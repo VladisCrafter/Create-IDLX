@@ -1,4 +1,4 @@
-package com.vladiscrafter.createedlx.mixin;
+package com.vladiscrafter.createidlx.mixin;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,7 +14,7 @@ import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import com.vladiscrafter.createedlx.CreateEDLX;
+import com.vladiscrafter.createidlx.CreateIDLX;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,12 +39,8 @@ public abstract class SingleLineDisplaySourceMixin {
     protected abstract boolean allowsLabeling(DisplayLinkContext context);
 
     @Unique
-    protected String createedlx$fullLine = "";
+    protected String createidlx$fullLine = "";
 
-    /**
-     * @author VladisCrafter
-     * @reason Inject the Attached Label tooltip with information about the $ specifier
-     */
     @Overwrite
     @OnlyIn(Dist.CLIENT)
     protected void addLabelingTextBox(ModularGuiLineBuilder builder) {
@@ -53,9 +49,9 @@ public abstract class SingleLineDisplaySourceMixin {
             t.withTooltip(ImmutableList.of(
                     CreateLang.translateDirect("display_source.label")
                             .withStyle(s -> s.withColor(0x5391E1)),
-                    CreateEDLX.translate("gui.display_link.attached_label_edit_box_1")
+                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_1")
                             .withStyle(ChatFormatting.GRAY),
-                    CreateEDLX.translate("gui.display_link.attached_label_edit_box_2")
+                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_2")
                             .withStyle(ChatFormatting.GRAY),
                     CreateLang.translateDirect("gui.schedule.lmb_edit")
                             .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
@@ -63,10 +59,6 @@ public abstract class SingleLineDisplaySourceMixin {
         }, "Label");
     }
 
-    /**
-     * @author VladisCrafter
-     * @reason Make the Attached Label act as a pseudo-formatted string whenever a non-escaped $ specifier is present
-     */
     @Overwrite
     public List<MutableComponent> provideText(DisplayLinkContext context, DisplayTargetStats stats) {
         MutableComponent line = provideLine(context, stats);
@@ -98,31 +90,12 @@ public abstract class SingleLineDisplaySourceMixin {
             }
         }
 
-        createedlx$fullLine = lineStr;
+        createidlx$fullLine = lineStr;
         return ImmutableList.of(Component.literal(lineStr));
     }
 
-//    /**
-//     * @author VladisCrafter
-//     * @reason Make the method return the previously formatted string as the Attached Label
-//     */
-//    @Overwrite
-//    public List<List<MutableComponent>> provideFlapDisplayText(DisplayLinkContext context, DisplayTargetStats stats) {
-//
-//        if (allowsLabeling(context)) {
-//            String label = context.sourceConfig()
-//                    .getString("Label");
-//            if (!label.isEmpty()) {
-//                return ImmutableList.of(provideText(context, stats));
-//            }
-//        }
-//
-//        return ((SingleLineDisplaySource)(Object)this)
-//                .super$provideFlapDisplayText(context, stats);
-//    }
-
     @Inject(method = "provideFlapDisplayText", at = @At("HEAD"), cancellable = true)
-    private void createedlx$overrideFlapDisplayText(DisplayLinkContext context, DisplayTargetStats stats,
+    private void createidlx$overrideFlapDisplayText(DisplayLinkContext context, DisplayTargetStats stats,
                                                     CallbackInfoReturnable<List<List<MutableComponent>>> cir) {
         if (allowsLabeling(context)) {
             String label = context.sourceConfig().getString("Label");
@@ -132,10 +105,6 @@ public abstract class SingleLineDisplaySourceMixin {
         }
     }
 
-    /**
-     * @author VladisCrafter
-     * @reason Make the method account the fullLine length to calculate required display space
-     */
     @Overwrite
     public void loadFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
                                       FlapDisplayLayout layout) {
@@ -158,34 +127,26 @@ public abstract class SingleLineDisplaySourceMixin {
             return;
         }
 
-        String layoutName = createedlx$fullLine.length() + "_Labeled_" + layoutKey;
+        String layoutName = createidlx$fullLine.length() + "_Labeled_" + layoutKey;
         if (layout.isLayout(layoutName))
             return;
 
         int maxCharCount = flapDisplay.getMaxCharCount();
         FlapDisplaySection labelSection = new FlapDisplaySection(
-                Math.min(maxCharCount, createedlx$fullLine.length()) * FlapDisplaySection.MONOSPACE, "alphabet", false, false);
+                Math.min(maxCharCount, createidlx$fullLine.length()) * FlapDisplaySection.MONOSPACE, "alphabet", false, false);
 
-        if (createedlx$fullLine.length() < maxCharCount)
+        if (createidlx$fullLine.length() < maxCharCount)
             layout.configure(layoutName,
-                    ImmutableList.of(labelSection, createSectionForValue(context, maxCharCount - createedlx$fullLine.length())));
+                    ImmutableList.of(labelSection, createSectionForValue(context, maxCharCount - createidlx$fullLine.length())));
         else
             layout.configure(layoutName, ImmutableList.of(labelSection));
     }
 
-    /**
-     * @author VladisCrafter
-     * @reason Make the whole mixin not crash for fox’s sake
-     */
     @Overwrite
     protected String getFlapDisplayLayoutName(DisplayLinkContext context) {
         return "Default";
     }
 
-    /**
-     * @author VladisCrafter
-     * @reason Same as above
-     */
     @Overwrite
     protected FlapDisplaySection createSectionForValue(DisplayLinkContext context, int size) {
         return new FlapDisplaySection(size * FlapDisplaySection.MONOSPACE, "alphabet", false, false);

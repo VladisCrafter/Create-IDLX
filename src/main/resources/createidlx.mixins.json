@@ -1,8 +1,8 @@
 {
   "required": true,
-  "package": "com.vladiscrafter.createedlx.mixin",
+  "package": "com.vladiscrafter.createidlx.mixin",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "createedlx.refmap.json",
+  "refmap": "createidlx.refmap.json",
   "mixins": [
     "SingleLineDisplaySourceMixin"
   ],

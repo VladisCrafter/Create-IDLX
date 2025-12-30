@@ -1,9 +1,11 @@
-package com.vladiscrafter.createedlx;
+package com.vladiscrafter.createidlx;
 
-import com.simibubi.create.Create;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -13,14 +15,22 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-@Mod(value = CreateEDLX.ID)
-public class CreateEDLX {
-    public static final String ID = "createedlx";
+@Mod(value = CreateIDLX.ID)
+public class CreateIDLX {
+    public static final String ID = "createidlx";
+    public static final String NAME = "Create: Improved Display Link Experience";
 
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateIDLX.ID);
 
-    public CreateEDLX(IEventBus modEventBus, ModContainer modContainer) {
+    public CreateIDLX(IEventBus modEventBus, ModContainer modContainer) {
+        IEventBus forgeBus = NeoForge.EVENT_BUS;
         modEventBus.addListener(this::commonSetup);
+        ModLoadingContext mlContext = ModLoadingContext.get();
+
+        CreateIDLX.REGISTRATE.registerEventListeners(modEventBus);
+
+        
     }
 
     public static MutableComponent translate(String key, Object... args) {
