@@ -63,12 +63,11 @@ public abstract class SingleLineDisplaySourceMixin {
     @Unique
     private static boolean createidlx$hasUnescapedSpecifiers(String s) {
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\')) {
-                CreateIDLX.LOGGER.info("{} DOES HAVE UNESCAPED SPECIFIERS", s);
+            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\'))
+                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\'))) {
                 return true;
             }
         }
-        CreateIDLX.LOGGER.info("{} DOES NOT HAVE UNESCAPED SPECIFIERS", s);
         return false;
     }
 
@@ -77,18 +76,16 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return raw;
 
-        CreateIDLX.LOGGER.info("ASSEMBLING FULL LINE FROM {} and {}", raw, label);
-
         boolean hasSpecifiers = createidlx$hasUnescapedSpecifiers(label);
 
         String result;
         if (hasSpecifiers) {
-            result = label.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
+            result = label.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw))
+                    .replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
         } else {
             result = label + " " + raw;
         }
-        CreateIDLX.LOGGER.info(result.replaceAll("\\\\\\$", "\\$"));
-        return result.replaceAll("\\\\\\$", "\\$");
+        return result.replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\\{}", "{}");
     }
 
     // ------ INVOKERS ------
@@ -108,7 +105,7 @@ public abstract class SingleLineDisplaySourceMixin {
     protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context,int size);
 
 
-    // ------ MODIFIERS ------
+    // ------ MODIFIERS & INJECTORS ------
 
     @ModifyReturnValue(method = "provideText", at = @At("RETURN"))
     private List<MutableComponent> createidlx$modifyProvideText(

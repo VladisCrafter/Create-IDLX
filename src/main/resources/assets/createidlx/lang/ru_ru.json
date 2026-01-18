@@ -1,4 +1,4 @@
 {
-  "createidlx.gui.display_link.attached_label_edit_box_1": "Используйте спецификатор $ для вставки информации\nв любую часть строки, в том числе многократной;",
-  "createidlx.gui.display_link.attached_label_edit_box_2": "если же требуется отобразить сам символ $,\nэкранируйте его обратной косой чертой: \\$"
+  "createidlx.gui.display_link.attached_label_edit_box_1": "Используйте спецификаторы $ или {} для вставки информации,\nв том числе многократной, в любую часть строки;",
+  "createidlx.gui.display_link.attached_label_edit_box_2": "для буквального отображения $ или {} используйте\nэкранирование обратными косыми чертами: \\$ и \\{}"
 }

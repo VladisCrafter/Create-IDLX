@@ -1,4 +1,4 @@
 {
-  "createidlx.gui.display_link.attached_label_edit_box_1": "Use a $ specifier to insert the information in any\npart of the string, as well as more than once;",
-  "createidlx.gui.display_link.attached_label_edit_box_2": "if a literal $ character needs to be displayed\ninstead, escape it with a backslash: \\$"
+  "createidlx.gui.display_link.attached_label_edit_box_1": "Use $ or {} specifiers to insert the data in any\npart of the string, as well as more than once;",
+  "createidlx.gui.display_link.attached_label_edit_box_2": "for displaying literal $ or {} \ninstead, use backslash escaping: \\$ and \\{}"
 }
