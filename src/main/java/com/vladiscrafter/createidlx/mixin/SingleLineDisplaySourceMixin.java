@@ -2,9 +2,9 @@ package com.vladiscrafter.createidlx.mixin;
 
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
@@ -26,21 +26,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceMixin {
 
-    protected abstract MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats);
+    // ------ OVERWRITES ------
 
-    protected abstract boolean allowsLabeling(DisplayLinkContext context);
-
-    @Unique
-    protected String createidlx$fullLine = "";
-
+    /**
+     * @author VladisCrafter
+     * @reason Inject the Attached Label tooltip with information about the $ specifier
+     */
     @Overwrite
     @OnlyIn(Dist.CLIENT)
     protected void addLabelingTextBox(ModularGuiLineBuilder builder) {
@@ -59,97 +58,144 @@ public abstract class SingleLineDisplaySourceMixin {
         }, "Label");
     }
 
-    @Overwrite
-    public List<MutableComponent> provideText(DisplayLinkContext context, DisplayTargetStats stats) {
-        MutableComponent line = provideLine(context, stats);
-        if (line == SingleLineDisplaySource.EMPTY_LINE)
-            return SingleLineDisplaySource.EMPTY;
+    // ------ UTILITY METHODS ------
 
-        String lineStr = line.getString();
-
-        if (allowsLabeling(context)) {
-            String label = context.sourceConfig()
-                    .getString("Label");
-
-            if (!label.isEmpty()) {
-                boolean hasSpecifiers = false;
-
-                for (int i = 0; i < label.length(); i++) {
-                    if ((i == 0 || label.charAt(i - 1) != '\\') && label.charAt(i) == '$') {
-                        hasSpecifiers = true;
-                        break;
-                    }
-                }
-
-                if (hasSpecifiers) {
-                    lineStr = label.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(lineStr));
-                } else lineStr = label + " " + lineStr;
-
-                lineStr = lineStr.replaceAll(Pattern.quote("\\" + "$"), Matcher.quoteReplacement("$")
-                );
+    @Unique
+    private static boolean createidlx$hasUnescapedSpecifiers(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\')) {
+                CreateIDLX.LOGGER.info("{} DOES HAVE UNESCAPED SPECIFIERS", s);
+                return true;
             }
         }
-
-        createidlx$fullLine = lineStr;
-        return ImmutableList.of(Component.literal(lineStr));
+        CreateIDLX.LOGGER.info("{} DOES NOT HAVE UNESCAPED SPECIFIERS", s);
+        return false;
     }
 
-    @Inject(method = "provideFlapDisplayText", at = @At("HEAD"), cancellable = true)
-    private void createidlx$overrideFlapDisplayText(DisplayLinkContext context, DisplayTargetStats stats,
-                                                    CallbackInfoReturnable<List<List<MutableComponent>>> cir) {
-        if (allowsLabeling(context)) {
-            String label = context.sourceConfig().getString("Label");
-            if (!label.isEmpty()) {
-                cir.setReturnValue(ImmutableList.of(provideText(context, stats)));
-            }
+    @Unique
+    private static String createidlx$assembleFullLine(DisplayLinkContext context, String raw) {
+        String label = context.sourceConfig().getString("Label");
+        if (label.isEmpty()) return raw;
+
+        CreateIDLX.LOGGER.info("ASSEMBLING FULL LINE FROM {} and {}", raw, label);
+
+        boolean hasSpecifiers = createidlx$hasUnescapedSpecifiers(label);
+
+        String result;
+        if (hasSpecifiers) {
+            result = label.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
+        } else {
+            result = label + " " + raw;
         }
+        CreateIDLX.LOGGER.info(result.replaceAll("\\\\\\$", "\\$"));
+        return result.replaceAll("\\\\\\$", "\\$");
     }
 
-    @Overwrite
-    public void loadFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
-                                      FlapDisplayLayout layout) {
-        String layoutKey = getFlapDisplayLayoutName(context);
+    // ------ INVOKERS ------
 
-        if (!allowsLabeling(context)) {
-            if (!layout.isLayout(layoutKey))
-                layout.configure(layoutKey,
-                        ImmutableList.of(createSectionForValue(context, flapDisplay.getMaxCharCount())));
+    @Invoker("provideLine")
+    protected abstract MutableComponent createidlx$invokeProvideLine(DisplayLinkContext context, DisplayTargetStats stats);
+
+    @Invoker("allowsLabeling")
+    protected abstract boolean createidlx$invokeAllowsLabeling( DisplayLinkContext context);
+
+    /**
+    createSectionForValue() is currently unused since a single, non-separable literal component is passed to be displayed now
+
+    (this might be changed in the future if add-on compatibility issues arise)
+     */
+    @Invoker("createSectionForValue")
+    protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context,int size);
+
+
+    // ------ MODIFIERS ------
+
+    @ModifyReturnValue(method = "provideText", at = @At("RETURN"))
+    private List<MutableComponent> createidlx$modifyProvideText(
+            List<MutableComponent> original,
+            DisplayLinkContext context,
+            DisplayTargetStats stats
+    ) {
+        if (original.isEmpty())
+            return original;
+
+        if (!this.createidlx$invokeAllowsLabeling(context))
+            return original;
+
+        String label = context.sourceConfig().getString("Label");
+        if (label.isEmpty())
+            return original;
+
+        if (!createidlx$hasUnescapedSpecifiers(label))
+            return original;
+
+        MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
+        if (raw == SingleLineDisplaySource.EMPTY_LINE)
+            return original;
+
+        String full = createidlx$assembleFullLine(context, raw.getString());
+        return ImmutableList.of(Component.literal(full));
+    }
+
+    @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
+    private List<List<MutableComponent>> createidlx$modifyFlapText(
+            List<List<MutableComponent>> original,
+            DisplayLinkContext context,
+            DisplayTargetStats stats
+    ) {
+        if (!this.createidlx$invokeAllowsLabeling(context))
+            return original;
+
+        String label = context.sourceConfig().getString("Label");
+        if (label.isEmpty())
+            return original;
+
+        if (!createidlx$hasUnescapedSpecifiers(label))
+            return original;
+
+        MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
+        if (raw == SingleLineDisplaySource.EMPTY_LINE)
+            return original;
+
+        String full = createidlx$assembleFullLine(context, raw.getString());
+        return ImmutableList.of(ImmutableList.of(Component.literal(full)));
+    }
+
+    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
+    private void createidlx$overrideLayout(
+            DisplayLinkContext context,
+            FlapDisplayBlockEntity flapDisplay,
+            FlapDisplayLayout layout,
+            CallbackInfo ci
+    ) {
+        if (!this.createidlx$invokeAllowsLabeling(context))
+            return;
+
+        String label = context.sourceConfig().getString("Label");
+        if (label.isEmpty())
+            return;
+
+        if (!createidlx$hasUnescapedSpecifiers(label))
+            return;
+
+        String layoutKey = "IDLX_DYNAMIC";
+
+        if (layout.isLayout(layoutKey)) {
+            ci.cancel();
             return;
         }
 
-        String label = context.sourceConfig()
-                .getString("Label");
+        int max = flapDisplay.getMaxCharCount();
 
-        if (label.isEmpty()) {
-            if (!layout.isLayout(layoutKey))
-                layout.configure(layoutKey,
-                        ImmutableList.of(createSectionForValue(context, flapDisplay.getMaxCharCount())));
-            return;
-        }
+        FlapDisplaySection section = new FlapDisplaySection(
+                max * FlapDisplaySection.MONOSPACE,
+                "alphabet",
+                false,
+                false
+        );
 
-        String layoutName = createidlx$fullLine.length() + "_Labeled_" + layoutKey;
-        if (layout.isLayout(layoutName))
-            return;
-
-        int maxCharCount = flapDisplay.getMaxCharCount();
-        FlapDisplaySection labelSection = new FlapDisplaySection(
-                Math.min(maxCharCount, createidlx$fullLine.length()) * FlapDisplaySection.MONOSPACE, "alphabet", false, false);
-
-        if (createidlx$fullLine.length() < maxCharCount)
-            layout.configure(layoutName,
-                    ImmutableList.of(labelSection, createSectionForValue(context, maxCharCount - createidlx$fullLine.length())));
-        else
-            layout.configure(layoutName, ImmutableList.of(labelSection));
-    }
-
-    @Overwrite
-    protected String getFlapDisplayLayoutName(DisplayLinkContext context) {
-        return "Default";
-    }
-
-    @Overwrite
-    protected FlapDisplaySection createSectionForValue(DisplayLinkContext context, int size) {
-        return new FlapDisplaySection(size * FlapDisplaySection.MONOSPACE, "alphabet", false, false);
+        layout.configure(layoutKey, ImmutableList.of(section));
+        ci.cancel();
     }
 
 }
