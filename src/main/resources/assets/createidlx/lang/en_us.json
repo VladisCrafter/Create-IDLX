@@ -1,4 +1,5 @@
 {
-  "createidlx.gui.display_link.attached_label_edit_box_1": "Use $ or {} specifiers to insert the data in any\npart of the string, as well as more than once;",
-  "createidlx.gui.display_link.attached_label_edit_box_2": "for displaying literal $ or {} \ninstead, use backslash escaping: \\$ and \\{}"
+  "createidlx.gui.display_link.attached_label_edit_box_1": "Use $ or {} placeholders to insert the data\nonce or multiple times anywhere inside the string;",
+  "createidlx.gui.display_link.attached_label_edit_box_2": "for displaying the above characters literally, use\nbackslash escaping: \\$ and \\{} respectively.",
+  "createidlx.gui.display_link.attached_label_edit_box_3": "In case of no unescaped placeholders present,\ndefault concatenation method will be used instead."
 }

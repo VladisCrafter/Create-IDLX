@@ -52,6 +52,8 @@ public abstract class SingleLineDisplaySourceMixin {
                             .withStyle(ChatFormatting.GRAY),
                     CreateIDLX.translate("gui.display_link.attached_label_edit_box_2")
                             .withStyle(ChatFormatting.GRAY),
+                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_3")
+                            .withStyle(ChatFormatting.GRAY),
                     CreateLang.translateDirect("gui.schedule.lmb_edit")
                             .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
             ));
@@ -125,8 +127,8 @@ public abstract class SingleLineDisplaySourceMixin {
     }
 
     @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
-    private List<List<MutableComponent>> createidlx$modifyFlapText(List<List<MutableComponent>> originalValue,
-                                                                   DisplayLinkContext context, DisplayTargetStats stats) {
+    private List<List<MutableComponent>> createidlx$modifyFlapDisplayText(List<List<MutableComponent>> originalValue,
+                                                                          DisplayLinkContext context, DisplayTargetStats stats) {
         if (!this.createidlx$invokeAllowsLabeling(context)) return originalValue;
 
         String label = context.sourceConfig().getString("Label");
@@ -142,8 +144,8 @@ public abstract class SingleLineDisplaySourceMixin {
     }
 
     @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
-    private void createidlx$overrideLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
-                                           FlapDisplayLayout layout, CallbackInfo ci) {
+    private void createidlx$overrideFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
+                                                      FlapDisplayLayout layout, CallbackInfo ci) {
         if (!this.createidlx$invokeAllowsLabeling(context)) return;
 
         String label = context.sourceConfig().getString("Label");
