@@ -74,6 +74,17 @@ public abstract class SingleLineDisplaySourceMixin {
     }
 
     @Unique
+    private static boolean createidlx$hasEscapedSpecifiers(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if ((s.charAt(i) == '$' && (i > 0 && s.charAt(i - 1) == '\\'))
+                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i > 0 && s.charAt(i - 1) == '\\'))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Unique
     private static String createidlx$assembleFullLine(DisplayLinkContext context, String raw) {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return raw;
@@ -117,7 +128,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!createidlx$hasUnescapedSpecifiers(label)) return originalValue;
+        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         if (raw == SingleLineDisplaySource.EMPTY_LINE) return originalValue;
@@ -134,7 +145,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!createidlx$hasUnescapedSpecifiers(label)) return originalValue;
+        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         if (raw == SingleLineDisplaySource.EMPTY_LINE) return originalValue;
@@ -151,7 +162,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return;
 
-        if (!createidlx$hasUnescapedSpecifiers(label)) return;
+        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return;
 
         String layoutKey = "IDLX_WithSpecifiers";
 
