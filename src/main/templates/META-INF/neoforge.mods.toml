@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/VladisCrafter/Create-EDLX/issues"
+issueTrackerURL="https://github.com/VladisCrafter/Create-IDLX/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-displayURL="https://github.com/VladisCrafter/Create-EDLX"
+displayURL="https://github.com/VladisCrafter/Create-IDLX"
 #logoFile="createidlx.png"
 #credits=""
 authors="${mod_authors}"
