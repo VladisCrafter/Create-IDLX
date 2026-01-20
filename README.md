@@ -1,25 +1,84 @@
+<div align="center">
+  <img src="icon.png" width="192" height="192" alt="C: IDLX mod icon">
+  <h1>Create: Improved Display Link Experience</h1>
+	<a href=""><img src="https://img.shields.io/badge/Avalable_For-1.21.1-blue" alt="Supported Versions"></a>
+	<a href="https://github.com/VladisCrafter/Create-IDLX/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-red" alt="License"></a>
+</div>
 
-Installation information
-=======
+___
+## Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+---
+<div align="center">
+    <h2>Currently added features</h2>
+1. Placeholders for the Attached Label.
+    
+###### Yeah that's basically it for now.
+</div>
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+---
+## 1. Placeholders for the Attached Label:
+The way Create mod currently handles displaying information (aka data) with the attached label is by simply concatenating them with a space:
+It's a simple way, but thus a severely limiting one in terms of customization.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+<details open>
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+<summary>[Collapsible]</summary>
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+![image](README-images/IDLX_showcase1.png)
+
+</details>
+
+This add-on pushes the boundaries apart by introducing the `$` and `{}` placeholders (aka specifiers).
+Placing one (or more) marks the place where the information string should be inserted.
+In short, the Attached Label can now act like a formatted string!
+
+<details open>
+
+<summary>[Collapsible]</summary>
+
+![image](README-images/IDLX_showcase2.png)
+
+</details>
+
+You can utilize as many placeholders as you want in one string. Mixing both types of them doesn't cause any issues as well!
+
+<details open>
+
+<summary>[Collapsible]</summary>
+
+![image](README-images/IDLX_showcase3.png)
+
+</details>
+
+If you need to insert a `$` character literally (same applies to `{}`), without it turning into a placeholder, use backslash-escaping on it.
+
+<details open>
+
+<summary>[Collapsible]</summary>
+
+![image](README-images/IDLX_showcase4.png)
+
+</details>
+
+In case of no unescaped placeholders present in the label altogether, default (base Create's) concatenation will be applied.
+
+<details open>
+
+<summary>[Collapsible]</summary>
+
+![image](README-images/IDLX_showcase5.png)
+
+</details>
+
+Lastly, there's a new tooltip linked to the Attached Label input field, that briefly repeats the above.
+
+<details open>
+
+<summary>[Click here to collapse]</summary>
+
+![image](README-images/IDLX_showcase_label.png)
+
+</details>
+
+# The README is incomplete and will be getting updates through further development.
