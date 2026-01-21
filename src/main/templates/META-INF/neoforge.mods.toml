@@ -1,37 +1,37 @@
-modLoader="javafml"
-loaderVersion="${loader_version_range}"
-license="${mod_license}"
-issueTrackerURL="https://github.com/VladisCrafter/Create-IDLX/issues"
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
+issueTrackerURL = "https://github.com/VladisCrafter/Create-IDLX/issues"
 
 [[mods]]
-modId="${mod_id}"
-version="${mod_version}"
-displayName="${mod_name}"
-displayURL="https://github.com/VladisCrafter/Create-IDLX"
-logoFile="icon.png"
-credits="LiukRast, swzo"
-authors="${mod_authors}"
-description='''${mod_description}'''
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+displayURL = "https://github.com/VladisCrafter/Create-IDLX"
+logoFile = "icon.png"
+credits = "LiukRast, swzo"
+authors = "${mod_authors}"
+description = '''${mod_description}'''
 
 [[mixins]]
-config="${mod_id}.mixins.json"
+config = "${mod_id}.mixins.json"
 
 [[dependencies.${mod_id}]]
-    modId="neoforge"
-    versionRange="[${neo_version},)"
-    ordering="NONE"
-    side="BOTH"
+    modId = "neoforge"
+    versionRange = "[${neo_version},)"
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="minecraft"
-    type="required"
-    versionRange="${minecraft_version_range}"
-    ordering="NONE"
-    side="BOTH"
+    modId = "minecraft"
+    type = "required"
+    versionRange = "${minecraft_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="create"
-    type="required"
-    versionRange="[6.0.0,6.1.0)"
-    ordering="AFTER"
-    side="BOTH"
+    modId = "create"
+    type = "required"
+    versionRange = "[6.0.0,6.1.0)"
+    ordering = "AFTER"
+    side = "BOTH"
