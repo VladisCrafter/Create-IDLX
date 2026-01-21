@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align: center;">
   <img src="icon.png" width="192" height="192" alt="C: IDLX mod icon">
   <h1>Create: Improved Display Link Experience</h1>
 	<a href=""><img src="https://img.shields.io/badge/Avalable_For-1.21.1-blue" alt="Supported Versions"></a>
@@ -9,11 +9,11 @@ ___
 ## Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
 
 ---
-<div align="center">
+<div style="text-align: center;">
     <h2>Currently added features</h2>
 1. Placeholders for the Attached Label.
     
-###### Yeah that's basically it for now.
+###### Yeah, that's basically it for now.
 </div>
 
 ---
@@ -75,10 +75,11 @@ Lastly, there's a new tooltip linked to the Attached Label input field, that bri
 
 <details open>
 
-<summary>[Click here to collapse]</summary>
+<summary>[Collapsible]</summary>
 
 ![image](README-images/IDLX_showcase_label.png)
 
 </details>
 
+---
 # The README is incomplete and will be getting updates through further development.

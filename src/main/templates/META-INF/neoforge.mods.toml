@@ -9,22 +9,16 @@ version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/VladisCrafter/Create-IDLX"
 logoFile="icon.png"
-#credits=""
+credits="LiukRast, swzo"
 authors="${mod_authors}"
 description='''${mod_description}'''
 
 [[mixins]]
 config="${mod_id}.mixins.json"
 
-#[[accessTransformers]]
-#file="META-INF/accesstransformer.cfg"
-
 [[dependencies.${mod_id}]]
     modId="neoforge"
     versionRange="[${neo_version},)"
-    # An ordering relationship for the dependency.
-    # BEFORE - This mod is loaded BEFORE the dependency
-    # AFTER - This mod is loaded AFTER the dependency
     ordering="NONE"
     side="BOTH"
 
@@ -39,5 +33,5 @@ config="${mod_id}.mixins.json"
     modId="create"
     type="required"
     versionRange="[6.0.0,6.1.0)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
