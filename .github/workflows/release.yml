@@ -5,6 +5,8 @@ on:
     tags:
       - "*"
 
+permissions: write-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,3 +34,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/libs/*.jar
+          body_path: RELEASE_NOTES.md
