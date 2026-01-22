@@ -24,7 +24,7 @@ jobs:
           fi
 
           cat RELEASE_NOTES.md > /tmp/TEMP_CHANGELOG.md
-          echo -e "\n---\n" >> /tmp/TEMP_CHANGELOG.md
+          echo -e "\n\n---\n" >> /tmp/TEMP_CHANGELOG.md
           cat CHANGELOG.md >> /tmp/TEMP_CHANGELOG.md
           mv /tmp/TEMP_CHANGELOG.md CHANGELOG.md
 
