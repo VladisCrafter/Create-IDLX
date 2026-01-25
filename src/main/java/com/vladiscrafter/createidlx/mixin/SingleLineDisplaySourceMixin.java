@@ -34,32 +34,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceMixin {
 
-    // ------ OVERWRITES ------
-
-    /**
-     * @author VladisCrafter
-     * @reason Inject the Attached Label tooltip with information about the $ and {} specifiers
-     */
-    @Overwrite
-    @OnlyIn(Dist.CLIENT)
-    protected void addLabelingTextBox(ModularGuiLineBuilder builder) {
-        builder.addTextInput(0, 137, (e, t) -> {
-            e.setValue("");
-            t.withTooltip(ImmutableList.of(
-                    CreateLang.translateDirect("display_source.label")
-                            .withStyle(s -> s.withColor(0x5391E1)),
-                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_1")
-                            .withStyle(ChatFormatting.GRAY),
-                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_2")
-                            .withStyle(ChatFormatting.GRAY),
-                    CreateIDLX.translate("gui.display_link.attached_label_edit_box_3")
-                            .withStyle(ChatFormatting.GRAY),
-                    CreateLang.translateDirect("gui.schedule.lmb_edit")
-                            .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
-            ));
-        }, "Label");
-    }
-
     // ------ UTILITY METHODS ------
 
     @Unique
