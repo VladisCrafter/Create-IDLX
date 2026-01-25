@@ -8,6 +8,7 @@ import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplay
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,6 +29,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
+        boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
+        if (!isPlaceholdersGuideButtonEnabled) return;
+
         if (i < 0 || i >= sources.size()) return;
 
         DisplaySource source = sources.get(i);
