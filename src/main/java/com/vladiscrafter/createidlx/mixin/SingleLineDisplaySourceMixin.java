@@ -79,7 +79,7 @@ public abstract class SingleLineDisplaySourceMixin {
     protected abstract MutableComponent createidlx$invokeProvideLine(DisplayLinkContext context, DisplayTargetStats stats);
 
     @Invoker("allowsLabeling")
-    protected abstract boolean createidlx$invokeAllowsLabeling( DisplayLinkContext context);
+    protected abstract boolean createidlx$invokeAllowsLabeling(DisplayLinkContext context);
 
     /**
     createSectionForValue() is currently unused since a single, non-separable literal component is passed to be displayed now

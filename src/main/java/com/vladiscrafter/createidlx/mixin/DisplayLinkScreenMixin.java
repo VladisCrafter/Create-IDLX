@@ -1,12 +1,17 @@
 package com.vladiscrafter.createidlx.mixin;
 
+import com.simibubi.create.api.behaviour.display.DisplaySource;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
+import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,8 +24,15 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 //    @Unique
 //    private IconButton createidlx$specifierHelpButton;
 
-    @Inject(method = "init", at = @At("TAIL"))
-    private void createidlx$initGuideButtons(CallbackInfo ci) {
+    @Shadow private List<DisplaySource> sources;
+
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
+        if (i < 0 || i >= sources.size()) return;
+
+        DisplaySource source = sources.get(i);
+        if (!(source instanceof SingleLineDisplaySource)) return;
+
         IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, AllIcons./*I_ACTIVE*/I_PASSIVE);
         placeholdersGuideButton.active = false;
         placeholdersGuideButton.withCallback(() -> {});
@@ -40,7 +52,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         ));
 
         this.addRenderableWidget(placeholdersGuideButton);
-
 //        this.createidlx$specifierHelpButton = placeholdersGuideButton;
     }
+
 }
