@@ -32,6 +32,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
         if (!isPlaceholdersGuideButtonEnabled) return;
 
+        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
+        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+
         if (i < 0 || i >= sources.size()) return;
 
         DisplaySource source = sources.get(i);
@@ -50,7 +53,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                         .withStyle(ChatFormatting.GRAY),
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_3")
                         .withStyle(ChatFormatting.GRAY),
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_4", /*both enabled in config ? */CreateIDLX.translate("gui.display_link.active_placeholder.both")
+                CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
+                                ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both") :
+                                        (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only") :
+                                                ((isDollarSignSpecifierEnabled && !isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only") :
+                                                        CreateIDLX.translate("gui.display_link.active_placeholder.none")))
                                 .withStyle(ChatFormatting.UNDERLINE))
                         .withStyle(ChatFormatting.DARK_GRAY)
         ));

@@ -15,6 +15,7 @@ import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -38,9 +39,12 @@ public abstract class SingleLineDisplaySourceMixin {
 
     @Unique
     private static boolean createidlx$hasUnescapedSpecifiers(String s) {
+        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
+        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+
         for (int i = 0; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\'))
-                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\'))) {
+            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\') && isDollarSignSpecifierEnabled)
+                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\') && isBracketsSpecifierEnabled)) {
                 return true;
             }
         }
@@ -49,9 +53,12 @@ public abstract class SingleLineDisplaySourceMixin {
 
     @Unique
     private static boolean createidlx$hasEscapedSpecifiers(String s) {
+        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
+        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+
         for (int i = 1; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\')
-                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\')) {
+            if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\' && isDollarSignSpecifierEnabled)
+                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\' && isBracketsSpecifierEnabled)) {
                 return true;
             }
         }
@@ -60,13 +67,16 @@ public abstract class SingleLineDisplaySourceMixin {
 
     @Unique
     private static String createidlx$assembleFullLine(DisplayLinkContext context, String raw) {
+        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
+        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return raw;
 
-        String result;
+        String result = label;
         if (createidlx$hasUnescapedSpecifiers(label)) {
-            result = label.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw))
-                    .replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
+            if (isDollarSignSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
+            if (isBracketsSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
         } else {
             result = label + " " + raw;
         }

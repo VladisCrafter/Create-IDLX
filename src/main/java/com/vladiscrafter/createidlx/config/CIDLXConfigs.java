@@ -18,8 +18,15 @@ public class CIDLXConfigs {
     private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
     public static CIDLXClient client;
+    public static CIDLXServer server;
 
-    private static CIDLXClient client() { return client; }
+    private static CIDLXClient client() {
+        return client;
+    }
+
+    private static CIDLXServer server() {
+        return server;
+    }
 
     public static ConfigBase byType(ModConfig.Type type) { return CONFIGS.get(type); }
 
@@ -38,6 +45,7 @@ public class CIDLXConfigs {
 
     public static void register(ModLoadingContext context, ModContainer container) {
         client = register(CIDLXClient::new, ModConfig.Type.CLIENT);
+        server = register(CIDLXServer::new, ModConfig.Type.SERVER);
 
         for (Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())
             container.registerConfig(pair.getKey(), pair.getValue().specification);
