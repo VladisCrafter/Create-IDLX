@@ -3,9 +3,9 @@
   "createidlx.gui.display_link.placeholders_tooltip_1": "Используйте спецификаторы $ или {} для разовой или\nмногократной вставки информации в любую часть строки;",
   "createidlx.gui.display_link.placeholders_tooltip_2": "для буквального отображения этих символов экранируйте\nих обратной косой чертой: \\$ и \\{} соответственно.",
   "createidlx.gui.display_link.placeholders_tooltip_3": "В случае отсутствия неэкранированных спецификаторов\nбудет выполнена классическая конкатенация через пробел.",
-  "createidlx.gui.display_link.placeholders_tooltip_4": "Активные спецификаторы: %s",
+  "createidlx.gui.display_link.placeholders_tooltip_4": "Активные спецификаторы: %s.",
+  "createidlx.gui.display_link.placeholders_tooltip_4_disabled": "Спецификаторы отключены настройками мира/сервера.",
   "createidlx.gui.display_link.active_placeholder.both": "$ и {}",
   "createidlx.gui.display_link.active_placeholder.brackets_only": "только {}",
-  "createidlx.gui.display_link.active_placeholder.dollar_only": "только $",
-  "createidlx.gui.display_link.active_placeholder.none": "нет"
+  "createidlx.gui.display_link.active_placeholder.dollar_only": "только $"
 }

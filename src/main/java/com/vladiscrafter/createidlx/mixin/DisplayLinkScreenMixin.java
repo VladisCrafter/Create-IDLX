@@ -53,13 +53,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                         .withStyle(ChatFormatting.GRAY),
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_3")
                         .withStyle(ChatFormatting.GRAY),
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
-                                ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both") :
-                                        (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only") :
-                                                ((isDollarSignSpecifierEnabled && !isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only") :
-                                                        CreateIDLX.translate("gui.display_link.active_placeholder.none")))
-                                .withStyle(ChatFormatting.UNDERLINE))
-                        .withStyle(ChatFormatting.DARK_GRAY)
+                ((isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
+                                ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withStyle(s -> s.withColor(0x53e053)) :
+                                        (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withStyle(s -> s.withColor(0xe0b653)) :
+                                                CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.DARK_GRAY)
+                        : CreateIDLX.translate("gui.display_link.placeholders_tooltip_4_disabled").withStyle(s -> s.withColor(0xe05353)))
         ));
 
         this.addRenderableWidget(placeholdersGuideButton);
