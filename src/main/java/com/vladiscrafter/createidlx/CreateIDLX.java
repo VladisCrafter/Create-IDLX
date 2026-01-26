@@ -5,6 +5,7 @@ import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -43,6 +44,10 @@ public class CreateIDLX {
     public static MutableComponent translate(String key, Object... args) {
         Object[] args1 = LangBuilder.resolveBuilders(args);
         return Component.translatable(ID + "." + key, args1);
+    }
+
+    public static ResourceLocation asResource(String path) {
+        return ResourceLocation.fromNamespaceAndPath(ID, path);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {}

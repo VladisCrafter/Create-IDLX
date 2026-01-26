@@ -1,13 +1,11 @@
 package com.vladiscrafter.createidlx.mixin;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
-import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
@@ -40,7 +38,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         DisplaySource source = sources.get(i);
         if (!(source instanceof SingleLineDisplaySource)) return;
 
-        IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, AllIcons./*I_ACTIVE*/I_PASSIVE);
+        IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
         placeholdersGuideButton.active = false;
         placeholdersGuideButton.withCallback(() -> {});
 
