@@ -53,12 +53,8 @@ public abstract class SingleLineDisplaySourceMixin {
 
     @Unique
     private static boolean createidlx$hasEscapedSpecifiers(String s) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-
         for (int i = 1; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\' && isDollarSignSpecifierEnabled)
-                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\' && isBracketsSpecifierEnabled)) {
+            if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\') || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\')) {
                 return true;
             }
         }
@@ -69,6 +65,7 @@ public abstract class SingleLineDisplaySourceMixin {
     private static String createidlx$assembleFullLine(DisplayLinkContext context, String raw) {
         boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
         boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
 
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return raw;
@@ -80,7 +77,13 @@ public abstract class SingleLineDisplaySourceMixin {
         } else {
             result = label + " " + raw;
         }
-        return result.replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\\{}", "{}");
+
+        if (isDollarSignSpecifierEnabled) result = result.replaceAll("\\\\\\$", "\\$");
+        if (isBracketsSpecifierEnabled) result = result.replaceAll("\\\\\\{}", "{}");
+        if (hideEscapingOfDisabledSpecifiers) result = result
+                .replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\\{}", "{}");
+
+        return result;
     }
 
     // ------ INVOKERS ------
