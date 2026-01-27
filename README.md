@@ -8,7 +8,7 @@
 <a href="https://neoforged.net/"><img height="56" alt="Available For Neoforge" src="README-images/neoforge_vector.svg"></a>
 <a href="https://fabricmc.net/"><img height="56" alt="Won't support Fabric" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/fabric_vector.svg"></a>
 
-<a href=""><img height="30" alt="Available For 1.21.1" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=Available+For&secondaryLabel=1.21.1&primaryBGColor=%23222427&primaryTextColor=%23ffffff&secondaryBGColor=%23d7742f&secondaryTextColor=%23ffffff&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
+<a href="https://github.com/VladisCrafter/Create-IDLX/releases"><img height="30" alt="Available For 1.21.1" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=Available+For&secondaryLabel=1.21.1&primaryBGColor=%23222427&primaryTextColor=%23ffffff&secondaryBGColor=%23d7742f&secondaryTextColor=%23ffffff&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
 <a href="https://github.com/VladisCrafter/Create-IDLX/blob/main/LICENSE"><img height="30" alt="License MIT" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=License&secondaryLabel=MIT&primaryBGColor=%23222427&primaryTextColor=%23FFFFFF&secondaryBGColor=%23389AD5&secondaryTextColor=%23FFFFFF&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
 </div>
 
@@ -107,12 +107,12 @@ C: IDLX has a proper Create-styled config for both the client (visuals) and the 
 ## Credits
 
 ### Mod Development
-- @LIUKRAST and @serverside-swzo for valuable Mixin advices at the early stage of C: IDLX development;
+- [@LIUKRAST](https://github.com/LIUKRAST) and [@serverside-swzo](https://github.com/serverside-swzo) for valuable Mixin advices at the early stage of C: IDLX development;
 - GG_Gnom (`gg_gnom` on Discord) for testing the mod (literally the only case of testing this mod I know).
 
 ### Post-Production
 - [Devin's Badges](https://intergrav.github.io/devins-badges-docs/) for most badges used in this README;
-- @flikrheist for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
+- [@flikrheist](https://github.com/flikrheist) for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
 - [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
 
 ---
