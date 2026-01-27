@@ -1,31 +1,33 @@
 <div align="center">
-  <img src="icon.png" width="192" height="192" alt="C: IDLX mod icon">
-  <h1>Create: Improved Display Link Experience</h1>
-	<a href=""><img src="https://img.shields.io/badge/Avalable_For-1.21.1-blue" alt="Supported Versions"></a>
-	<a href="https://github.com/VladisCrafter/Create-IDLX/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-red" alt="License"></a>
-</div>
+<img src="icon.png" width="192" height="192" alt="C: IDLX mod icon">
+<h1>Create: Improved Display Link Experience</h1>
+<a href="https://modrinth.com/mod/create-idlx"><img height="56" alt="Available on Modrinth" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
+<a href="https://github.com/VladisCrafter/Create-IDLX"><img height="56" alt="Available on GitHub" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/create-idlx"><img height="56" alt="Available on CurseForge" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg"></a>
 
-___
-## Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
+<a href="https://neoforged.net/"><img height="56" alt="Available For Neoforge" src="README-images/neoforge_vector.svg"></a>
+<a href="https://fabricmc.net/"><img height="56" alt="Won't support Fabric" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/fabric_vector.svg"></a>
 
----
-<div align="center">
-    <h2>Currently added features</h2>
-1. Placeholders for the Attached Label.
-    
-###### Yeah, that's basically it for now.
+<a href=""><img height="30" alt="Available For 1.21.1" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=Available+For&secondaryLabel=1.21.1&primaryBGColor=%23222427&primaryTextColor=%23ffffff&secondaryBGColor=%23d7742f&secondaryTextColor=%23ffffff&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
+<a href="https://github.com/VladisCrafter/Create-IDLX/blob/main/LICENSE"><img height="30" alt="License MIT" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=License&secondaryLabel=MIT&primaryBGColor=%23222427&primaryTextColor=%23FFFFFF&secondaryBGColor=%23389AD5&secondaryTextColor=%23FFFFFF&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
 </div>
 
 ---
-## 1. Placeholders for the Attached Label:
+### Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
+
+---
+
+## Features
+
+### Placeholders for the Attached Label
+<details open> <summary></summary>
+
 The way Create mod currently handles displaying information (aka data) with the attached label is by simply concatenating them with a space:
 It's a simple way, but thus a severely limiting one in terms of customization.
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
-
-![image](README-images/IDLX_showcase1.png)
+![IDLX showcase 1](README-images/IDLX_showcase1.png)
 
 </details>
 
@@ -33,53 +35,85 @@ This add-on pushes the boundaries apart by introducing the `$` and `{}` placehol
 Placing one (or more) marks the place where the information string should be inserted.
 In short, the Attached Label can now act like a formatted string!
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
-
-![image](README-images/IDLX_showcase2.png)
+![IDLX showcase 2](README-images/IDLX_showcase2.png)
 
 </details>
 
 You can utilize as many placeholders as you want in one string. Mixing both types of them doesn't cause any issues as well!
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
-
-![image](README-images/IDLX_showcase3.png)
+![IDLX showcase 3](README-images/IDLX_showcase3.png)
 
 </details>
 
 If you need to insert a `$` character literally (same applies to `{}`), without it turning into a placeholder, use backslash-escaping on it.
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
-
-![image](README-images/IDLX_showcase4.png)
+![IDLX showcase 4](README-images/IDLX_showcase4.png)
 
 </details>
 
 In case of no unescaped placeholders present in the label altogether, default (base Create's) concatenation will be applied.
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
-
-![image](README-images/IDLX_showcase5.png)
+![IDLX showcase 5](README-images/IDLX_showcase5.png)
 
 </details>
 
-Lastly, there's a new tooltip linked to the Attached Label input field, that briefly repeats the above.
+Lastly, there's a new hover-on button that displays all the abovementioned.
 
-<details open>
+<details open> <summary></summary>
 
-<summary>[Collapsible]</summary>
+![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase1.png)
 
-![image](README-images/IDLX_showcase_label.png)
+</details>
+
+Its last string displays which placeholders are active (available to use in this world/server, which is specified by the server config of the mod).
+
+<details open> <summary></summary>
+
+![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase.png)
+
+<details> <summary>(A .webp version if the one above doesn't play properly)</summary>
+
+![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase.webp)
+
+</details>
+
+</details>
 
 </details>
 
 ---
-# The README is incomplete and will be getting updates through further development.
+## Config
+<details open> <summary></summary>
+
+C: IDLX has a proper Create-styled config for both the client (visuals) and the server (per-world).
+
+### Client settings
+- `Enable Guide Buttons`: toggling that off will hide the abovementioned hover-on button in the Display Link interface.
+### Server settings
+- `Enable (Dollar Sign / Curly Brackets) Placeholder`: with those two it is possible to limit the placeholder functionality to only one option - the Dollar Sign or the Curly Brackets respectively - or disable the feature altogether by ticking both as off (affects the last string of the Placeholders Usage Guide tooltip);
+- `Hide Escaping Of Disabled Placeholders`: by default, when a disabled placeholder is escaped, the backslash stays visible as if placed before a regular character; enable to make it get hidden like if it did its job. 
+
+</details>
+
+---
+## Credits
+
+### Mod Development
+- @LIUKRAST and @serverside-swzo for valuable Mixin advices at the early stage of C: IDLX development;
+- GG_Gnom (`gg_gnom` on Discord) for testing the mod (literally the only case of testing this mod I know).
+
+### Post-Production
+- [Devin's Badges](https://intergrav.github.io/devins-badges-docs/) for most badges used in this README;
+- @flikrheist for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
+- [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
+
+---
+### The README is not final and will likely get updated not once prior to the add-on's public release.
