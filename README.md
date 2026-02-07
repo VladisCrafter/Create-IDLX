@@ -16,7 +16,6 @@
 ### Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
 
 ---
-
 ## Features
 
 ### Placeholders for the Attached Label
@@ -65,7 +64,7 @@ In case of no unescaped placeholders present in the label altogether, default (b
 
 </details>
 
-Lastly, there's a new hover-on button that displays all the abovementioned.
+Lastly, there's a new hover-on button that displays a Placeholders Usage Guide tooltip containing all the abovementioned.
 
 <details open> <summary></summary>
 
@@ -91,17 +90,28 @@ Its last string displays which placeholders are active (available to use in this
 
 ---
 ## Config
-<details open> <summary></summary>
-
 C: IDLX has a proper Create-styled config for both the client (visuals) and the server (per-world).
+
+<details open> <summary></summary>
 
 ### Client settings
 - `Enable Guide Buttons`: toggling that off will hide the abovementioned hover-on button in the Display Link interface.
 ### Server settings
 - `Enable (Dollar Sign / Curly Brackets) Placeholder`: with those two it is possible to limit the placeholder functionality to only one option - the Dollar Sign or the Curly Brackets respectively - or disable the feature altogether by ticking both as off (affects the last string of the Placeholders Usage Guide tooltip);
-- `Hide Escaping Of Disabled Placeholders`: by default, when a disabled placeholder is escaped, the backslash stays visible as if placed before a regular character; enable to make it get hidden like if it did its job. 
+- `Hide Escaping Of Disabled Placeholders`: by default, when a disabled placeholder is escaped, the backslash stays visible as if placed before a regular character; enable to make it get hidden like if it did its job;
+- `Enable Crude Progress Bar Support`: currently the progress bar characters are being rendered incorrectly (appear squashed together) if used with placeholders, so the support for this display format is disabled altogether by default (see "Known Issues").
 
 </details>
+
+---
+## Known Issues
+Essentially C: IDLX provides a single flap display section with default formatting options,
+unlike Create that makes two for the label (default formatting) and the value (formatting specific to its display format) respectively.
+The consequence of the first method is that the progress bar characters are being rendered as literal characters (non-wide), and thus appear squashed together.
+Fixing that would involve rewriting the code to instead generate an array of sections. I started working on it but didn't have time to finish after running into numerous issues,
+and decided to postpone it for when I get more time on my hands. Currently, placeholders support for the progress bar is put behind config (off by default).
+
+If anybody has the will to help me with this issue, I would appreciate the contribution very much.
 
 ---
 ## Credits
@@ -114,6 +124,3 @@ C: IDLX has a proper Create-styled config for both the client (visuals) and the 
 - [Devin's Badges](https://intergrav.github.io/devins-badges-docs/) for most badges used in this README;
 - [@flikrheist](https://github.com/flikrheist) for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
 - [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
-
----
-### The README is not final and will likely get updated not once prior to the add-on's public release.
