@@ -1,7 +1,7 @@
 package com.vladiscrafter.createidlx.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -11,21 +11,14 @@ import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplay
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
-import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.utility.CreateLang;
 
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.CreateIDLXMixinUtils;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.*;
@@ -34,57 +27,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Pseudo
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceMixin {
-
-    // ------ UTILITY METHODS ------
-
-    @Unique
-    private static boolean createidlx$hasUnescapedSpecifiers(String s) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-
-        for (int i = 0; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\') && isDollarSignSpecifierEnabled)
-                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\') && isBracketsSpecifierEnabled)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Unique
-    private static boolean createidlx$hasEscapedSpecifiers(String s) {
-        for (int i = 1; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\') || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\')) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Unique
-    private static String createidlx$assembleFullLine(DisplayLinkContext context, String raw) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
-
-        String label = context.sourceConfig().getString("Label");
-        if (label.isEmpty()) return raw;
-
-        String result = label;
-        if (createidlx$hasUnescapedSpecifiers(label)) {
-            if (isDollarSignSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
-            if (isBracketsSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
-        } else {
-            result = label + " " + raw;
-        }
-
-        if (isDollarSignSpecifierEnabled) result = result.replaceAll("\\\\\\$", "\\$");
-        if (isBracketsSpecifierEnabled) result = result.replaceAll("\\\\\\{}", "{}");
-        if (hideEscapingOfDisabledSpecifiers) result = result
-                .replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\\{}", "{}");
-
-        return result;
-    }
 
     // ------ INVOKERS ------
 
@@ -100,7 +42,7 @@ public abstract class SingleLineDisplaySourceMixin {
     (this might be changed in the future if add-on compatibility issues arise)
      */
     @Invoker("createSectionForValue")
-    protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context,int size);
+    protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context, int size);
 
 
     // ------ MODIFIERS & INJECTORS ------
@@ -115,12 +57,12 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         if (raw == SingleLineDisplaySource.EMPTY_LINE) return originalValue;
 
-        String fullLine = createidlx$assembleFullLine(context, raw.getString());
+        String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, raw.getString());
         return ImmutableList.of(Component.literal(fullLine));
     }
 
@@ -129,15 +71,16 @@ public abstract class SingleLineDisplaySourceMixin {
                                                                           DisplayLinkContext context, DisplayTargetStats stats) {
         if (!this.createidlx$invokeAllowsLabeling(context)) return originalValue;
 
+        String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         if (raw == SingleLineDisplaySource.EMPTY_LINE) return originalValue;
 
-        String fullLine = createidlx$assembleFullLine(context, raw.getString());
+        String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, raw.getString());
         return ImmutableList.of(ImmutableList.of(Component.literal(fullLine)));
     }
 
@@ -149,14 +92,11 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return;
 
-        if (!createidlx$hasUnescapedSpecifiers(label) && !createidlx$hasEscapedSpecifiers(label)) return;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return;
 
-        String layoutKey = "IDLX_WithSpecifiers";
-
-        if (layout.isLayout(layoutKey)) {
-            ci.cancel();
+        String layoutName = label.length() + "_Labeled_WithSpecifiers_" + layoutKey;
+        if (layout.isLayout(layoutName))
             return;
-        }
 
         int maxCharCount = flapDisplay.getMaxCharCount();
 
@@ -166,5 +106,63 @@ public abstract class SingleLineDisplaySourceMixin {
         layout.configure(layoutKey, ImmutableList.of(section));
         ci.cancel();
     }
+
+    /**
+     * This is an unfinished attempt at implementing assembling of multiple sections to respect each's layout type
+     *
+     * (Didn't go well from the start and I ended up postponing it due to lack of time)
+     */
+//    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
+//    private void createidlx$overrideFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
+//                                                      FlapDisplayLayout layout, CallbackInfo ci) {
+//        if (!this.createidlx$invokeAllowsLabeling(context)) return;
+//
+//        String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
+//
+//        String label = context.sourceConfig().getString("Label");
+//        if (label.isEmpty()) return;
+//
+//        int actualLabelSize = CreateIDLXMixinUtils.getLabelSizeAccountingSpecifiers(label);
+//
+//        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return;
+//
+//        ArrayList<Object> labelParts = CreateIDLXMixinUtils.breakDownLabelWithSpecifiers(label).getA();
+//        int amountOfSpecifiers = CreateIDLXMixinUtils.breakDownLabelWithSpecifiers(label).getB();
+//
+//        String layoutName = "IDLX_WithSpecifiers_" + actualLabelSize + "_" + labelParts.toArray().length + "_" + amountOfSpecifiers;
+//        if (layout.isLayout(layoutName)) {
+//            ci.cancel();
+//            return;
+//        }
+//        CreateIDLX.LOGGER.info("New layoutName: {}", layoutName);
+//
+//        int maxCharCount = flapDisplay.getMaxCharCount();
+//        int valueCharCount = maxCharCount - actualLabelSize;
+//
+//        ImmutableList.Builder<FlapDisplaySection> sections = ImmutableList.builder();
+//
+//        for (Object part : labelParts) {
+//            if (part instanceof String s) {
+//                int size = Math.min(s.length(), maxCharCount);
+//                CreateIDLX.LOGGER.info("Created section '{}' with size of {}", s, size);
+//
+//                sections.add(new FlapDisplaySection(
+//                        size * FlapDisplaySection.MONOSPACE, "alphabet", false, false));
+//                continue;
+//            }
+//
+//            if (part instanceof Character) {
+//                int valueSize = Math.max(1, Math.round((float) valueCharCount / amountOfSpecifiers));
+//
+//                FlapDisplaySection valueSection = createidlx$invokeCreateSectionForValue(context, valueSize);
+//                CreateIDLX.LOGGER.info("Created valueSection '{}' with size of {} (actually {})", valueSection, valueSize, valueSection.getSize());
+//
+//                sections.add(valueSection);
+//            }
+//        }
+//
+//        layout.configure(layoutKey, sections.build());
+//        ci.cancel();
+//    }
 
 }
