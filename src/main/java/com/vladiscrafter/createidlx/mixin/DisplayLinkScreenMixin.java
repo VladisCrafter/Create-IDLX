@@ -32,6 +32,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
         boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
         boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+        boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
 
         if (i < 0 || i >= sources.size()) return;
 
@@ -57,6 +58,15 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                                         : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.DARK_GRAY)
                         : CreateIDLX.translate("gui.display_link.placeholders_tooltip_4_disabled").withStyle(s -> s.withColor(0xe05353)))
         ));
+        if (isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) {
+            placeholdersGuideButton.getToolTip().add(
+                CreateIDLX.translate("gui.display_link.placeholders_tooltip_5",
+                        (isCrudeProgressBarSupportEnabled)
+                                ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withStyle(s -> s.withColor(0xe0b653))
+                                : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")
+                ).withStyle(ChatFormatting.DARK_GRAY)
+            );
+        }
 
         this.addRenderableWidget(placeholdersGuideButton);
 //        this.createidlx$specifierHelpButton = placeholdersGuideButton;

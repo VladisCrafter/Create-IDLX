@@ -44,15 +44,22 @@ public abstract class SingleLineDisplaySourceMixin {
     @Invoker("createSectionForValue")
     protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context, int size);
 
+    @Invoker("getFlapDisplayLayoutName")
+    protected abstract String createidlx$invokeGetFlapDisplayLayoutName(DisplayLinkContext context);
 
     // ------ MODIFIERS & INJECTORS ------
 
     @ModifyReturnValue(method = "provideText", at = @At("RETURN"))
     private List<MutableComponent> createidlx$modifyProvideText(List<MutableComponent> originalValue,
                                                                 DisplayLinkContext context, DisplayTargetStats stats) {
+        boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+
         if (originalValue.isEmpty()) return originalValue;
 
         if (!this.createidlx$invokeAllowsLabeling(context)) return originalValue;
+
+        String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
+        if (layoutKey.equals("Progress") && !isCrudeProgressBarSupportEnabled) return originalValue;
 
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
@@ -69,9 +76,15 @@ public abstract class SingleLineDisplaySourceMixin {
     @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
     private List<List<MutableComponent>> createidlx$modifyFlapDisplayText(List<List<MutableComponent>> originalValue,
                                                                           DisplayLinkContext context, DisplayTargetStats stats) {
+        boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+
+        if (originalValue.isEmpty()) return originalValue;
+
         if (!this.createidlx$invokeAllowsLabeling(context)) return originalValue;
 
         String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
+        if (layoutKey.equals("Progress") && !isCrudeProgressBarSupportEnabled) return originalValue;
+
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
@@ -87,7 +100,12 @@ public abstract class SingleLineDisplaySourceMixin {
     @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
     private void createidlx$overrideFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
                                                       FlapDisplayLayout layout, CallbackInfo ci) {
+        boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+
         if (!this.createidlx$invokeAllowsLabeling(context)) return;
+
+        String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
+        if (layoutKey.equals("Progress") && !isCrudeProgressBarSupportEnabled) return;
 
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return;

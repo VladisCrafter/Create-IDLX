@@ -5,6 +5,7 @@ public class CIDLXServer extends CIDLXConfigBase {
     public final ConfigBool enableBracketsSpecifier = b(true, "enableCurlyBracketsPlaceholder", Comments.enableBracketsSpecifier);
     public final ConfigBool enableDollarSpecifier = b(true, "enableDollarSignPlaceholder", Comments.enableDollarSpecifier);
     public final ConfigBool hideEscapingOfDisabledSpecifiers = b(false, "hideEscapingOfDisabledPlaceholders", Comments.hideEscapingOfDisabledSpecifiers);
+    public final ConfigBool enableCrudeProgressBarSupport = b(false, "enableCrudeProgressBarSupport", Comments.enableCrudeProgressBarSupport);
 
     @Override public String getName() { return "server"; }
 
@@ -12,5 +13,6 @@ public class CIDLXServer extends CIDLXConfigBase {
         static String enableBracketsSpecifier = "Treat {} (curly brackets) as a placeholder for the Attached Label.";
         static String enableDollarSpecifier = "Treat $ (dollar sign) as a placeholder for the Attached Label.";
         static String hideEscapingOfDisabledSpecifiers = "Hide backslashes placed before the disabled placeholders.";
+        static String enableCrudeProgressBarSupport = "Allow usage of placeholders for the Progress Bar display format (the bar characters will appear squashed together).";
     }
 }

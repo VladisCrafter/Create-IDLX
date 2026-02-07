@@ -1,11 +1,14 @@
 {
   "createidlx.gui.display_link.placeholders_tooltip_header": "Placeholders Usage Guide",
-  "createidlx.gui.display_link.placeholders_tooltip_1": "Use $ or {} placeholders to insert the data\nonce or multiple times anywhere inside the string;",
-  "createidlx.gui.display_link.placeholders_tooltip_2": "for displaying the above characters literally, use\nbackslash escaping: \\$ and \\{} respectively.",
+  "createidlx.gui.display_link.placeholders_tooltip_1": "Use '$' or '{}' placeholders to insert the data\nonce or multiple times anywhere inside the string;",
+  "createidlx.gui.display_link.placeholders_tooltip_2": "for displaying the above characters literally, use\nbackslash escaping: '\\$' and '\\{}' respectively.",
   "createidlx.gui.display_link.placeholders_tooltip_3": "In case of no unescaped placeholders present,\ndefault concatenation method will be used instead.",
   "createidlx.gui.display_link.placeholders_tooltip_4": "Active placeholders: %s.",
   "createidlx.gui.display_link.placeholders_tooltip_4_disabled": "Placeholders are disabled by the server config.",
-  "createidlx.gui.display_link.active_placeholder.both": "$ and {}",
-  "createidlx.gui.display_link.active_placeholder.brackets_only": "{} only",
-  "createidlx.gui.display_link.active_placeholder.dollar_only": "$ only"
+  "createidlx.gui.display_link.active_placeholder.both": "'$' and '{}'",
+  "createidlx.gui.display_link.active_placeholder.brackets_only": "'{}' only",
+  "createidlx.gui.display_link.active_placeholder.dollar_only": "'$' only",
+  "createidlx.gui.display_link.placeholders_tooltip_5": "'Progress Bar' display format support\nis %s by the server config.",
+  "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
+  "createidlx.gui.display_link.progress_bar_support.disabled": "disabled"
 }
