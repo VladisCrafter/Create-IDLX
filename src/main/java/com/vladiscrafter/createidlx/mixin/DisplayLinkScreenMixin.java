@@ -28,6 +28,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
         boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
+        boolean isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();
+        boolean isProgressBarSupportStateTooltipEnabled = CIDLXConfigs.client.enableProgressBarSupportStateTooltip.get();
+
         if (!isPlaceholdersGuideButtonEnabled) return;
 
         boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
@@ -51,14 +54,20 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_2")
                         .withStyle(ChatFormatting.GRAY),
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_3")
-                        .withStyle(ChatFormatting.GRAY),
-                ((isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
-                                ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withStyle(s -> s.withColor(0x53e053))
-                                        : (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withStyle(s -> s.withColor(0xe0b653))
-                                        : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.DARK_GRAY)
-                        : CreateIDLX.translate("gui.display_link.placeholders_tooltip_4_disabled").withStyle(s -> s.withColor(0xe05353)))
+                        .withStyle(ChatFormatting.GRAY)
         ));
-        if (isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) {
+
+        if (isActiveSpecifiersTooltipEnabled) {
+            placeholdersGuideButton.getToolTip().add(
+                    ((isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
+                            ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withStyle(s -> s.withColor(0x53e053))
+                                    : (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withStyle(s -> s.withColor(0xe0b653))
+                                    : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.DARK_GRAY)
+                            : CreateIDLX.translate("gui.display_link.placeholders_tooltip_4_disabled").withStyle(s -> s.withColor(0xe05353)))
+            );
+        }
+
+        if (isProgressBarSupportStateTooltipEnabled && (isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled)) {
             placeholdersGuideButton.getToolTip().add(
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_5",
                         (isCrudeProgressBarSupportEnabled)
