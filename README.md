@@ -13,7 +13,7 @@
 </div>
 
 ---
-### Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.
+**Create: Improved Display Link Experience (C: IDLX) is a little Quality-of-Life add-on for Create mod aimed at sprucing up some of Display Link features, mainly the underrated Attached Label option.**
 
 ---
 ## Features
@@ -99,7 +99,7 @@ C: IDLX has a proper Create-styled config for both the client (visuals) and the 
 ### Server settings
 - `Enable (Dollar Sign / Curly Brackets) Placeholder`: with those two it is possible to limit the placeholder functionality to only one option - the Dollar Sign or the Curly Brackets respectively - or disable the feature altogether by ticking both as off (affects the last string of the Placeholders Usage Guide tooltip);
 - `Hide Escaping Of Disabled Placeholders`: by default, when a disabled placeholder is escaped, the backslash stays visible as if placed before a regular character; enable to make it get hidden like if it did its job;
-- `Enable Crude Progress Bar Support`: currently the progress bar characters are being rendered incorrectly (appear squashed together) if used with placeholders, so the support for this display format is disabled altogether by default (see "Known Issues").
+- `Enable Crude Progress Bar Support`: currently the progress bar characters are being rendered incorrectly (appear squashed together) if used with placeholders, so the support for this display format is disabled altogether by default (see **Known Issues**).
 
 </details>
 
