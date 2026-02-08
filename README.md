@@ -1,11 +1,11 @@
 <div align="center">
-<img src="icon.png" width="192" height="192" alt="C: IDLX mod icon">
+<img src="https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/icon.png" width="192" height="192" alt="C: IDLX mod icon">
 <h1>Create: Improved Display Link Experience</h1>
 <a href="https://modrinth.com/mod/create-idlx"><img height="56" alt="Available on Modrinth" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
 <a href="https://github.com/VladisCrafter/Create-IDLX"><img height="56" alt="Available on GitHub" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg"></a>
 <a href="https://www.curseforge.com/minecraft/mc-mods/create-idlx"><img height="56" alt="Available on CurseForge" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg"></a>
 
-<a href="https://neoforged.net/"><img height="56" alt="Available For Neoforge" src="README-images/neoforge_vector.svg"></a>
+<a href="https://neoforged.net/"><img height="56" alt="Available For Neoforge" src="https://github.com/VladisCrafter/Create-IDLX/raw/main/README-images/neoforge_vector.svg"></a>
 <a href="https://fabricmc.net/"><img height="56" alt="Won't support Fabric" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/fabric_vector.svg"></a>
 
 <a href="https://github.com/VladisCrafter/Create-IDLX/releases"><img height="30" alt="Available For 1.21.1" src="https://forthebadge.com/api/badges/generate?panels=2&primaryLabel=Available+For&secondaryLabel=1.21.1&primaryBGColor=%23222427&primaryTextColor=%23ffffff&secondaryBGColor=%23d7742f&secondaryTextColor=%23ffffff&primaryFontSize=12&primaryFontWeight=600&primaryLetterSpacing=2&primaryFontFamily=Roboto&primaryTextTransform=uppercase&secondaryFontSize=16&secondaryFontWeight=700&secondaryLetterSpacing=2&secondaryFontFamily=Montserrat&secondaryTextTransform=uppercase"></a>
@@ -26,7 +26,7 @@ It's a simple way, but thus a severely limiting one in terms of customization.
 
 <details open> <summary></summary>
 
-![IDLX showcase 1](README-images/IDLX_showcase1.png)
+![IDLX showcase 1](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_showcase1.png)
 
 </details>
 
@@ -36,7 +36,7 @@ In short, the Attached Label can now act like a formatted string!
 
 <details open> <summary></summary>
 
-![IDLX showcase 2](README-images/IDLX_showcase2.png)
+![IDLX showcase 2](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_showcase2.png)
 
 </details>
 
@@ -44,7 +44,7 @@ You can utilize as many placeholders as you want in one string. Mixing both type
 
 <details open> <summary></summary>
 
-![IDLX showcase 3](README-images/IDLX_showcase3.png)
+![IDLX showcase 3](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_showcase3.png)
 
 </details>
 
@@ -52,7 +52,7 @@ If you need to insert a `$` character literally (same applies to `{}`), without 
 
 <details open> <summary></summary>
 
-![IDLX showcase 4](README-images/IDLX_showcase4.png)
+![IDLX showcase 4](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_showcase4.png)
 
 </details>
 
@@ -60,7 +60,7 @@ In case of no unescaped placeholders present in the label altogether, default (b
 
 <details open> <summary></summary>
 
-![IDLX showcase 5](README-images/IDLX_showcase5.png)
+![IDLX showcase 5](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_showcase5.png)
 
 </details>
 
@@ -68,7 +68,7 @@ Lastly, there's a new hover-on button that displays a Placeholders Usage Guide t
 
 <details open> <summary></summary>
 
-![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase1.png)
+![IDLX showcase (tooltip)](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_tooltip_showcase1.png)
 
 </details>
 
@@ -76,11 +76,11 @@ Its last string displays which placeholders are active (available to use in this
 
 <details open> <summary></summary>
 
-![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase.png)
+![IDLX showcase (tooltip)](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_tooltip_showcase.png)
 
 <details> <summary>(A .webp version if the one above doesn't play properly)</summary>
 
-![IDLX showcase (tooltip)](README-images/IDLX_tooltip_showcase.webp)
+![IDLX showcase (tooltip)](https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/README-images/IDLX_tooltip_showcase.webp)
 
 </details>
 
@@ -96,10 +96,13 @@ C: IDLX has a proper Create-styled config for both the client (visuals) and the 
 
 ### Client settings
 - `Enable Guide Buttons`: toggling that off will hide the abovementioned hover-on button in the Display Link interface.
+- **Tooltip Customization**:
+    - `Enable (Active Placeholders / Progress Bar Support) Tooltip`: those two add their additional strings into the Placeholders Usage Guide tooltip, that change the text, reflecting the states of their respective config options in **Server settings**.
 ### Server settings
-- `Enable (Dollar Sign / Curly Brackets) Placeholder`: with those two it is possible to limit the placeholder functionality to only one option - the Dollar Sign or the Curly Brackets respectively - or disable the feature altogether by ticking both as off (affects the last string of the Placeholders Usage Guide tooltip);
 - `Hide Escaping Of Disabled Placeholders`: by default, when a disabled placeholder is escaped, the backslash stays visible as if placed before a regular character; enable to make it get hidden like if it did its job;
 - `Enable Crude Progress Bar Support`: currently the progress bar characters are being rendered incorrectly (appear squashed together) if used with placeholders, so the support for this display format is disabled altogether by default (see **Known Issues**).
+- **Placeholders Availability**:
+    - `Enable (Dollar Sign / Curly Brackets) Placeholder`: with those two it is possible to limit the placeholder functionality to only one option - the Dollar Sign or the Curly Brackets respectively - or disable the feature altogether by ticking both as off (affects the last string of the Placeholders Usage Guide tooltip);
 
 </details>
 
@@ -124,3 +127,5 @@ If anybody has the will to help me with this issue, I would appreciate the contr
 - [Devin's Badges](https://intergrav.github.io/devins-badges-docs/) for most badges used in this README;
 - [@flikrheist](https://github.com/flikrheist) for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
 - [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
+
+_My first Minecraft mod, by the way!_
