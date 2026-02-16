@@ -2,8 +2,10 @@
 <img src="https://raw.githubusercontent.com/VladisCrafter/Create-IDLX/main/icon.png" width="192" height="192" alt="C: IDLX mod icon">
 <h1>Create: Improved Display Link Experience</h1>
 <a href="https://modrinth.com/mod/create-idlx"><img height="56" alt="Available on Modrinth" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
-<a href="https://github.com/VladisCrafter/Create-IDLX"><img height="56" alt="Available on GitHub" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg"></a>
 <a href="https://www.curseforge.com/minecraft/mc-mods/create-idlx"><img height="56" alt="Available on CurseForge" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg"></a>
+
+<a href="https://github.com/VladisCrafter/Create-IDLX"><img height="56" alt="Available on GitHub" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg"></a>
+<a href="https://github.com/VladisCrafter/Create-IDLX/tree/main/src/main/resources/assets/createidlx/lang"><img height="56" alt="Help me Translate" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/translate/generic-singular_vector.svg"></a>
 
 <a href="https://neoforged.net/"><img height="56" alt="Available For Neoforge" src="https://github.com/VladisCrafter/Create-IDLX/raw/main/README-images/neoforge_vector.svg"></a>
 <a href="https://fabricmc.net/"><img height="56" alt="Won't support Fabric" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/fabric_vector.svg"></a>
@@ -133,6 +135,6 @@ C: IDLX is planned to be backported to **Forge 1.20.1**. However I currently can
 - [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
 
 ### Translation
-- @KEricMinecraft for Chinese Simplified (`zh_cn`)
+- [@KEricMinecraft](https://github.com/KEricMinecraft) for Chinese Simplified (`zh_cn`).
 
 _My first Minecraft mod, by the way!_
