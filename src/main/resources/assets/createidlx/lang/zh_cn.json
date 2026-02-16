@@ -1,0 +1,14 @@
+{
+  "createidlx.gui.display_link.placeholders_tooltip_header": "占位符使用指南",
+  "createidlx.gui.display_link.placeholders_tooltip_1": "使用 '$' 或 '{}' 占位符\n可以在输出字符串内任意位置插入一次或多次目标数据；",
+  "createidlx.gui.display_link.placeholders_tooltip_2": "如需输出占位符自身，则应使用反斜杠转义：\n'\\$' 或 '\\{}'。",
+  "createidlx.gui.display_link.placeholders_tooltip_3": "当输出字符串中没有占位符，\n将采用默认的文本连接方式。",
+  "createidlx.gui.display_link.placeholders_tooltip_4": "可用占位符： %s",
+  "createidlx.gui.display_link.placeholders_tooltip_4_disabled": "服务器配置已禁用占位符。",
+  "createidlx.gui.display_link.active_placeholder.both": "'$' 与 '{}'",
+  "createidlx.gui.display_link.active_placeholder.brackets_only": "仅 '{}'",
+  "createidlx.gui.display_link.active_placeholder.dollar_only": "仅 '$'",
+  "createidlx.gui.display_link.placeholders_tooltip_5": "服务器配置已%s进度条格式支持。",
+  "createidlx.gui.display_link.progress_bar_support.enabled": "启用",
+  "createidlx.gui.display_link.progress_bar_support.disabled": "禁用"
+}
