@@ -117,15 +117,22 @@ and decided to postpone it for when I get more time on my hands. Currently, plac
 If anybody has the will to help me with this issue, I would appreciate the contribution very much.
 
 ---
+## Porting Plans
+C: IDLX is planned to be backported to **Forge 1.20.1**. However I currently can not say exactly when that will happen.
+
+---
 ## Credits
 
 ### Mod Development
 - [@LIUKRAST](https://github.com/LIUKRAST) and [@serverside-swzo](https://github.com/serverside-swzo) for valuable Mixin advices at the early stage of C: IDLX development;
 - GG_Gnom (`gg_gnom` on Discord) for testing the mod (literally the only case of testing this mod I know).
 
-### Post-Production
+### Mod Page Decoration
 - [Devin's Badges](https://intergrav.github.io/devins-badges-docs/) for most badges used in this README;
 - [@flikrheist](https://github.com/flikrheist) for the [NeoForge badge](https://github.com/intergrav/devins-badges/pull/92) specifically;
 - [FOR THE BADGE](https://forthebadge.com) for the "Available For: 1.21.1" and "License: MIT" badges.
+
+### Translation
+- @KEricMinecraft for Chinese Simplified (`zh_cn`)
 
 _My first Minecraft mod, by the way!_
