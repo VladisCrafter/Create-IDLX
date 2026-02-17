@@ -1,9 +1,8 @@
 name: Publish Release
 
 on:
-  push:
-    tags:
-      - "*"
+  on:
+    workflow_dispatch:
 
 permissions: write-all
 
@@ -14,6 +13,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Get mod version
+        id: version
+        run: |
+             VERSION=$(sed -n 's/^mod_version[[:space:]]*=[[:space:]]*//p' gradle.properties)
+             echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -33,5 +38,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
           files: build/libs/*.jar
           body_path: RELEASE_NOTES.md
