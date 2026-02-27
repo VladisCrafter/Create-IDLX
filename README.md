@@ -23,8 +23,8 @@
 ### Placeholders for the Attached Label
 <details open> <summary></summary>
 
-The way Create mod currently handles displaying information (aka data) with the attached label is by simply concatenating them with a space:
-It's a simple way, but thus a severely limiting one in terms of customization.
+The way Create mod currently handles displaying information (let's call one an input string) with the attached label is by simply concatenating both with a space in between -
+it's a simple way, but thus, in terms of customization, a severely limiting one:
 
 <details open> <summary></summary>
 
@@ -32,8 +32,8 @@ It's a simple way, but thus a severely limiting one in terms of customization.
 
 </details>
 
-This add-on pushes the boundaries apart by introducing the `$` and `{}` placeholders (aka specifiers).
-Placing one (or more) marks the place where the information string should be inserted.
+This add-on pushes the boundaries apart by introducing the `$` and `{}` placeholders.
+Placing one (or more) marks the place where the input string should be inserted.
 In short, the Attached Label can now act like a formatted string!
 
 <details open> <summary></summary>
@@ -127,6 +127,7 @@ C: IDLX is planned to be backported to **Forge 1.20.1**. However I currently can
 
 ### Mod Development
 - [@LIUKRAST](https://github.com/LIUKRAST) and [@serverside-swzo](https://github.com/serverside-swzo) for valuable Mixin advices at the early stage of C: IDLX development;
+- [@realRobotix](https://github.com/realRobotix) for help with making my mod config always open through Catnip (be Create-styled);
 - GG_Gnom (`gg_gnom` on Discord) for testing the mod (literally the only case of testing this mod I know).
 
 ### Mod Page Decoration
