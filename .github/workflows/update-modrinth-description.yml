@@ -1,0 +1,24 @@
+name: Update Mod Description on Modrinth
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+
+permissions: write-all
+
+jobs:
+  modrinth-desc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Update Modrinth description
+      uses: funnyboy-roks/modrinth-auto-desc@v1.7
+      with:
+        auth-token: ${{ secrets.MODRINTH_TOKEN }}
+        slug: create-idlx
