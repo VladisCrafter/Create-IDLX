@@ -10,5 +10,20 @@
   "createidlx.gui.display_link.active_placeholder.dollar_only": "alleen '$'",
   "createidlx.gui.display_link.placeholders_tooltip_5": "Het 'voortgangsbalk'-weergavetype is\ndoor de serverinstellingen %s.",
   "createidlx.gui.display_link.progress_bar_support.enabled": "ingeschakeld",
-  "createidlx.gui.display_link.progress_bar_support.disabled": "uitgeschakeld"
+  "createidlx.gui.display_link.progress_bar_support.disabled": "uitgeschakeld",
+
+  "createidlx.ponder.attached_label.header": "Schermkoppelinglabel gebruiken met opmaaktekens",
+  "createidlx.ponder.attached_label.text_1": "Over het algemeen wordt de informatie die aan de schermkoppeling gegeven wordt onbewerkt aan het doelwit doorgegeven",
+  "createidlx.ponder.attached_label.text_2": "Open het menu om een label aan de informatie toe te voegen",
+  "createidlx.ponder.attached_label.text_3": "DRAAISNELHEID:",
+  "createidlx.ponder.attached_label.text_4": "De ingevoegde tekst zal voor de informatie worden ingevoegd en wordt gescheiden met een spatie",
+  "createidlx.ponder.attached_label.text_5": "Gebruik opmaaktekens ('$' of '{}') om aan te geven waar de informatie in de tekst ingevoegd moet worden",
+  "createidlx.ponder.attached_label.text_6": "HET IS $, MAATJES!",
+  "createidlx.ponder.attached_label.text_7": "Je kan meerdere opmaaktekens in één regel gebruiken, en deze ook naar keuze mengen zonder het eindresultaat te beïnvloeden",
+  "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
+  "createidlx.ponder.attached_label.text_9": "Als een letterlijk '$'-karakter (of '{}') ingevoegd moet worden zonder dat het als opmaakteken wordt gebruikt, gebruik dan een backslash (\\)",
+  "createidlx.ponder.attached_label.text_10": "SUBTOTAAL: \\${}/STAPEL",
+  "createidlx.ponder.attached_label.text_11": "Zolang er geen negeerde opmaaktekens present zijn wordt de standaard samenvoegingsmethode toegepast",
+  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
+  "createidlx.ponder.attached_label.text_13": "Hou de muis boven het 'opmaaktekens gebruiken'-icoon om een korte samenvatting te zien over (zoals de naam al doet vermoeden) het gebruik van opmaaktekens"
 }
