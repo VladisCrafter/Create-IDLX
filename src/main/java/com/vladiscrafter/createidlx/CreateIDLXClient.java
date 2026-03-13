@@ -1,6 +1,8 @@
 package com.vladiscrafter.createidlx;
 
+import com.vladiscrafter.createidlx.foundation.ponder.CIDLXPonderPlugin;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,7 +25,14 @@ public class CreateIDLXClient {
         modEventBus.addListener(CreateIDLXClient::onLoadComplete);
     }
 
-    @SubscribeEvent static void onClientSetup(FMLClientSetupEvent event) {}
+    @SubscribeEvent static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(CreateIDLXClient::clientInit);
+    }
+
+    private static void clientInit() {
+        PonderIndex.addPlugin(new CIDLXPonderPlugin());
+
+    }
 
     public static void onLoadComplete(FMLLoadCompleteEvent event) {
         ModContainer container = ModList.get()

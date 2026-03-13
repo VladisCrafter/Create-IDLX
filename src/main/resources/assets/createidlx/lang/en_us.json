@@ -10,5 +10,20 @@
   "createidlx.gui.display_link.active_placeholder.dollar_only": "'$' only",
   "createidlx.gui.display_link.placeholders_tooltip_5": "'Progress Bar' display format support\nis %s by the server config.",
   "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
-  "createidlx.gui.display_link.progress_bar_support.disabled": "disabled"
+  "createidlx.gui.display_link.progress_bar_support.disabled": "disabled",
+
+  "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
+  "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
+  "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",
+  "createidlx.ponder.attached_label.text_3": "NETWORK SPEED:",
+  "createidlx.ponder.attached_label.text_4": "The inserted text will be displayed before the information string and separated from it by a space",
+  "createidlx.ponder.attached_label.text_5": "Use placeholders ('$' or '{}') to mark the place, where the information string should be embedded, inside the label text",
+  "createidlx.ponder.attached_label.text_6": "IT IS $, MY DUDES!",
+  "createidlx.ponder.attached_label.text_7": "Utilizing multiple placeholders in one string is possible, and mixing both types doesn't affect the final result",
+  "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
+  "createidlx.ponder.attached_label.text_9": "If a literal '$' character has to be inserted (same applies to '{}'), without it turning into a placeholder, use backslash-escaping on it",
+  "createidlx.ponder.attached_label.text_10": "TOTAL PRICE: \\${}/STACK",
+  "createidlx.ponder.attached_label.text_11": "As long as there are no unescaped placeholders present in the label altogether, default concatenation by a space will be applied",
+  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
+  "createidlx.ponder.attached_label.text_13": "Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders"
 }
