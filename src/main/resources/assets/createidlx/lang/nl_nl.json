@@ -21,7 +21,7 @@
   "createidlx.ponder.attached_label.text_6": "HET IS $, MAATJES!",
   "createidlx.ponder.attached_label.text_7": "Je kan meerdere opmaaktekens in één regel gebruiken, en deze ook naar keuze mengen zonder het eindresultaat te beïnvloeden",
   "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
-  "createidlx.ponder.attached_label.text_9": "Als een letterlijk '$'-karakter (of '{}') ingevoegd moet worden zonder dat het als opmaakteken wordt gebruikt, gebruik dan een backslash (\)",
+  "createidlx.ponder.attached_label.text_9": "Als een letterlijk '$'-karakter (of '{}') ingevoegd moet worden zonder dat het als opmaakteken wordt gebruikt, gebruik dan een backslash (\\)",
   "createidlx.ponder.attached_label.text_10": "SUBTOTAAL: \\${}/STAPEL",
   "createidlx.ponder.attached_label.text_11": "Zolang er geen negeerde opmaaktekens present zijn wordt de standaard samenvoegingsmethode toegepast",
   "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
