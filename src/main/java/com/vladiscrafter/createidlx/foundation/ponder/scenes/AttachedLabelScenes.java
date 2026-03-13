@@ -4,6 +4,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.CreateIDLXIcons;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
@@ -18,6 +19,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.regex.Matcher;
 
 public class AttachedLabelScenes {
 
@@ -199,7 +202,7 @@ public class AttachedLabelScenes {
         scene.idle(30);
         scene.world().setDisplayBoardText(board, 1,
                 Component.literal(CreateIDLX.translate("ponder.attached_label.text_10").getString()
-                        .replaceAll("\\$", "$")
+                        .replaceAll("\\\\\\$", Matcher.quoteReplacement("$"))
                         .replaceAll("\\{}", "12")));
         scene.world().flashDisplayLink(linkPos);
         scene.idle(40);
@@ -234,9 +237,17 @@ public class AttachedLabelScenes {
                 Component.literal("$ {} $ {} $ {} " + 2750 + " ").append(CreateLang.translateDirect("generic.unit.millibuckets")));
         scene.world().flashDisplayLink(linkPos);
         scene.idle(40);
-//        scene.world().hideIndependentSection(smartElement, Direction.SOUTH);
-//        scene.world().setDisplayBoardText(board, 1, CommonComponents.EMPTY);
-//        scene.idle(10);
 
+        scene.addLazyKeyframe();
+
+        scene.overlay().showControls(util.vector().centerOf(linkPos), Pointing.LEFT, 100).showing(CreateIDLXIcons.I_SPECIFIER);
+        scene.idle(10);
+        scene.overlay().showText(100)
+                .text("Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders")
+                .colored(PonderPalette.BLUE)
+                .placeNearTarget();
+        scene.idle(110);
+
+        scene.markAsFinished();
     }
 }

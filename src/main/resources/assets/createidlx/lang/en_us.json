@@ -24,5 +24,6 @@
   "createidlx.ponder.attached_label.text_9": "If a literal '$' character has to be inserted (same applies to '{}'), without it turning into a placeholder, use backslash-escaping on it",
   "createidlx.ponder.attached_label.text_10": "TOTAL PRICE: \\${}/STACK",
   "createidlx.ponder.attached_label.text_11": "As long as there are no unescaped placeholders present in the label altogether, default concatenation by a space will be applied",
-  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}"
+  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
+  "createidlx.ponder.attached_label.text_13": "Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders"
 }
