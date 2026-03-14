@@ -10,5 +10,20 @@
   "createidlx.gui.display_link.active_placeholder.dollar_only": "только «$»",
   "createidlx.gui.display_link.placeholders_tooltip_5": "Поддержка формата отображения «полоса прогресса»\n%s настройками мира/сервера.",
   "createidlx.gui.display_link.progress_bar_support.enabled": "включена",
-  "createidlx.gui.display_link.progress_bar_support.disabled": "отключена"
+  "createidlx.gui.display_link.progress_bar_support.disabled": "отключена",
+
+  "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
+  "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
+  "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",
+  "createidlx.ponder.attached_label.text_3": "СКОРОСТЬ:",
+  "createidlx.ponder.attached_label.text_4": "Введённый текст будет отображён перед информацией и отделён от неё пробелом",
+  "createidlx.ponder.attached_label.text_5": "Спецификаторы — «$» и «{}» — могут быть использованы для обозначения мест внутри добавочной надписи, куда следует вставить информацию",
+  "createidlx.ponder.attached_label.text_6": "СЕЙЧАС $, ТОВАРИЩ!",
+  "createidlx.ponder.attached_label.text_7": "Возможно использование нескольких спецификаторов в строке, а смешивание типов не влияет на итоговый результат",
+  "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
+  "createidlx.ponder.attached_label.text_9": "Если требуется вставить «$» буквально (применимо и к «{}»), не превращая оный в спецификатор, экранируйте его обратной косой чертой",
+  "createidlx.ponder.attached_label.text_10": "ЦЕНА: {}\\$ ЗА СТАК",
+  "createidlx.ponder.attached_label.text_11": "Если все спецификаторы экранированы, применяется обычная конкатенация пробелом",
+  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
+  "createidlx.ponder.attached_label.text_13": "Наведите курсор на кнопку «Справка по спецификаторам» в интерфейсе передатчика, чтобы прочесть краткую текстовую версию этого размышления"
 }

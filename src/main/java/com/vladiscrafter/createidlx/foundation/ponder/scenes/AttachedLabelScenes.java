@@ -99,7 +99,7 @@ public class AttachedLabelScenes {
         scene.world().setDisplayBoardText(board, 1, CreateIDLX.translate("ponder.attached_label.text_3")
                 .append(Component.literal(" " + 160 + " ").append(CreateLang.translateDirect("generic.unit.rpm"))));
         scene.world().flashDisplayLink(linkPos);
-        scene.idle(40);
+        scene.idle(60);
 
         scene.overlay().showText(120)
                 .text("The inserted text will be displayed before the information string and separated from it with a space")
@@ -121,7 +121,7 @@ public class AttachedLabelScenes {
         scene.idle(10);
 
         scene.overlay().showText(120)
-                .text("Use placeholders ('$' or '{}') to mark the place, where the information string should be embedded, inside the label text")
+                .text("Use placeholders ('$' or '{}') to mark places, where the information string should be embedded, inside the label text")
                 .pointAt(util.vector().centerOf(linkPos))
                 .attachKeyFrame()
                 .placeNearTarget();
@@ -139,7 +139,7 @@ public class AttachedLabelScenes {
                 Component.literal(CreateIDLX.translate("ponder.attached_label.text_6").getString().
                         replaceAll("\\$", "11:55")));
         scene.world().flashDisplayLink(linkPos);
-        scene.idle(40);
+        scene.idle(60);
         scene.world().hideIndependentSection(cuckooElement, Direction.SOUTH);
         scene.world().setDisplayBoardText(board, 1, CommonComponents.EMPTY);
         scene.idle(10);
@@ -172,7 +172,7 @@ public class AttachedLabelScenes {
                         .replaceAll("\\$", "64%")
                         .replaceAll("\\{}", "64%")));
         scene.world().flashDisplayLink(linkPos);
-        scene.idle(40);
+        scene.idle(60);
         scene.world().hideIndependentSection(stockpileElement, Direction.SOUTH);
         scene.world().setDisplayBoardText(board, 1, CommonComponents.EMPTY);
         scene.idle(10);
@@ -205,7 +205,7 @@ public class AttachedLabelScenes {
                         .replaceAll("\\\\\\$", Matcher.quoteReplacement("$"))
                         .replaceAll("\\{}", "12")));
         scene.world().flashDisplayLink(linkPos);
-        scene.idle(40);
+        scene.idle(60);
         scene.world().hideIndependentSection(nixieElement, Direction.SOUTH);
         scene.world().setDisplayBoardText(board, 1, CommonComponents.EMPTY);
         scene.idle(10);
@@ -236,7 +236,7 @@ public class AttachedLabelScenes {
         scene.world().setDisplayBoardText(board, 1,
                 Component.literal("$ {} $ {} $ {} " + 2750 + " ").append(CreateLang.translateDirect("generic.unit.millibuckets")));
         scene.world().flashDisplayLink(linkPos);
-        scene.idle(40);
+        scene.idle(60);
 
         scene.addLazyKeyframe();
 
