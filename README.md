@@ -126,7 +126,7 @@ C: IDLX is planned to be backported to **Forge 1.20.1**. However I currently can
 ## Credits
 
 ### Mod Development
-- [@LIUKRAST](https://github.com/LIUKRAST) and [@serverside-swzo](https://github.com/serverside-swzo) for valuable Mixin advices at the early stage of C: IDLX development;
+- [@LIUKRAST](https://github.com/LIUKRAST) and [@salem-5](https://github.com/salem-5) for valuable Mixin advices at the early stage of C: IDLX development;
 - [@realRobotix](https://github.com/realRobotix) for help with making my mod config always open through Catnip (be Create-styled);
 - GG_Gnom (`gg_gnom` on Discord) for testing the mod (literally the only case of testing this mod I know).
 
