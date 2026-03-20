@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.mixin;
+package com.vladiscrafter.createidlx.mixin.create;
 
 import java.util.List;
 

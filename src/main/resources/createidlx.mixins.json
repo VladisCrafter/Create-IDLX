@@ -4,10 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "createidlx.refmap.json",
   "mixins": [
-    "SingleLineDisplaySourceMixin",
-    "DisplayLinkScreenMixin",
-    "create.source.TrainStatusDisplaySourceMixin",
-    "create.source.CurrentFloorDisplaySourceMixin"
+    "create.DisplayLinkScreenMixin",
+    "create.ModularGuiLineBuilderMixin",
+    "create.SingleLineDisplaySourceMixin",
+    "create.source.CurrentFloorDisplaySourceMixin",
+    "create.source.TrainStatusDisplaySourceMixin"
   ],
   "client": [],
   "server": []

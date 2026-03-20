@@ -12,12 +12,12 @@
   "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
   "createidlx.gui.display_link.progress_bar_support.disabled": "disabled",
 
-  "createidlx.display_source.current_floor_extended": "Elevator Location Extras",
+  "createidlx.display_source.current_floor_extended": "Elevator Location with Extra Formats",
   "createidlx.display_source.current_floor_extended.display": "Display Format",
   "createidlx.display_source.current_floor_extended.short_name": "Floor Identifier",
   "createidlx.display_source.current_floor_extended.long_name": "Floor Description",
-  "createidlx.display_source.current_floor_extended.short_n_long": "Identifier & Description",
-  "createidlx.display_source.current_floor_extended.long_n_short": "Description & Identifier",
+  "createidlx.display_source.current_floor_extended.short_n_long": "Floor Identifier & Description",
+  "createidlx.display_source.current_floor_extended.long_n_short": "Floor Description & Identifier",
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
 
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",

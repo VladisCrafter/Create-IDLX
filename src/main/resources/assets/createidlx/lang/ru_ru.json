@@ -12,7 +12,7 @@
   "createidlx.gui.display_link.progress_bar_support.enabled": "включена",
   "createidlx.gui.display_link.progress_bar_support.disabled": "отключена",
 
-  "createidlx.display_source.current_floor_extended": "Местоположение лифта +",
+  "createidlx.display_source.current_floor_extended": "Местоположение лифта с доп. форматами",
   "createidlx.display_source.current_floor_extended.display": "Формат отображения",
   "createidlx.display_source.current_floor_extended.short_name": "Идентификатор этажа",
   "createidlx.display_source.current_floor_extended.long_name": "Описание этажа",
