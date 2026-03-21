@@ -39,6 +39,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (sources == null || sources.isEmpty()) return;
         if (sourceTypeSelector == null) return;
         if (sourceTypeSelector instanceof InBoundsSelectionScrollInput) return;
+        if (!CIDLXConfigs.client.truncateOverflowingStrings.get()) return;
 
         int currentState = sourceTypeSelector.getState();
 

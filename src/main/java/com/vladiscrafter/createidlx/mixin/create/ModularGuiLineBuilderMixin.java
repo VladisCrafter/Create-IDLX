@@ -3,6 +3,7 @@ package com.vladiscrafter.createidlx.mixin.create;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
@@ -17,7 +18,7 @@ public abstract class ModularGuiLineBuilderMixin {
     @Redirect(method = "addSelectionScrollInput", at = @At(value = "NEW",
             target = "Lcom/simibubi/create/foundation/gui/widget/SelectionScrollInput;"))
     private SelectionScrollInput createidlx$replaceSelectionScrollInput(int x, int y, int width, int height) {
-        if (CreateIDLXGuiContext.isInSourceConfig()) {
+        if (CreateIDLXGuiContext.isInSourceConfig() && CIDLXConfigs.client.truncateOverflowingStrings.get()) {
             return new InBoundsSelectionScrollInput(x, y, width, height, false);
         }
         return new SelectionScrollInput(x, y, width, height);

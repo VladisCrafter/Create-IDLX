@@ -4,12 +4,25 @@ import java.util.List;
 
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.Util;
 
 public class InBoundsSelectionScrollInput extends SelectionScrollInput {
+
+    private final boolean addMarqueeEffectToTruncatedStrings = CIDLXConfigs.client.addMarqueeEffectToTruncatedStrings.get();
+    private final long fixedCharTravelTime = (long) CIDLXConfigs.client.fixedCharTravelTime.get();
+    private final long fixedStringTravelTime = (long) ((int) (CIDLXConfigs.client.fixedStringTravelTime.get() * 1000));
+    private final long maximalStringTravelTime = (long) ((int) (CIDLXConfigs.client.maximalStringTravelTime.get() * 1000));
+    private final long minimalStringTravelTime = (long) ((int) (CIDLXConfigs.client.minimalStringTravelTime.get() * 1000));
+    private final long stringPauseTime = (long) ((int) (CIDLXConfigs.client.stringPauseTime.get() * 1000));
+
+    private final boolean isStringTravelTimeFixed = fixedStringTravelTime > 0;
+    private final boolean isMaximalStringTravelTimeSpecified = maximalStringTravelTime > 0;
+    private final boolean isMinimalStringTravelTimeSpecified = minimalStringTravelTime > 0;
+
 
     private List<Component> createidlx$options = List.of();
     private long createidlx$lastStateChangeMillis = Util.getMillis();
@@ -71,11 +84,16 @@ public class InBoundsSelectionScrollInput extends SelectionScrollInput {
 
         int overflow = textWidth - availableWidth;
 
-        long pauseMillis = 2000L;
-        long travelMillis = Math.max(/*80*/0L, 30L * overflow);
+        long pauseMillis = Math.max(0L, stringPauseTime);
+        long travelMillis = Math.max(0L,
+                isStringTravelTimeFixed ? fixedStringTravelTime :
+                        isMinimalStringTravelTimeSpecified && isMaximalStringTravelTimeSpecified ? Math.min(Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow), maximalStringTravelTime) :
+                                isMinimalStringTravelTimeSpecified ? Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow) :
+                                        isMaximalStringTravelTimeSpecified ? Math.min(fixedCharTravelTime * overflow, maximalStringTravelTime) :
+                                                fixedCharTravelTime * overflow);
 
         long period = (pauseMillis + travelMillis) * 2;
-        long t = elapsed % period;
+        long t = addMarqueeEffectToTruncatedStrings ? elapsed % period : 0;
 
         if (t < pauseMillis) {
             offset = 0;
