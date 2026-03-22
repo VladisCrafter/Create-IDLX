@@ -88,7 +88,7 @@ jobs:
         if: ${{ inputs.gh-releases }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: 'mc1.21.1-${{ steps.version.outputs.version }}'
+          tag_name: '${{ steps.version.outputs.version }}'
           name: 'mc1.21.1-${{ steps.version.outputs.version }}'
           files: build/libs/*.jar
           body_path: RELEASE_NOTES.md
