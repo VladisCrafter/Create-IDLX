@@ -84,7 +84,7 @@ jobs:
           game-versions: 1.21.1
           java: 21
 
-      - name: Upload to GitHub Releases
+      - name: Upload to GH Releases
         if: ${{ inputs.gh-releases }}
         uses: softprops/action-gh-release@v2
         with:
