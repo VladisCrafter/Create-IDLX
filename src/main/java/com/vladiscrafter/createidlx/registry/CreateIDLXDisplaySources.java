@@ -9,7 +9,7 @@ import com.vladiscrafter.createidlx.content.source.CurrentFloorExtendedDisplaySo
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegisterEvent;
 
 public class CreateIDLXDisplaySources {
 

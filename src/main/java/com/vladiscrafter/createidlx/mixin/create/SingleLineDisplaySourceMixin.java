@@ -21,8 +21,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -35,10 +35,10 @@ public abstract class SingleLineDisplaySourceMixin {
 
     // ------ INVOKERS ------
 
-    @Invoker("provideLine")
+    @Invoker(value = "provideLine", remap = false)
     protected abstract MutableComponent createidlx$invokeProvideLine(DisplayLinkContext context, DisplayTargetStats stats);
 
-    @Invoker("allowsLabeling")
+    @Invoker(value = "allowsLabeling", remap = false)
     protected abstract boolean createidlx$invokeAllowsLabeling(DisplayLinkContext context);
 
     /**
@@ -46,15 +46,15 @@ public abstract class SingleLineDisplaySourceMixin {
 
     (this might be changed in the future if add-on compatibility issues arise)
      */
-    @Invoker("createSectionForValue")
+    @Invoker(value = "createSectionForValue", remap = false)
     protected abstract FlapDisplaySection createidlx$invokeCreateSectionForValue(DisplayLinkContext context, int size);
 
-    @Invoker("getFlapDisplayLayoutName")
+    @Invoker(value = "getFlapDisplayLayoutName", remap = false)
     protected abstract String createidlx$invokeGetFlapDisplayLayoutName(DisplayLinkContext context);
 
     // ------ MODIFIERS & INJECTORS ------
 
-    @Inject(method = "addLabelingTextBox", at = @At("TAIL"))
+    @Inject(method = "addLabelingTextBox", at = @At("TAIL"), remap = false)
     @OnlyIn(Dist.CLIENT)
     private void createidlx$cacheLabelingTextBoxTooltip(ModularGuiLineBuilder builder, CallbackInfo ci) {
         CreateIDLXGuiTooltipBuffer.registerLabelingTextBoxTooltip(ImmutableList.of(
@@ -64,7 +64,7 @@ public abstract class SingleLineDisplaySourceMixin {
                         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)));
     }
 
-    @ModifyReturnValue(method = "provideText", at = @At("RETURN"))
+    @ModifyReturnValue(method = "provideText", at = @At("RETURN"), remap = false)
     private List<MutableComponent> createidlx$modifyProvideText(List<MutableComponent> originalValue,
                                                                 DisplayLinkContext context, DisplayTargetStats stats) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
@@ -91,7 +91,7 @@ public abstract class SingleLineDisplaySourceMixin {
         } else return ImmutableList.of(Component.literal(fullLine));
     }
 
-    @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
+    @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"), remap = false)
     private List<List<MutableComponent>> createidlx$modifyFlapDisplayText(List<List<MutableComponent>> originalValue,
                                                                           DisplayLinkContext context, DisplayTargetStats stats) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
@@ -118,7 +118,7 @@ public abstract class SingleLineDisplaySourceMixin {
         } else return ImmutableList.of(ImmutableList.of(Component.literal(fullLine)));
     }
 
-    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true, remap = false)
     private void createidlx$overrideFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
                                                       FlapDisplayLayout layout, CallbackInfo ci) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();

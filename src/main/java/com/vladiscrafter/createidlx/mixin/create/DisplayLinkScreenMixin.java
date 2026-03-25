@@ -28,13 +28,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 //    @Unique
 //    private IconButton createidlx$specifierHelpButton;
 
-    @Shadow private List<DisplaySource> sources;
-    @Shadow private ScrollInput sourceTypeSelector;
-    @Shadow private Label sourceTypeLabel;
+    @Shadow(remap = false) private List<DisplaySource> sources;
+    @Shadow(remap = false) private ScrollInput sourceTypeSelector;
+    @Shadow(remap = false) private Label sourceTypeLabel;
 
-    @Shadow protected abstract void initGathererSourceSubOptions(int i);
+    @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
         if (sources == null || sources.isEmpty()) return;
         if (sourceTypeSelector == null) return;
@@ -68,17 +68,17 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (widget != null) super.removeWidget(widget);
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"), remap = false)
     private void createidlx$enterSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.enter(sources.get(i));
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"), remap = false)
     private void createidlx$exitSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.exit();
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
         boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
         boolean isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();

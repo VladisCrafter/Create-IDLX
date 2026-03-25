@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 public class CIDLXPonderScenes {
 
     public static void register(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
-        PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         HELPER.forComponents(AllBlocks.DISPLAY_LINK)
                         .addStoryBoard("attached_label", AttachedLabelScenes::attachedLabel,

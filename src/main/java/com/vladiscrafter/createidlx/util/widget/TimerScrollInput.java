@@ -31,7 +31,7 @@ public class TimerScrollInput extends ScrollInput {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double pScrollX, double pScrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (!visible || !active || !isMouseOver(mouseX, mouseY))
             return false;
 
@@ -41,7 +41,7 @@ public class TimerScrollInput extends ScrollInput {
         int minutes = totalSeconds / SECONDS_PER_MINUTE;
         int seconds = totalSeconds % SECONDS_PER_MINUTE;
 
-        int direction = pScrollY > 0 ? 1 : -1;
+        int direction = delta > 0 ? 1 : -1;
 
         if (AllKeys.ctrlDown()) {
             int step = AllKeys.shiftDown() ? 10 : 1;

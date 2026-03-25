@@ -14,7 +14,7 @@ import java.util.List;
 @Mixin(AbstractSimiWidget.class)
 public abstract class AbstractSimiWidgetMixin {
 
-    @Inject(method = "renderTooltip", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "renderTooltip", at = @At("HEAD"), cancellable = true, remap = false)
     private void createidlx$deferLabelTooltip(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (!((AbstractSimiWidget) (Object) this).isHovered()) return;
 

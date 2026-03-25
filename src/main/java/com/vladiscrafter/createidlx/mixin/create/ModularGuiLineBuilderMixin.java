@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class ModularGuiLineBuilderMixin {
 
     @Redirect(method = "addSelectionScrollInput", at = @At(value = "NEW",
-            target = "Lcom/simibubi/create/foundation/gui/widget/SelectionScrollInput;"))
+            target = "Lcom/simibubi/create/foundation/gui/widget/SelectionScrollInput;"), remap = false)
     private SelectionScrollInput createidlx$replaceSelectionScrollInput(int x, int y, int width, int height) {
         if (CreateIDLXGuiContext.isInSourceConfig() && CIDLXConfigs.client.truncateOverflowingStrings.get()) {
             return new InBoundsSelectionScrollInput(x, y, width, height, false);
@@ -25,7 +25,7 @@ public abstract class ModularGuiLineBuilderMixin {
     }
 
     @Redirect(method = "addScrollInput", at = @At(value = "NEW",
-            target = "Lcom/simibubi/create/foundation/gui/widget/ScrollInput;"))
+            target = "Lcom/simibubi/create/foundation/gui/widget/ScrollInput;"), remap = false)
     private ScrollInput createidlx$replaceScrollInput(int x, int y, int width, int height) {
         if(CreateIDLXGuiContext.currentSource() instanceof CountdownDisplaySource) {
             return new TimerScrollInput(x, y, width, height);

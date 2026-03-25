@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(CurrentFloorDisplaySource.class)
 public class CurrentFloorDisplaySourceMixin {
-    @ModifyReturnValue(method = "allowsLabeling", at = @At("RETURN"))
+    @ModifyReturnValue(method = "allowsLabeling", at = @At("RETURN"), remap = false)
     protected boolean allowsLabeling(boolean original) {
         return CIDLXConfigs.server.enhanceCurrentFloorDisplaySource.get();
     }

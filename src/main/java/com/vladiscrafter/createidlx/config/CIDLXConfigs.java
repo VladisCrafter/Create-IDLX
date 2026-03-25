@@ -2,10 +2,10 @@ package com.vladiscrafter.createidlx.config;
 
 import com.vladiscrafter.createidlx.CreateIDLXClient;
 import net.createmod.catnip.config.ConfigBase;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
@@ -31,7 +31,7 @@ public class CIDLXConfigs {
     public static ConfigBase byType(ModConfig.Type type) { return CONFIGS.get(type); }
 
     private static <T extends CIDLXConfigBase> T register(Supplier<T> factory, ModConfig.Type side) {
-        Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
+        Pair<T, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(builder -> {
             T config = factory.get();
             config.registerAll(builder);
             return config;
@@ -43,12 +43,12 @@ public class CIDLXConfigs {
         return config;
     }
 
-    public static void register(ModLoadingContext context, ModContainer container) {
+    public static void register(BiConsumer<ModConfig.Type, ForgeConfigSpec> biConsumer) {
         client = register(CIDLXClient::new, ModConfig.Type.CLIENT);
         server = register(CIDLXServer::new, ModConfig.Type.SERVER);
 
         for (Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())
-            container.registerConfig(pair.getKey(), pair.getValue().specification);
+            biConsumer.accept(pair.getKey(), pair.getValue().specification);
     }
 
     public static void onLoad(ModConfig modConfig) {

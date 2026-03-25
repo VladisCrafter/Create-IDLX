@@ -1,8 +1,8 @@
 package com.vladiscrafter.createidlx.config;
 
 import net.createmod.catnip.config.ConfigBase;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public abstract class CIDLXConfigBase extends ConfigBase {
-    @Override public void registerAll(final ModConfigSpec.Builder builder) { super.registerAll(builder); }
+    @Override public void registerAll(final ForgeConfigSpec.Builder builder) { super.registerAll(builder); }
 }

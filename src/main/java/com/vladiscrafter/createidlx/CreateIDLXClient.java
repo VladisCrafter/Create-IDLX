@@ -3,25 +3,20 @@ package com.vladiscrafter.createidlx;
 import com.vladiscrafter.createidlx.foundation.ponder.CIDLXPonderPlugin;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.client.ConfigScreenHandler;
 
-import java.util.function.Supplier;
-
-@Mod(value = CreateIDLX.ID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = CreateIDLX.ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateIDLX.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class CreateIDLXClient {
     public CreateIDLXClient(IEventBus modEventBus, ModContainer container) {
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
+        modEventBus.addListener(CreateIDLXClient::onClientSetup);
         modEventBus.addListener(CreateIDLXClient::onLoadComplete);
     }
 
@@ -34,11 +29,12 @@ public class CreateIDLXClient {
 
     }
 
+    @SubscribeEvent
     public static void onLoadComplete(FMLLoadCompleteEvent event) {
         ModContainer container = ModList.get()
                 .getModContainerById(CreateIDLX.ID)
                 .orElseThrow(() -> new IllegalStateException("Create: IDLX mod container missing on LoadComplete"));
-        Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(previousScreen, CreateIDLX.ID);
-        container.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
+        container.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> new BaseConfigScreen(screen, CreateIDLX.ID)));
     }
 }
