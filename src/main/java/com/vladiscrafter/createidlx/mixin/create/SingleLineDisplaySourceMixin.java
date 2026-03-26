@@ -13,6 +13,7 @@ import com.simibubi.create.content.trains.display.FlapDisplaySection;
 
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
 import com.vladiscrafter.createidlx.util.CreateIDLXMixinUtils;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
@@ -68,6 +69,12 @@ public abstract class SingleLineDisplaySourceMixin {
     private List<MutableComponent> createidlx$modifyProvideText(List<MutableComponent> originalValue,
                                                                 DisplayLinkContext context, DisplayTargetStats stats) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+        boolean hasOverridingFinishLabel = ((Object) this instanceof CountdownDisplaySource
+                && context.sourceConfig().getBoolean("IsCountdownFinished")
+                && !context.sourceConfig().getString("FinishLabel").isEmpty()
+                && context.sourceConfig().getInt("OverrideLabelOnFinish") == 1);
+
+        if (hasOverridingFinishLabel) return ImmutableList.of(Component.literal(context.sourceConfig().getString("FinishLabel")));
 
         if (originalValue.isEmpty()) return originalValue;
 
@@ -79,22 +86,24 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label) && !hasOverridingFinishLabel) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, ((raw == SingleLineDisplaySource.EMPTY_LINE) ? "" : raw.getString()));
 
-        if ((Object) this instanceof CountdownDisplaySource
-                && context.sourceConfig().getBoolean("IsCountdownFinished")
-                && !context.sourceConfig().getString("FinishLabel").isEmpty()) {
-            return ImmutableList.of(Component.literal(context.sourceConfig().getString("FinishLabel")));
-        } else return ImmutableList.of(Component.literal(fullLine));
+        return ImmutableList.of(Component.literal(fullLine));
     }
 
     @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"), remap = false)
     private List<List<MutableComponent>> createidlx$modifyFlapDisplayText(List<List<MutableComponent>> originalValue,
                                                                           DisplayLinkContext context, DisplayTargetStats stats) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+        boolean hasOverridingFinishLabel = ((Object) this instanceof CountdownDisplaySource
+                && context.sourceConfig().getBoolean("IsCountdownFinished")
+                && !context.sourceConfig().getString("FinishLabel").isEmpty()
+                && context.sourceConfig().getInt("OverrideLabelOnFinish") == 1);
+
+        if (hasOverridingFinishLabel) return ImmutableList.of(ImmutableList.of(Component.literal(context.sourceConfig().getString("FinishLabel"))));
 
         if (originalValue.isEmpty()) return originalValue;
 
@@ -106,26 +115,25 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label) && !hasOverridingFinishLabel) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, ((raw == SingleLineDisplaySource.EMPTY_LINE) ? "" : raw.getString()));
 
-        if ((Object) this instanceof CountdownDisplaySource
-                && context.sourceConfig().getBoolean("IsCountdownFinished")
-                && !context.sourceConfig().getString("FinishLabel").isEmpty()) {
-            return ImmutableList.of(ImmutableList.of(Component.literal(context.sourceConfig().getString("FinishLabel"))));
-        } else return ImmutableList.of(ImmutableList.of(Component.literal(fullLine)));
+        return ImmutableList.of(ImmutableList.of(Component.literal(fullLine)));
     }
 
     @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true, remap = false)
     private void createidlx$overrideFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
                                                       FlapDisplayLayout layout, CallbackInfo ci) {
         boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+        boolean hasOverridingFinishLabel = ((Object) this instanceof CountdownDisplaySource
+                && !context.sourceConfig().getString("FinishLabel").isEmpty()
+                && context.sourceConfig().getInt("OverrideLabelOnFinish") == 1);
+        boolean isCountdownFinished = ((Object) this instanceof CountdownDisplaySource
+                && context.sourceConfig().getBoolean("IsCountdownFinished"));
 
         if (!this.createidlx$invokeAllowsLabeling(context)) return;
-
-//        if ((Object) this instanceof CountdownDisplaySource && context.sourceConfig().getBoolean("IsCountdownFinished")) return;
 
         String layoutKey = createidlx$invokeGetFlapDisplayLayoutName(context);
         if (layoutKey.equals("Progress") && !isCrudeProgressBarSupportEnabled) return;
@@ -133,9 +141,12 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return;
+        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)
+                && (!hasOverridingFinishLabel || !isCountdownFinished)) return;
 
-        String layoutName = label.length() + "_Labeled_WithSpecifiers_" + layoutKey;
+        String layoutName = (hasOverridingFinishLabel)
+                ? ((isCountdownFinished) ? "1_" : "0_") + label.length() + "_Labeled_WithSpecifiers_" + layoutKey
+                : label.length() + "_Labeled_WithSpecifiers_" + layoutKey;
         if (layout.isLayout(layoutName))
             return;
 

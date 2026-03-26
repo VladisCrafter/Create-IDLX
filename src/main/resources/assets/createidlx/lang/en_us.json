@@ -12,12 +12,17 @@
   "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
   "createidlx.gui.display_link.progress_bar_support.disabled": "disabled",
 
+  "createidlx.gui.binaryScrollInput.scrollOrClickToToggle": "Scroll or Left-Click to toggle",
+  "createidlx.gui.binaryScrollInput.true": "✔",
+  "createidlx.gui.binaryScrollInput.false": "❌",
+
   "createidlx.gui.timerScrollInput.scrollToModifySeconds": "Scroll to Modify Seconds",
   "createidlx.gui.timerScrollInput.ctrlScrollsMinutes": "Ctrl to Modify Minutes",
 
   "createidlx.display_source.countdown": "Countdown",
   "createidlx.display_source.countdown.time": "Countdown Timer",
   "createidlx.display_source.countdown.finish_label": "Countdown Finish Label",
+  "createidlx.display_source.countdown.override_label": "Override the Attached Label with the Finish Label",
 
   "createidlx.display_source.current_floor_extended": "Elevator Location with Extra Formats",
   "createidlx.display_source.current_floor_extended.display": "Display Format",
