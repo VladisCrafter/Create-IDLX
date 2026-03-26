@@ -62,9 +62,8 @@ public class CurrentFloorExtendedDisplaySource extends SingleLineDisplaySource {
         if (isFirstLine)
             return;
 
-        builder.addSelectionScrollInput(0, 137, (selectionScrollInput, label) -> {
-            selectionScrollInput
-                    .forOptions(CreateIDLX.translatedOptions("display_source.current_floor_extended",
+        builder.addSelectionScrollInput(0, 137, (ssi, l) -> {
+            ssi.forOptions(CreateIDLX.translatedOptions("display_source.current_floor_extended",
                             "short_name", "long_name", "short_n_long", "long_n_short"))
                     .titled(CreateIDLX.translate("display_source.current_floor_extended.display"));
         }, "FloorDisplayMode");
