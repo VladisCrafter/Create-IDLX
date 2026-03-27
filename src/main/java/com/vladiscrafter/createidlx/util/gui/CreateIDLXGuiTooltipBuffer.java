@@ -10,6 +10,7 @@ public final class CreateIDLXGuiTooltipBuffer {
     private CreateIDLXGuiTooltipBuffer() {}
 
     private static List<Component> labelingTextBoxTooltip = List.of();
+    private static List<Component> targetWidgetTooltip = List.of();
 
     private static List<Component> deferredTooltip = List.of();
     private static int deferredMouseX;
@@ -20,8 +21,16 @@ public final class CreateIDLXGuiTooltipBuffer {
         labelingTextBoxTooltip = List.copyOf(tooltip);
     }
 
+    public static void registerTargetWidgetTooltip(List<Component> tooltip) {
+        targetWidgetTooltip = List.copyOf(tooltip);
+    }
+
     public static boolean isLabelingTextBoxTooltip(List<Component> tooltip) {
         return !labelingTextBoxTooltip.isEmpty() && labelingTextBoxTooltip.equals(tooltip);
+    }
+
+    public static boolean isTargetWidgetTooltip(List<Component> tooltip) {
+        return !targetWidgetTooltip.isEmpty() && targetWidgetTooltip.equals(tooltip);
     }
 
     public static void defer(List<Component> tooltip, int mouseX, int mouseY) {

@@ -1,6 +1,7 @@
 package com.vladiscrafter.createidlx.mixin.create;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
+import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
@@ -12,11 +13,14 @@ import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.util.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -35,8 +39,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
 
-    @Shadow
-    private DisplayLinkBlockEntity blockEntity;
+    @Shadow private DisplayLinkBlockEntity blockEntity;
+    @Shadow private BlockState targetState;
+    @Shadow private DisplayTarget target;
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
@@ -82,9 +87,21 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         initGathererSourceSubOptions(0);
     }
 
+    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    private void createidlx$cacheTargetWidgetTooltip(CallbackInfo ci) {
+        CreateIDLXGuiTooltipBuffer.registerTargetWidgetTooltip(List.of(
+                CreateLang.translateDirect("display_link.writing_to"),
+                targetState.getBlock().getName()
+                        .withStyle(s -> s.withColor(target == null ? 0xF68989 : 0xF2C16D)),
+                CreateLang.translateDirect("display_link.targeted_location"),
+                CreateLang.translateDirect("display_link.view_compatible")
+                        .withStyle(ChatFormatting.GRAY)
+        ));
+    }
+
     @Override
-    protected void removeWidget(GuiEventListener widget) {
-        if (widget != null) super.removeWidget(widget);
+    protected void removeWidget(@NotNull GuiEventListener widget) {
+        super.removeWidget(widget);
     }
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"), remap = false)
