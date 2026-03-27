@@ -14,6 +14,8 @@ import net.minecraft.Util;
 
 public class InBoundsSelectionScrollInput extends SelectionScrollInput {
 
+    private final boolean truncateOverflowingStrings = CIDLXConfigs.client.truncateOverflowingStrings.get();
+    private final boolean showTooltipForSingleOptionSelector = CIDLXConfigs.client.showTooltipForSingleOptionSelector.get();
 
 
     private List<Component> createidlx$options = List.of();
@@ -65,7 +67,7 @@ public class InBoundsSelectionScrollInput extends SelectionScrollInput {
     @Override
     protected void updateTooltip() {
         toolTip.clear();
-        if (title == null)
+        if (title == null || (createidlx$isSingleOption && truncateOverflowingStrings && !showTooltipForSingleOptionSelector))
             return;
         toolTip.add(title.plainCopy()
                 .withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
