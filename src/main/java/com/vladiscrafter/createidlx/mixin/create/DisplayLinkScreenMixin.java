@@ -1,6 +1,7 @@
 package com.vladiscrafter.createidlx.mixin.create;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -34,33 +35,51 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
 
+    @Shadow
+    private DisplayLinkBlockEntity blockEntity;
+
     @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
         if (sources == null || sources.isEmpty()) return;
-        if (sourceTypeSelector == null) return;
         if (sourceTypeSelector instanceof InBoundsSelectionScrollInput) return;
         if (!CIDLXConfigs.client.truncateOverflowingStrings.get()) return;
 
-        int currentState = sourceTypeSelector.getState();
-
+        int currentState = Math.max(sources.indexOf(blockEntity.activeSource), 0);
         List<Component> options = sources.stream()
                 .map(DisplaySource::getName)
                 .toList();
 
-        removeWidget(sourceTypeSelector);
+        if (sources.size() > 1) {
+            if (sourceTypeSelector == null) return;
+
+            removeWidget(sourceTypeSelector);
+            removeWidget(sourceTypeLabel);
+
+            sourceTypeSelector = new InBoundsSelectionScrollInput(
+                    guiLeft + 61, guiTop + 26, 135, 16, true, false)
+                    .forOptions(options)
+                    .writingTo(sourceTypeLabel)
+                    .titled(CreateLang.translateDirect("display_link.information_type"))
+                    .calling(this::initGathererSourceSubOptions)
+                    .setState(currentState);
+
+            addRenderableWidget(sourceTypeSelector);
+            initGathererSourceSubOptions(currentState);
+            return;
+        }
+
         removeWidget(sourceTypeLabel);
 
         sourceTypeSelector = new InBoundsSelectionScrollInput(
-                guiLeft + 61, guiTop + 26, 135, 16, true)
+                guiLeft + 61, guiTop + 26, 135, 16, true, true)
                 .forOptions(options)
                 .writingTo(sourceTypeLabel)
                 .titled(CreateLang.translateDirect("display_link.information_type"))
                 .calling(this::initGathererSourceSubOptions)
-                .setState(currentState);
+                .setState(0);
 
         addRenderableWidget(sourceTypeSelector);
-
-        initGathererSourceSubOptions(currentState);
+        initGathererSourceSubOptions(0);
     }
 
     @Override

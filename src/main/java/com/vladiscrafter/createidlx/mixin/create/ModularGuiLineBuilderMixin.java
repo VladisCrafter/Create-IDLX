@@ -56,7 +56,7 @@ public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilde
             target = "Lcom/simibubi/create/foundation/gui/widget/SelectionScrollInput;"), remap = false)
     private SelectionScrollInput createidlx$replaceSelectionScrollInput(int x, int y, int width, int height) {
         if (CreateIDLXGuiContext.isInSourceConfig() && CIDLXConfigs.client.truncateOverflowingStrings.get()) {
-            return new InBoundsSelectionScrollInput(x, y, width, height, false);
+            return new InBoundsSelectionScrollInput(x, y, width, height, false, false);
         }
         return new SelectionScrollInput(x, y, width, height);
     }

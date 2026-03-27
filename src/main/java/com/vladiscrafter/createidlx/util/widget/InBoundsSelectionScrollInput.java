@@ -5,6 +5,8 @@ import java.util.List;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.util.gui.MarqueeEffectTruncatedLabel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -12,16 +14,6 @@ import net.minecraft.Util;
 
 public class InBoundsSelectionScrollInput extends SelectionScrollInput {
 
-    private final boolean addMarqueeEffectToTruncatedStrings = CIDLXConfigs.client.addMarqueeEffectToTruncatedStrings.get();
-    private final long fixedCharTravelTime = (long) CIDLXConfigs.client.fixedCharTravelTime.get();
-    private final long fixedStringTravelTime = (long) ((int) (CIDLXConfigs.client.fixedStringTravelTime.get() * 1000));
-    private final long maximalStringTravelTime = (long) ((int) (CIDLXConfigs.client.maximalStringTravelTime.get() * 1000));
-    private final long minimalStringTravelTime = (long) ((int) (CIDLXConfigs.client.minimalStringTravelTime.get() * 1000));
-    private final long stringPauseTime = (long) ((int) (CIDLXConfigs.client.stringPauseTime.get() * 1000));
-
-    private final boolean isStringTravelTimeFixed = fixedStringTravelTime > 0;
-    private final boolean isMaximalStringTravelTimeSpecified = maximalStringTravelTime > 0;
-    private final boolean isMinimalStringTravelTimeSpecified = minimalStringTravelTime > 0;
 
 
     private List<Component> createidlx$options = List.of();
@@ -29,10 +21,12 @@ public class InBoundsSelectionScrollInput extends SelectionScrollInput {
     private int createidlx$lastRenderedState = Integer.MIN_VALUE;
 
     private final boolean createidlx$isSourceTypeSelector;
+    private final boolean createidlx$isSingleOption;
 
-    public InBoundsSelectionScrollInput(int x, int y, int width, int height, boolean isSourceTypeSelector) {
+    public InBoundsSelectionScrollInput(int x, int y, int width, int height, boolean isSourceTypeSelector, boolean isSingleOption) {
         super(x, y, width, height);
         this.createidlx$isSourceTypeSelector = isSourceTypeSelector;
+        this.createidlx$isSingleOption = isSingleOption;
     }
 
     @Override
@@ -64,59 +58,52 @@ public class InBoundsSelectionScrollInput extends SelectionScrollInput {
         String text = createidlx$options.get(state).getString();
         if (text.isEmpty()) return;
 
-        var font = Minecraft.getInstance().font;
-        int textWidth = font.width(text);
+        MarqueeEffectTruncatedLabel.render(graphics, Minecraft.getInstance().font, text, getX() + 4,
+                getY() + (height - 8) / 2, width, createidlx$isSourceTypeSelector, createidlx$lastStateChangeMillis);
+    }
 
-        int offset = 0;
-        int textX = getX() + 4;
-        int textY = getY() + (height - 8) / 2;
-
-        int availableWidthForCheck = Math.max(0, width - 5);
-        int availableWidth = createidlx$isSourceTypeSelector ? Math.max(0, width - 8) : Math.max(0, width - 10);
-
-        if (textWidth <= availableWidthForCheck) {
-            if (createidlx$isSourceTypeSelector) graphics.drawString(font, text, textX - offset, textY, 0xFFFFFF, true);
-            else graphics.drawString(font, text, textX - offset + 1, textY - 1, 0xFFFFFF, true);
+    @Override
+    protected void updateTooltip() {
+        toolTip.clear();
+        if (title == null)
             return;
+        toolTip.add(title.plainCopy()
+                .withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
+        int min = Math.min(this.max - 16, state - 7);
+        int max = Math.max(this.min + 16, state + 8);
+        min = Math.max(min, this.min);
+        max = Math.min(max, this.max);
+        if (this.min + 1 == min)
+            min--;
+        if (min > this.min) {
+            toolTip.add(Component.literal("> ...")
+                    .withStyle(ChatFormatting.GRAY));
+        }
+        if (this.max - 1 == max)
+            max++;
+        for (int i = min; i < max; i++) {
+            if (i == state)
+                toolTip.add(Component.empty()
+                        .append("-> ")
+                        .append(options.get(i))
+                        .withStyle(ChatFormatting.WHITE));
+            else
+                toolTip.add(Component.empty()
+                        .append("> ")
+                        .append(options.get(i))
+                        .withStyle(ChatFormatting.GRAY));
+        }
+        if (max < this.max) {
+            toolTip.add(Component.literal("> ...")
+                    .withStyle(ChatFormatting.GRAY));
         }
 
-        long elapsed = Util.getMillis() - createidlx$lastStateChangeMillis;
-
-        int overflow = textWidth - availableWidth;
-
-        long pauseMillis = Math.max(0L, stringPauseTime);
-        long travelMillis = Math.max(0L,
-                isStringTravelTimeFixed ? fixedStringTravelTime :
-                        isMinimalStringTravelTimeSpecified && isMaximalStringTravelTimeSpecified ? Math.min(Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow), maximalStringTravelTime) :
-                                isMinimalStringTravelTimeSpecified ? Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow) :
-                                        isMaximalStringTravelTimeSpecified ? Math.min(fixedCharTravelTime * overflow, maximalStringTravelTime) :
-                                                fixedCharTravelTime * overflow);
-
-        long period = (pauseMillis + travelMillis) * 2;
-        long t = addMarqueeEffectToTruncatedStrings ? elapsed % period : 0;
-
-        if (t < pauseMillis) {
-            offset = 0;
-        } else if (t < pauseMillis + travelMillis) {
-            double progress = (double) (t - pauseMillis) / (double) travelMillis;
-            offset = (int) Math.round(overflow * progress);
-        } else if (t < pauseMillis + travelMillis + pauseMillis) {
-            offset = overflow;
-        } else {
-            double progress = (double) (t - pauseMillis - travelMillis - pauseMillis) / (double) travelMillis;
-            offset = overflow - (int) Math.round(overflow * progress);
-        }
-
-        int minX = createidlx$isSourceTypeSelector ? textX - 4 : textX - 3;
-        int maxX = createidlx$isSourceTypeSelector ? textX + availableWidth + 4 : textX + availableWidth + 5;
-        int stringX = createidlx$isSourceTypeSelector ? textX - offset : textX - offset + 1;
-        int stringY = createidlx$isSourceTypeSelector ? textY : textY - 1;
-
-        graphics.enableScissor(minX, getY(), maxX, getY() + height);
-        try {
-            graphics.drawString(font, text, stringX, stringY, 0xFFFFFF, true);
-        } finally {
-            graphics.disableScissor();
+        if (!createidlx$isSingleOption) {
+            if (hint != null)
+                toolTip.add(hint.plainCopy()
+                        .withStyle(s -> s.withColor(HINT_RGB.getRGB())));
+            toolTip.add(scrollToModify.plainCopy()
+                    .withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
         }
     }
 }
