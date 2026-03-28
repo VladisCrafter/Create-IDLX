@@ -21,6 +21,7 @@ public class CIDLXPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
+        CIDLXPonderTags.register(helper);
     }
 
     @Override
