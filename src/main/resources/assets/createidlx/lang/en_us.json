@@ -22,7 +22,7 @@
   "createidlx.display_source.countdown": "Countdown",
   "createidlx.display_source.countdown.time": "Countdown Timer",
   "createidlx.display_source.countdown.finish_label": "Countdown Finish Label",
-  "createidlx.display_source.countdown.override_label": "Override the Attached Label with the Finish Label",
+  "createidlx.display_source.countdown.overlap_label": "Overlap the Attached Label with the Finish Label",
 
   "createidlx.display_source.current_floor_extended": "Elevator Location with Extra Formats",
   "createidlx.display_source.current_floor_extended.display": "Display Format",
