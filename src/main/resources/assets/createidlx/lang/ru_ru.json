@@ -30,7 +30,10 @@
   "createidlx.display_source.current_floor_extended.long_name": "Описание этажа",
   "createidlx.display_source.current_floor_extended.short_n_long": "Идентификатор и описание этажа",
   "createidlx.display_source.current_floor_extended.long_n_short": "Описание и идентификатор этажа",
+  "createidlx.display_source.current_floor_extended.show_empty_floor_description": "Отображать пустые описания этажей как «????»",
+
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
+  "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
 
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",

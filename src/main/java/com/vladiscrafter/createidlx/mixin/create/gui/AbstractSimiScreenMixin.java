@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.mixin.create;
+package com.vladiscrafter.createidlx.mixin.create.gui;
 
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import net.createmod.catnip.gui.AbstractSimiScreen;

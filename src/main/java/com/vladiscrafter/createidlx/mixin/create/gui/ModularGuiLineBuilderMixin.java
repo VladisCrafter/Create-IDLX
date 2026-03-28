@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.mixin.create;
+package com.vladiscrafter.createidlx.mixin.create.gui;
 
 import com.simibubi.create.foundation.gui.ModularGuiLine;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
@@ -6,7 +6,6 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.util.widget.BinaryScrollInput;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
