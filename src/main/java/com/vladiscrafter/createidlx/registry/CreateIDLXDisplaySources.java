@@ -7,6 +7,7 @@ import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
 import com.vladiscrafter.createidlx.content.source.CurrentFloorExtendedDisplaySource;
 import com.vladiscrafter.createidlx.content.source.CurrentTargetFloorDisplaySource;
+import com.vladiscrafter.createidlx.content.source.ElevatorMovementDirectionDisplaySource;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +18,8 @@ public class CreateIDLXDisplaySources {
     public static final DisplaySource CURRENT_FLOOR_EXTENDED = new CurrentFloorExtendedDisplaySource();
     public static final DisplaySource CURRENT_TARGET_FLOOR = new CurrentTargetFloorDisplaySource();
 
+    public static final DisplaySource ELEVATOR_MOVEMENT_DIRECTION = new ElevatorMovementDirectionDisplaySource();
+
     public static final DisplaySource COUNTDOWN = new CountdownDisplaySource();
 
     public static void register(RegisterEvent event) {
@@ -24,6 +27,8 @@ public class CreateIDLXDisplaySources {
 
         registerByBlock(CURRENT_FLOOR_EXTENDED, "current_floor_extended", AllBlocks.ELEVATOR_CONTACT.get()); // TODO: remake with Record
         registerByBlock(CURRENT_TARGET_FLOOR, "current_target_floor", AllBlocks.ELEVATOR_CONTACT.get());
+
+        registerByBlock(ELEVATOR_MOVEMENT_DIRECTION, "elevator_movement_direction", AllBlocks.ELEVATOR_PULLEY.get());
 
         registerByBlock(COUNTDOWN, "countdown", AllBlocks.CUCKOO_CLOCK.get());
     }

@@ -37,6 +37,16 @@
 
   "createidlx.display_source.current_target_floor": "Elevator Target Floor",
 
+  "createidlx.display_source.elevator_movement_direction": "Elevator Movement Direction",
+  "createidlx.display_source.elevator_movement_direction.display": "Display Format",
+  "createidlx.display_source.elevator_movement_direction.arrows": "Arrows",
+  "createidlx.display_source.elevator_movement_direction.triangles": "Triangles",
+  "createidlx.display_source.elevator_movement_direction.words": "Words",
+
+  "createidlx.display_source.elevator_movement_direction.still": "standing still",
+  "createidlx.display_source.elevator_movement_direction.up": "heading up",
+  "createidlx.display_source.elevator_movement_direction.down": "heading down",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",
