@@ -35,7 +35,17 @@
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
   "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
 
-  "createidlx.display_source.current_target_floor": "Целевой этаж лифта",
+  "createidlx.display_source.current_target_floor": "Текущий целевой этаж лифта",
+
+  "createidlx.display_source.elevator_movement_direction": "Направление движения лифта",
+  "createidlx.display_source.elevator_movement_direction.display": "Формат отображения",
+  "createidlx.display_source.elevator_movement_direction.arrows": "Стрелки",
+  "createidlx.display_source.elevator_movement_direction.triangles": "Треугольники",
+  "createidlx.display_source.elevator_movement_direction.words": "Слова",
+
+  "createidlx.display_source.elevator_movement_direction.still": "стоит на месте",
+  "createidlx.display_source.elevator_movement_direction.up": "поднимается",
+  "createidlx.display_source.elevator_movement_direction.down": "опускается",
 
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
