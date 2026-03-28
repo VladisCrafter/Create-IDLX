@@ -122,7 +122,7 @@ public class CountdownDisplaySource extends SingleLineDisplaySource {
         }, "FinishLabel");
 
         ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(120, 17, (ssi, l) -> {
-            ssi.titled(CreateIDLX.translate("display_source.countdown.override_label"));
+            ssi.titled(CreateIDLX.translate("display_source.countdown.overlap_label"));
         }, "OverrideLabelOnFinish");
     }
 }
