@@ -43,7 +43,7 @@
   "createidlx.display_source.elevator_movement_direction.triangles": "Треугольники",
   "createidlx.display_source.elevator_movement_direction.words": "Слова",
 
-  "createidlx.display_source.elevator_movement_direction.still": "стоит на месте",
+  "createidlx.display_source.elevator_movement_direction.still": "стоит на этаже",
   "createidlx.display_source.elevator_movement_direction.up": "поднимается",
   "createidlx.display_source.elevator_movement_direction.down": "опускается",
 
