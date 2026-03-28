@@ -35,6 +35,8 @@
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
   "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
 
+  "createidlx.display_source.current_target_floor": "Elevator Target Floor",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",
