@@ -30,7 +30,10 @@
   "createidlx.display_source.current_floor_extended.long_name": "Floor Description",
   "createidlx.display_source.current_floor_extended.short_n_long": "Floor Identifier & Description",
   "createidlx.display_source.current_floor_extended.long_n_short": "Floor Description & Identifier",
+  "createidlx.display_source.current_floor_extended.show_empty_floor_description": "Show Empty Floor Descriptions as '????'",
+
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
+  "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
 
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",

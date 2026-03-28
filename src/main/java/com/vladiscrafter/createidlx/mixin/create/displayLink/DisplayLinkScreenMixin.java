@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.mixin.create;
+package com.vladiscrafter.createidlx.mixin.create.displayLink;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;

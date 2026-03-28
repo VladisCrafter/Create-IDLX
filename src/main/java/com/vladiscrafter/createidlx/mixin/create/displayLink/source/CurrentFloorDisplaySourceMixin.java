@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.mixin.create.source;
+package com.vladiscrafter.createidlx.mixin.create.displayLink.source;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.simibubi.create.content.redstone.displayLink.source.CurrentFloorDisplaySource;
