@@ -35,6 +35,8 @@
   "createidlx.display_source.current_floor_extended.double_template": "%s (%s)",
   "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
 
+  "createidlx.display_source.current_target_floor": "Целевой этаж лифта",
+
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
   "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",
