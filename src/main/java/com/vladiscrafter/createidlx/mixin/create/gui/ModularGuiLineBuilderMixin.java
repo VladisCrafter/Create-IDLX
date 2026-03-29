@@ -23,9 +23,9 @@ import java.util.function.BiConsumer;
 @Mixin(ModularGuiLineBuilder.class)
 public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilderExt {
 
-    @Shadow private ModularGuiLine target;
-    @Shadow private int x;
-    @Shadow private int y;
+    @Shadow(remap = false) private ModularGuiLine target;
+    @Shadow(remap = false) private int x;
+    @Shadow(remap = false) private int y;
 
     @Override
     public ModularGuiLineBuilder createidlx$addTimerScrollInput(int x, int width, BiConsumer<ScrollInput, Label> inputTransform,

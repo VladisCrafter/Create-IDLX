@@ -11,7 +11,7 @@ public class CIDLXPonderTags {
     public static final ResourceLocation DISPLAY_SOURCES = AllCreatePonderTags.DISPLAY_SOURCES;
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         HELPER.addToTag(DISPLAY_SOURCES)
                 .add(AllBlocks.ELEVATOR_CONTACT)

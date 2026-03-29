@@ -20,7 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -39,9 +39,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
 
-    @Shadow private DisplayLinkBlockEntity blockEntity;
-    @Shadow private BlockState targetState;
-    @Shadow private DisplayTarget target;
+    @Shadow(remap = false) private DisplayLinkBlockEntity blockEntity;
+    @Shadow(remap = false) private BlockState targetState;
+    @Shadow(remap = false) private DisplayTarget target;
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
@@ -87,7 +87,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         initGathererSourceSubOptions(0);
     }
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$cacheTargetWidgetTooltip(CallbackInfo ci) {
         CreateIDLXGuiTooltipBuffer.registerTargetWidgetTooltip(List.of(
                 CreateLang.translateDirect("display_link.writing_to"),
@@ -100,7 +100,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     }
 
     @Override
-    protected void removeWidget(@NotNull GuiEventListener widget) {
+    protected void removeWidget(@ParametersAreNonnullByDefault GuiEventListener widget) {
         super.removeWidget(widget);
     }
 

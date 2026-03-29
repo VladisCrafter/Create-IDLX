@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ElevatorContactBlockEntity.class)
 public abstract class ElevatorContactBlockEntityMixin implements ElevatorContactBlockEntityExt {
 
-    @Shadow public String longName;
+    @Shadow(remap = false) public String longName;
     @Unique private String createidlx$lastReportedCurrentFloorLongName = "";
 
-    @Inject(method = "updateDisplayedFloor", at = @At("HEAD"))
+    @Inject(method = "updateDisplayedFloor", at = @At("HEAD"), remap = false)
     private void createidlx$captureLongName(String floor, CallbackInfo ci) {
         ElevatorContactBlockEntity self = (ElevatorContactBlockEntity) (Object) this;
 
@@ -36,13 +36,13 @@ public abstract class ElevatorContactBlockEntityMixin implements ElevatorContact
         }
     }
 
-    @Inject(method = "write", at = @At("TAIL"))
-    private void createidlx$writeLastReportedCurrentFloorLongName(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci) {
+    @Inject(method = "write", at = @At("TAIL"), remap = false)
+    private void createidlx$writeLastReportedCurrentFloorLongName(CompoundTag tag, boolean clientPacket, CallbackInfo ci) {
         tag.putString("LastReportedCurrentFloorLongName", createidlx$lastReportedCurrentFloorLongName);
     }
 
-    @Inject(method = "read", at = @At("TAIL"))
-    private void createidlx$readLastReportedCurrentFloorLongName(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci) {
+    @Inject(method = "read", at = @At("TAIL"), remap = false)
+    private void createidlx$readLastReportedCurrentFloorLongName(CompoundTag tag, boolean clientPacket, CallbackInfo ci) {
         if (tag.contains("LastReportedCurrentFloorLongName")) {
             createidlx$lastReportedCurrentFloorLongName = tag.getString("LastReportedCurrentFloorLongName");
         }

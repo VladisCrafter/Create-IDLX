@@ -43,16 +43,16 @@ public class BinaryScrollInput extends SelectionScrollInput {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double pScrollX, double pScrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (!inverted)
-            pScrollY *= -1;
+            delta *= -1;
 
         ScrollValueBehaviour.StepContext context = new ScrollValueBehaviour.StepContext();
         context.currentValue = state;
-        context.forward = pScrollY > 0;
+        context.forward = delta > 0;
 
         int priorState = state;
-        int step = (int) Math.signum(pScrollY) * this.step.apply(context);
+        int step = (int) Math.signum(delta) * this.step.apply(context);
 
         state += step;
 
