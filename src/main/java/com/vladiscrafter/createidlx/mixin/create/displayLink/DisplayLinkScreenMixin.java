@@ -69,6 +69,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                     .setState(currentState);
 
             addRenderableWidget(sourceTypeSelector);
+            CreateIDLXGuiTooltipBuffer.registerSourceTypeSelectorWidget(sourceTypeSelector);
             initGathererSourceSubOptions(currentState);
             return;
         }
@@ -84,6 +85,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                 .setState(0);
 
         addRenderableWidget(sourceTypeSelector);
+        CreateIDLXGuiTooltipBuffer.registerSourceTypeSelectorWidget(sourceTypeSelector);
         initGathererSourceSubOptions(0);
     }
 

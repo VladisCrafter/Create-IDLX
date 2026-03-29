@@ -16,10 +16,13 @@ public abstract class AbstractSimiWidgetMixin {
 
     @Inject(method = "renderTooltip", at = @At("HEAD"), cancellable = true, remap = false)
     private void createidlx$deferTooltips(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        if (!((AbstractSimiWidget) (Object) this).isHovered()) return;
+        AbstractSimiWidget self = (AbstractSimiWidget) (Object) this;
+        if (!self.isHovered()) return;
 
-        List<Component> tooltip = ((AbstractSimiWidget) (Object) this).getToolTip();
-        if (!CreateIDLXGuiTooltipBuffer.isLabelingTextBoxTooltip(tooltip) && !CreateIDLXGuiTooltipBuffer.isTargetWidgetTooltip(tooltip)) return;
+        List<Component> tooltip = self.getToolTip();
+        if (!CreateIDLXGuiTooltipBuffer.isSourceTypeSelectorWidget(self)
+                && !CreateIDLXGuiTooltipBuffer.isLabelingTextBoxTooltip(tooltip)
+                && !CreateIDLXGuiTooltipBuffer.isTargetWidgetTooltip(tooltip)) return;
 
         CreateIDLXGuiTooltipBuffer.defer(tooltip, mouseX, mouseY);
         ci.cancel();

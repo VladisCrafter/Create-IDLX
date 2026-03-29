@@ -2,6 +2,7 @@ package com.vladiscrafter.createidlx.util.gui;
 
 import java.util.List;
 
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -9,6 +10,8 @@ import net.minecraft.network.chat.Component;
 public final class CreateIDLXGuiTooltipBuffer {
     private CreateIDLXGuiTooltipBuffer() {}
 
+    private static AbstractSimiWidget sourceTypeSelectorWidget;
+    
     private static List<Component> labelingTextBoxTooltip = List.of();
     private static List<Component> targetWidgetTooltip = List.of();
 
@@ -17,12 +20,20 @@ public final class CreateIDLXGuiTooltipBuffer {
     private static int deferredMouseY;
     private static boolean hasDeferredTooltip;
 
+    public static void registerSourceTypeSelectorWidget(AbstractSimiWidget widget) {
+        sourceTypeSelectorWidget = widget;
+    }
+
     public static void registerLabelingTextBoxTooltip(List<Component> tooltip) {
         labelingTextBoxTooltip = List.copyOf(tooltip);
     }
 
     public static void registerTargetWidgetTooltip(List<Component> tooltip) {
         targetWidgetTooltip = List.copyOf(tooltip);
+    }
+
+    public static boolean isSourceTypeSelectorWidget(AbstractSimiWidget widget) {
+        return widget != null && widget == sourceTypeSelectorWidget;
     }
 
     public static boolean isLabelingTextBoxTooltip(List<Component> tooltip) {
