@@ -13,8 +13,8 @@
   "createidlx.gui.display_link.progress_bar_support.disabled": "禁用",
 
   "createidlx.gui.binaryScrollInput.scrollOrClickToToggle": "滚动或左击以更改",
-  "createidlx.gui.binaryScrollInput.true": "✔",
-  "createidlx.gui.binaryScrollInput.false": "❌",
+  "createidlx.gui.binaryScrollInput.true": "是",
+  "createidlx.gui.binaryScrollInput.false": "否",
 
   "createidlx.gui.timerScrollInput.scrollToModifySeconds": "直接滚动以调节秒钟数",
   "createidlx.gui.timerScrollInput.ctrlScrollsMinutes": "按住 Ctrl 滚动以调节分钟数",
@@ -50,14 +50,14 @@
   "createidlx.ponder.attached_label.header": "显示链接器附加标签和占位符的使用",
   "createidlx.ponder.attached_label.text_1": "默认情况下，显示链接器获取的目标数据字符串会像这样发送至显示目标",
   "createidlx.ponder.attached_label.text_2": "若打开显示链接器界面，在相应位置设置附加标签……",
-  "createidlx.ponder.attached_label.text_3": "NETWORK SPEED:",
+  "createidlx.ponder.attached_label.text_3": "网络速度：",
   "createidlx.ponder.attached_label.text_4": "上述标签文本将会被置于目标数据字符串前，并用空格隔开",
   "createidlx.ponder.attached_label.text_5": "像这样使用占位符（'$' 或 '{}'）可指定目标数据字符串的插入位置……",
-  "createidlx.ponder.attached_label.text_6": "IT IS $, MY DUDES!",
+  "createidlx.ponder.attached_label.text_6": "现在已经 $ 了, 兄弟们！",
   "createidlx.ponder.attached_label.text_7": "在输出字符串中可以插入多处目标数据，且混用占位符不会影响显示",
   "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
   "createidlx.ponder.attached_label.text_9": "若需输出字符'$'（或者'{}'）本身，而不是将它视为占位符，可以像这样用反斜杠转义……",
-  "createidlx.ponder.attached_label.text_10": "TOTAL PRICE: \\${}/STACK",
+  "createidlx.ponder.attached_label.text_10": "总价：\\${}/组",
   "createidlx.ponder.attached_label.text_11": "只要输出字符串中没有未被转义的占位符，字符串内容将默认置于目标数据字符串前，以空格隔开",
   "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
   "createidlx.ponder.attached_label.text_13": "将光标悬停于显示链接器界面内的指南按钮上以查看关于占位符的简单使用指导"
