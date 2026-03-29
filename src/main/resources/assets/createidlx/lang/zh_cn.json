@@ -1,8 +1,8 @@
 {
   "createidlx.gui.display_link.placeholders_tooltip_header": "占位符使用指南",
-  "createidlx.gui.display_link.placeholders_tooltip_1": "使用 '$' 或 '{}' 占位符\n可以在输出字符串内任意位置插入一次或多次目标数据；",
-  "createidlx.gui.display_link.placeholders_tooltip_2": "如需输出占位符自身，则应使用反斜杠转义：\n'\\$' 或 '\\{}'。",
-  "createidlx.gui.display_link.placeholders_tooltip_3": "当输出字符串中没有占位符，\n将采用默认的文本连接方式。",
+  "createidlx.gui.display_link.placeholders_tooltip_1": "使用 '$' 或 '{}' 占位符可以在输出字符串内任意位置插入一次或多次目标数据字符串；",
+  "createidlx.gui.display_link.placeholders_tooltip_2": "如需输出占位符自身，则应使用反斜杠转义：'\\$' 或 '\\{}'。",
+  "createidlx.gui.display_link.placeholders_tooltip_3": "当输出字符串中没有占位符，将采用默认的文本连接方式。",
   "createidlx.gui.display_link.placeholders_tooltip_4": "可用占位符： %s",
   "createidlx.gui.display_link.placeholders_tooltip_4_disabled": "服务器配置已禁用占位符。",
   "createidlx.gui.display_link.active_placeholder.both": "'$' 与 '{}'",
@@ -10,5 +10,55 @@
   "createidlx.gui.display_link.active_placeholder.dollar_only": "仅 '$'",
   "createidlx.gui.display_link.placeholders_tooltip_5": "服务器配置已%s进度条格式支持。",
   "createidlx.gui.display_link.progress_bar_support.enabled": "启用",
-  "createidlx.gui.display_link.progress_bar_support.disabled": "禁用"
+  "createidlx.gui.display_link.progress_bar_support.disabled": "禁用",
+
+  "createidlx.gui.binaryScrollInput.scrollOrClickToToggle": "滚动或左击以更改",
+  "createidlx.gui.binaryScrollInput.true": "是",
+  "createidlx.gui.binaryScrollInput.false": "否",
+
+  "createidlx.gui.timerScrollInput.scrollToModifySeconds": "直接滚动以调节秒钟数",
+  "createidlx.gui.timerScrollInput.ctrlScrollsMinutes": "按住 Ctrl 滚动以调节分钟数",
+
+  "createidlx.display_source.countdown": "倒计时",
+  "createidlx.display_source.countdown.time": "倒计时时长",
+  "createidlx.display_source.countdown.finish_label": "计时结束公告文本",
+  "createidlx.display_source.countdown.overlap_label": "公告文本覆盖全部文本",
+
+  "createidlx.display_source.current_floor_extended": "更多格式的轿厢所在位置",
+  "createidlx.display_source.current_floor_extended.display": "显示格式",
+  "createidlx.display_source.current_floor_extended.short_name": "楼层名称",
+  "createidlx.display_source.current_floor_extended.long_name": "楼层描述",
+  "createidlx.display_source.current_floor_extended.short_n_long": "楼层名称辅以描述",
+  "createidlx.display_source.current_floor_extended.long_n_short": "楼层描述辅以名称",
+  "createidlx.display_source.current_floor_extended.show_empty_floor_description": "用'????'代替空的楼层描述",
+
+  "createidlx.display_source.current_floor_extended.double_template": "%s(%s)",
+  "createidlx.display_source.current_floor_extended.empty_floor_description": "????",
+
+  "createidlx.display_source.current_target_floor": "升降机的目标楼层",
+
+  "createidlx.display_source.elevator_movement_direction": "升降机的移动方向",
+  "createidlx.display_source.elevator_movement_direction.display": "显示格式",
+  "createidlx.display_source.elevator_movement_direction.arrows": "箭头",
+  "createidlx.display_source.elevator_movement_direction.triangles": "三角形",
+  "createidlx.display_source.elevator_movement_direction.words": "文字",
+
+  "createidlx.display_source.elevator_movement_direction.still": "停",
+  "createidlx.display_source.elevator_movement_direction.up": "上",
+  "createidlx.display_source.elevator_movement_direction.down": "下",
+
+  "createidlx.ponder.attached_label.header": "显示链接器附加标签和占位符的使用",
+  "createidlx.ponder.attached_label.text_1": "默认情况下，显示链接器获取的目标数据字符串会像这样发送至显示目标",
+  "createidlx.ponder.attached_label.text_2": "若打开显示链接器界面，在相应位置设置附加标签……",
+  "createidlx.ponder.attached_label.text_3": "网络速度：",
+  "createidlx.ponder.attached_label.text_4": "上述标签文本将会被置于目标数据字符串前，并用空格隔开",
+  "createidlx.ponder.attached_label.text_5": "像这样使用占位符（'$' 或 '{}'）可指定目标数据字符串的插入位置……",
+  "createidlx.ponder.attached_label.text_6": "现在已经 $ 了, 兄弟们！",
+  "createidlx.ponder.attached_label.text_7": "在输出字符串中可以插入多处目标数据，且混用占位符不会影响显示",
+  "createidlx.ponder.attached_label.text_8": "{} | $ | {} | $",
+  "createidlx.ponder.attached_label.text_9": "若需输出字符'$'（或者'{}'）本身，而不是将它视为占位符，可以像这样用反斜杠转义……",
+  "createidlx.ponder.attached_label.text_10": "总价：\\${}/组",
+  "createidlx.ponder.attached_label.text_11": "只要输出字符串中没有未被转义的占位符，字符串内容将默认置于目标数据字符串前，以空格隔开",
+  "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
+  "createidlx.ponder.attached_label.text_13": "将光标悬停于显示链接器界面内的指南按钮上以查看关于占位符的简单使用指导"
 }
