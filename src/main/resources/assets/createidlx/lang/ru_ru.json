@@ -22,7 +22,7 @@
   "createidlx.display_source.countdown": "Обратный отсчёт",
   "createidlx.display_source.countdown.time": "Таймер отсчёта",
   "createidlx.display_source.countdown.finish_label": "Надпись по завершении отсчёта",
-  "createidlx.display_source.countdown.override_label": "Перекрывать добавочную надпись завершающей",
+  "createidlx.display_source.countdown.overlap_label": "Перекрывать добавочную надпись завершающей",
 
   "createidlx.display_source.current_floor_extended": "Местоположение лифта с дополнительными форматами",
   "createidlx.display_source.current_floor_extended.display": "Формат отображения",
