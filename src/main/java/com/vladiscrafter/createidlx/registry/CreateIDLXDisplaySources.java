@@ -1,19 +1,22 @@
 package com.vladiscrafter.createidlx.registry;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.Create;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateBuiltInRegistries;
+import com.simibubi.create.content.redstone.displayLink.source.StopWatchDisplaySource;
+import com.simibubi.create.content.redstone.displayLink.source.TimeOfDayDisplaySource;
+import com.tterrag.registrate.util.entry.BlockEntry;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
-import com.vladiscrafter.createidlx.content.source.CurrentFloorExtendedDisplaySource;
-import com.vladiscrafter.createidlx.content.source.CurrentTargetFloorDisplaySource;
-import com.vladiscrafter.createidlx.content.source.ElevatorMovementDirectionDisplaySource;
+import com.vladiscrafter.createidlx.content.source.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 public class CreateIDLXDisplaySources {
+
+    public static final DisplaySource TIME_OF_DAY = new TimeOfDayDisplaySource();
+    public static final DisplaySource STOPWATCH = new StopWatchDisplaySource();
 
     public static final DisplaySource CURRENT_FLOOR_EXTENDED = new CurrentFloorExtendedDisplaySource();
     public static final DisplaySource CURRENT_TARGET_FLOOR = new CurrentTargetFloorDisplaySource();
@@ -25,17 +28,30 @@ public class CreateIDLXDisplaySources {
     public static void register(RegisterEvent event) {
         if (!event.getRegistryKey().equals(CreateBuiltInRegistries.DISPLAY_SOURCE.key())) return;
 
-        registerByBlock(CURRENT_FLOOR_EXTENDED, "current_floor_extended", AllBlocks.ELEVATOR_CONTACT.get()); // TODO: remake with Record
-        registerByBlock(CURRENT_TARGET_FLOOR, "current_target_floor", AllBlocks.ELEVATOR_CONTACT.get());
+        registerSource(TIME_OF_DAY, Create.asResource("time_of_day"),
+                AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
+        registerSource(STOPWATCH, Create.asResource("stopwatch"),
+                AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
 
-        registerByBlock(ELEVATOR_MOVEMENT_DIRECTION, "elevator_movement_direction", AllBlocks.ELEVATOR_PULLEY.get());
+        registerSource(CURRENT_FLOOR_EXTENDED, "current_floor_extended",
+                AllBlocks.ELEVATOR_CONTACT);
+        registerSource(CURRENT_TARGET_FLOOR, "current_target_floor",
+                AllBlocks.ELEVATOR_CONTACT);
 
-        registerByBlock(COUNTDOWN, "countdown", AllBlocks.CUCKOO_CLOCK.get());
+        registerSource(ELEVATOR_MOVEMENT_DIRECTION, "elevator_movement_direction",
+                AllBlocks.ELEVATOR_PULLEY);
+
+        registerSource(COUNTDOWN, "countdown",
+                AllBlocks.CUCKOO_CLOCK,
+                AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
     }
 
-    private static void registerByBlock(DisplaySource displaySource, String displaySourceId, Block block) {
-        ResourceLocation displaySourceIdRL = CreateIDLX.asResource(displaySourceId);
+    private static void registerSource(DisplaySource displaySource, String displaySourceId, BlockEntry<?>... blocks) {
+        registerSource(displaySource, CreateIDLX.asResource(displaySourceId), blocks);
+    }
+
+    private static void registerSource(DisplaySource displaySource, ResourceLocation displaySourceIdRL, BlockEntry<?>... blocks) {
         Registry.register(CreateBuiltInRegistries.DISPLAY_SOURCE, displaySourceIdRL, displaySource);
-        DisplaySource.BY_BLOCK.add(block, displaySource);
+        for (BlockEntry<?> block : blocks) DisplaySource.BY_BLOCK.add(block.get(), displaySource);
     }
 }
