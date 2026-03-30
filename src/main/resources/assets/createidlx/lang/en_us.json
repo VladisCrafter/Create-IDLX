@@ -47,6 +47,20 @@
   "createidlx.display_source.elevator_movement_direction.up": "heading up",
   "createidlx.display_source.elevator_movement_direction.down": "heading down",
 
+  "createidlx.display_source.mechanical_piston_extension_state": "Mechanical Piston Extension State",
+  "createidlx.display_source.mechanical_piston_extension_state.display": "Displayed Info and Format",
+  "createidlx.display_source.mechanical_piston_extension_state.progress_bar": "Progress Bar",
+  "createidlx.display_source.mechanical_piston_extension_state.used_percent": "Used Extension Poles Percentage",
+  "createidlx.display_source.mechanical_piston_extension_state.spare_percent": "Spare Extension Poles Percentage",
+  "createidlx.display_source.mechanical_piston_extension_state.used": "Used Extension Poles",
+  "createidlx.display_source.mechanical_piston_extension_state.spare": "Spare Extension Poles",
+  "createidlx.display_source.mechanical_piston_extension_state.total": "Total Extension Poles",
+  "createidlx.display_source.mechanical_piston_extension_state.used_n_total": "Used to Total Extension Poles Ratio",
+  "createidlx.display_source.mechanical_piston_extension_state.spare_n_total": "Spare to Total Extension Poles Ratio",
+  "createidlx.display_source.mechanical_piston_extension_state.round_floats": "Round Fractions to Integers",
+
+  "createidlx.display_source.mechanical_piston_extension_state.ratio_template": "%s/%s",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",

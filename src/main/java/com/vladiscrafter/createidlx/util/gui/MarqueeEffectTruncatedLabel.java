@@ -25,7 +25,7 @@ public final class MarqueeEffectTruncatedLabel {
         int textWidth = font.width(text);
         int offset = 0;
 
-        int availableWidthForCheck = Math.max(0, width - 5);
+        int availableWidthForCheck = Math.max(0, width - 6);
         int availableWidth = isSourceTypeSelector ? Math.max(0, width - 8) : Math.max(0, width - 10);
 
         if (textWidth <= availableWidthForCheck) {

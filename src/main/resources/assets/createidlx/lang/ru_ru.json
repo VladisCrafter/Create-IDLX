@@ -47,6 +47,20 @@
   "createidlx.display_source.elevator_movement_direction.up": "поднимается",
   "createidlx.display_source.elevator_movement_direction.down": "опускается",
 
+  "createidlx.display_source.mechanical_piston_extension_state": "Состояние выдвижной части поршня",
+  "createidlx.display_source.mechanical_piston_extension_state.display": "Отображаемая информация и формат",
+  "createidlx.display_source.mechanical_piston_extension_state.progress_bar": "Полоса прогресса",
+  "createidlx.display_source.mechanical_piston_extension_state.used_percent": "Процент использованных удлинителей",
+  "createidlx.display_source.mechanical_piston_extension_state.spare_percent": "Процент резервных удлинителей",
+  "createidlx.display_source.mechanical_piston_extension_state.used": "Использованные удлинители",
+  "createidlx.display_source.mechanical_piston_extension_state.spare": "Резервные удлинители",
+  "createidlx.display_source.mechanical_piston_extension_state.total": "Всего удлинителей",
+  "createidlx.display_source.mechanical_piston_extension_state.used_n_total": "Доля использованных удлинителей",
+  "createidlx.display_source.mechanical_piston_extension_state.spare_n_total": "Доля резервных удлинителей",
+  "createidlx.display_source.mechanical_piston_extension_state.round_floats": "Округлять дробные числа до целых",
+
+  "createidlx.display_source.mechanical_piston_extension_state.ratio_template": "%s/%s",
+
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
   "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",
