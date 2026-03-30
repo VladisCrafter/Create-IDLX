@@ -11,7 +11,8 @@
     "create.elevator.ElevatorColumnMixin",
     "create.elevator.ElevatorContactBlockEntityMixin",
     "create.elevator.ElevatorContraptionMixin",
-    "create.gui.ModularGuiLineBuilderMixin"
+    "create.gui.ModularGuiLineBuilderMixin",
+    "create.piston.MechanicalPistonBlockEntityAccessor"
   ],
   "client": [
     "create.gui.AbstractSimiScreenMixin",

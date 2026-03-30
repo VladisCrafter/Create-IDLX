@@ -25,6 +25,8 @@ public class CreateIDLXDisplaySources {
 
     public static final DisplaySource COUNTDOWN = new CountdownDisplaySource();
 
+    public static final DisplaySource MECHANICAL_PISTON_EXTENSION_STATE = new MechanicalPistonExtensionStateDisplaySource();
+
     public static void register(RegisterEvent event) {
         if (!event.getRegistryKey().equals(CreateBuiltInRegistries.DISPLAY_SOURCE.key())) return;
 
@@ -44,6 +46,10 @@ public class CreateIDLXDisplaySources {
         registerSource(COUNTDOWN, "countdown",
                 AllBlocks.CUCKOO_CLOCK,
                 AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
+
+        registerSource(MECHANICAL_PISTON_EXTENSION_STATE, "mechanical_piston_extension_state",
+                AllBlocks.MECHANICAL_PISTON,
+                AllBlocks.STICKY_MECHANICAL_PISTON);
     }
 
     private static void registerSource(DisplaySource displaySource, String displaySourceId, BlockEntry<?>... blocks) {

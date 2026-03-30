@@ -8,13 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CIDLXPonderTags {
 
-    public static final ResourceLocation DISPLAY_SOURCES = AllCreatePonderTags.DISPLAY_SOURCES;
-
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
         PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
-        HELPER.addToTag(DISPLAY_SOURCES)
+        HELPER.addToTag(AllCreatePonderTags.DISPLAY_SOURCES)
                 .add(AllBlocks.ELEVATOR_CONTACT)
-                .add(AllBlocks.ELEVATOR_PULLEY);
+                .add(AllBlocks.ELEVATOR_PULLEY)
+                .add(AllBlocks.MECHANICAL_PISTON)
+                .add(AllBlocks.STICKY_MECHANICAL_PISTON);
     }
 }
