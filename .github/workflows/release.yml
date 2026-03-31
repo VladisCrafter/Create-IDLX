@@ -30,14 +30,20 @@ jobs:
       - name: Get mod version
         id: version
         run: |
-             VERSION=$(sed -n 's/^mod_version[[:space:]]*=[[:space:]]*//p' gradle.properties)
-             echo "version=$VERSION" >> $GITHUB_OUTPUT
+             MOD_VERSION=$(sed -n 's/^mod_version[[:space:]]*=[[:space:]]*//p' gradle.properties)
+             MC_VERSION=$(sed -n 's/^minecraft_version[[:space:]]*=[[:space:]]*//p' gradle.properties)
+             LOADER=$(sed -n 's/^loader[[:space:]]*=[[:space:]]*//p' gradle.properties)
+             JAVA_VERSION=$(sed -n 's/^java_version[[:space:]]*=[[:space:]]*//p' gradle.properties)
+             echo "mod_version=$MOD_VERSION" >> $GITHUB_OUTPUT
+             echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
+             echo "loader=$LOADER" >> $GITHUB_OUTPUT
+             echo "java_version=$JAVA_VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: ${{ steps.version.outputs.java_version }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -57,14 +63,14 @@ jobs:
 
           files: build/libs/*.jar
 
-          name: 'Create: IDLX ${{ steps.version.outputs.version }} for Minecraft 1.21.1 & Create 6.0.X'
-          version: 'mc1.21.1-${{ steps.version.outputs.version }}'
+          name: 'Create: IDLX ${{ steps.version.outputs.mod_version }} for Minecraft ${{ steps.version.outputs.mc_version }} & Create 6.0.X'
+          version: 'mc${{ steps.version.outputs.mc_version }}-${{ steps.version.outputs.mod_version }}'
           version-type: release
           changelog-file: RELEASE_NOTES.md
 
-          loaders: neoforge
-          game-versions: 1.21.1
-          java: 21
+          loaders: ${{ steps.version.outputs.loader }}
+          game-versions: ${{ steps.version.outputs.mc_version }}
+          java: ${{ steps.version.outputs.java_version }}
 
       - name: Upload to CurseForge
         if: ${{ inputs.curseforge }}
@@ -75,20 +81,20 @@ jobs:
 
           files: build/libs/*.jar
 
-          name: 'Create: IDLX ${{ steps.version.outputs.version }} for Minecraft 1.21.1 & Create 6.0.X'
-          version: 'mc1.21.1-${{ steps.version.outputs.version }}'
+          name: 'Create: IDLX ${{ steps.version.outputs.mod_version }} for Minecraft ${{ steps.version.outputs.mc_version }} & Create 6.0.X'
+          version: 'mc${{ steps.version.outputs.mc_version }}-${{ steps.version.outputs.mod_version }}'
           version-type: release
           changelog-file: RELEASE_NOTES.md
 
-          loaders: neoforge
-          game-versions: 1.21.1
-          java: 21
+          loaders: ${{ steps.version.outputs.loader }}
+          game-versions: ${{ steps.version.outputs.mc_version }}
+          java: ${{ steps.version.outputs.java_version }}
 
       - name: Upload to GH Releases
         if: ${{ inputs.gh-releases }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: 'mc1.21.1-${{ steps.version.outputs.version }}'
-          name: 'Create: IDLX ${{ steps.version.outputs.version }} for mc1.21.1'
+          tag_name: 'mc${{ steps.version.outputs.mc_version }}-${{ steps.version.outputs.mod_version }}'
+          name: 'Create: IDLX ${{ steps.version.outputs.mod_version }} for mc${{ steps.version.outputs.mc_version }}'
           files: build/libs/*.jar
           body_path: RELEASE_NOTES.md
