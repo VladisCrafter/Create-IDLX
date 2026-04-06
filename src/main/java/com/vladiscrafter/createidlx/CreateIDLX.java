@@ -4,6 +4,7 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.registry.CreateIDLXDisplaySources;
 import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Mod(value = CreateIDLX.ID)
 public class CreateIDLX {
@@ -49,6 +51,14 @@ public class CreateIDLX {
     public static MutableComponent translate(String key, Object... args) {
         Object[] args1 = LangBuilder.resolveBuilders(args);
         return Component.translatable(ID + "." + key, args1);
+    }
+
+    public static List<MutableComponent> translateMultiline(String key, ChatFormatting style, Object... args) {
+        String raw = CreateIDLX.translate(key, args).getString();
+        String[] splitStr = raw.split(Pattern.quote("\n"));
+        List<MutableComponent> split = new ArrayList<>(List.of());
+        for (String string : splitStr) split.add(Component.literal(string).withStyle(style));
+        return split;
     }
 
     public static List<Component> translatedOptions(String prefix, String... keys) {

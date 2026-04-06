@@ -1,18 +1,20 @@
 package com.vladiscrafter.createidlx.mixin.create.displayLink;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
+import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
+import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
+import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
+import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.foundation.ponder.scenes.AttachedLabelScenes;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
@@ -20,11 +22,13 @@ import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +36,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(DisplayLinkScreen.class)
@@ -179,8 +184,32 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
             );
         }
 
+        IconButton clipboardButton = new IconButton(guiLeft + 36, guiTop + 67, 16, 16, AllIcons.I_NONE);
+        clipboardButton.active = false;
+
         this.addRenderableWidget(placeholdersGuideButton);
+        this.addRenderableWidget(clipboardButton);
 //        this.createidlx$specifierHelpButton = placeholdersGuideButton;
+    }
+
+    @Inject(method = "renderWindow", at = @At("TAIL"))
+    private void injectClipboardIcon(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        int itemX = guiLeft + 37;
+        int itemY = guiTop + 68;
+
+        ItemStack clipboard = AllBlocks.CLIPBOARD.asStack();
+        clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardType.WRITTEN));
+        graphics.renderItem(clipboard, itemX, itemY);
+
+        List<Component> clipboardTip = new ArrayList<>(List.of());
+        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_1", ChatFormatting.GRAY));
+        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_2", ChatFormatting.GRAY));
+        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_3", ChatFormatting.GRAY));
+        clipboardTip.addFirst(CreateIDLX.translate("gui.display_link.clipboard_tooltip_header").withStyle(s -> s.withColor(0x5391E1)));
+
+        if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
+            graphics.renderComponentTooltip(Minecraft.getInstance().font, clipboardTip, mouseX, mouseY);
+        }
     }
 
 }
