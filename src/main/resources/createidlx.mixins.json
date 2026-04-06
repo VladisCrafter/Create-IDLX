@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "createidlx.refmap.json",
   "mixins": [
+    "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkScreenMixin",
     "create.displayLink.source.CurrentFloorDisplaySourceMixin",

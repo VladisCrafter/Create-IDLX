@@ -1,5 +1,7 @@
 package com.vladiscrafter.createidlx.mixin.create.displayLink;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
@@ -10,12 +12,16 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.foundation.ponder.scenes.AttachedLabelScenes;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
-import com.vladiscrafter.createidlx.util.CreateIDLXIcons;
+import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
@@ -42,6 +48,9 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Shadow private DisplayLinkBlockEntity blockEntity;
     @Shadow private BlockState targetState;
     @Shadow private DisplayTarget target;
+
+    @Shadow
+    public abstract void onClose();
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"))
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
@@ -134,8 +143,10 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (!(source instanceof SingleLineDisplaySource)) return;
 
         IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
-        placeholdersGuideButton.active = false;
-        placeholdersGuideButton.withCallback(() -> {});
+        placeholdersGuideButton.withCallback((mX, mY) -> {
+            onClose();
+            ScreenOpener.transitionTo(PonderUI.of(AllBlocks.DISPLAY_LINK.asStack()));
+        });
 
         placeholdersGuideButton.getToolTip().addAll(List.of(
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_header")

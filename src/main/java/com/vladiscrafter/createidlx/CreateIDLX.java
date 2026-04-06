@@ -38,6 +38,7 @@ public class CreateIDLX {
         CreateIDLX.REGISTRATE.registerEventListeners(modEventBus);
 
         modEventBus.addListener(CreateIDLXDisplaySources::register);
+        modEventBus.addListener(CreateIDLXPackets::register);
 
         CIDLXConfigs.register(modLoadingContext, modContainer);
 
