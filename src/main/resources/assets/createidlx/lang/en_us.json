@@ -12,6 +12,11 @@
   "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
   "createidlx.gui.display_link.progress_bar_support.disabled": "disabled",
 
+  "createidlx.gui.display_link.clipboard_tooltip_header": "Duplicating Display Source Data",
+  "createidlx.gui.display_link.clipboard_tooltip_1": "Use a clipboard to carry Source settings\nover from one Display Link to another:",
+  "createidlx.gui.display_link.clipboard_tooltip_2": "Right-click the first one to select\nwhich data will be copied from it,",
+  "createidlx.gui.display_link.clipboard_tooltip_3": "then left-click the other one to select\nthe data that will be applied to it.",
+
   "createidlx.gui.clipboard_display_source.title.copy": "Copying Display Source Data",
   "createidlx.gui.clipboard_display_source.title.paste": "Applying Display Source Data",
 

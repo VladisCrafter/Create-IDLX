@@ -19,7 +19,6 @@ import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.ElementWidget;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -36,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
@@ -374,7 +372,6 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
     public void onClose() {
         CatnipServices.NETWORK.sendToServer(new ClipboardDisplaySourceConfigurationPacket(
                 displayLink.getBlockPos(), paste, includeLabel, includeConfig, includeTarget));
-        CreateIDLX.LOGGER.info("Sending packet to server: {} {} {} {} {}", displayLink.getBlockPos(), paste, includeLabel, includeConfig, includeTarget);
         super.onClose();
     }
 
