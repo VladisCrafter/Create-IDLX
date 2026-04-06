@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.util;
+package com.vladiscrafter.createidlx.foundation.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

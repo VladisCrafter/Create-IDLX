@@ -1,5 +1,7 @@
 package com.vladiscrafter.createidlx.mixin.create.displayLink;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
@@ -10,17 +12,21 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.foundation.ponder.scenes.AttachedLabelScenes;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
-import com.vladiscrafter.createidlx.util.CreateIDLXIcons;
+import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -33,17 +39,20 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 //    @Unique
 //    private IconButton createidlx$specifierHelpButton;
 
-    @Shadow(remap = false) private List<DisplaySource> sources;
-    @Shadow(remap = false) private ScrollInput sourceTypeSelector;
-    @Shadow(remap = false) private Label sourceTypeLabel;
+    @Shadow private List<DisplaySource> sources;
+    @Shadow private ScrollInput sourceTypeSelector;
+    @Shadow private Label sourceTypeLabel;
 
-    @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
+    @Shadow protected abstract void initGathererSourceSubOptions(int i);
 
-    @Shadow(remap = false) private DisplayLinkBlockEntity blockEntity;
-    @Shadow(remap = false) private BlockState targetState;
-    @Shadow(remap = false) private DisplayTarget target;
+    @Shadow private DisplayLinkBlockEntity blockEntity;
+    @Shadow private BlockState targetState;
+    @Shadow private DisplayTarget target;
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
+    @Shadow
+    public abstract void onClose();
+
+    @Inject(method = "initGathererOptions", at = @At("TAIL"))
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
         if (sources == null || sources.isEmpty()) return;
         if (sourceTypeSelector instanceof InBoundsSelectionScrollInput) return;
@@ -89,7 +98,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         initGathererSourceSubOptions(0);
     }
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
+    @Inject(method = "initGathererOptions", at = @At("TAIL"))
     private void createidlx$cacheTargetWidgetTooltip(CallbackInfo ci) {
         CreateIDLXGuiTooltipBuffer.registerTargetWidgetTooltip(List.of(
                 CreateLang.translateDirect("display_link.writing_to"),
@@ -102,21 +111,21 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     }
 
     @Override
-    protected void removeWidget(@ParametersAreNonnullByDefault GuiEventListener widget) {
+    protected void removeWidget(@NotNull GuiEventListener widget) {
         super.removeWidget(widget);
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"), remap = false)
+    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"))
     private void createidlx$enterSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.enter(sources.get(i));
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"), remap = false)
+    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"))
     private void createidlx$exitSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.exit();
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
         boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
         boolean isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();
@@ -134,8 +143,10 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (!(source instanceof SingleLineDisplaySource)) return;
 
         IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
-        placeholdersGuideButton.active = false;
-        placeholdersGuideButton.withCallback(() -> {});
+        placeholdersGuideButton.withCallback((mX, mY) -> {
+            onClose();
+            ScreenOpener.transitionTo(PonderUI.of(AllBlocks.DISPLAY_LINK.asStack()));
+        });
 
         placeholdersGuideButton.getToolTip().addAll(List.of(
                 CreateIDLX.translate("gui.display_link.placeholders_tooltip_header")

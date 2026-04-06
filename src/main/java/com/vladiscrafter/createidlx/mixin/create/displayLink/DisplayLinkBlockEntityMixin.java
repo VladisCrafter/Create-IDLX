@@ -3,7 +3,7 @@ package com.vladiscrafter.createidlx.mixin.create.displayLink;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.vladiscrafter.createidlx.content.DisplayLinkBehaviour;
+import com.vladiscrafter.createidlx.content.displayLink.DisplayLinkBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
