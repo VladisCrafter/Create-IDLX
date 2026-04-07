@@ -1,47 +1,52 @@
 package com.vladiscrafter.createidlx.util.gui;
 
-import java.util.List;
-
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public final class CreateIDLXGuiTooltipBuffer {
     private CreateIDLXGuiTooltipBuffer() {}
 
-    private static AbstractSimiWidget sourceTypeSelectorWidget;
-    
-    private static List<Component> labelingTextBoxTooltip = List.of();
-    private static List<Component> targetWidgetTooltip = List.of();
+    private enum Type { WIDGET, TOOLTIP }
+
+    private record Entry(Type type, AbstractSimiWidget widget, List<Component> tooltip) {
+        boolean matches(AbstractSimiWidget self, List<Component> currentTooltip) {
+            return switch (type) {
+                case WIDGET -> widget != null && widget == self;
+                case TOOLTIP -> tooltip != null && !tooltip.isEmpty() && tooltip.equals(currentTooltip);
+            };
+        }
+    }
+
+    private static final Map<String, Entry> ENTRIES = new HashMap<>();
 
     private static List<Component> deferredTooltip = List.of();
     private static int deferredMouseX;
     private static int deferredMouseY;
     private static boolean hasDeferredTooltip;
 
-    public static void registerSourceTypeSelectorWidget(AbstractSimiWidget widget) {
-        sourceTypeSelectorWidget = widget;
+    public static void registerWidget(String id, AbstractSimiWidget widget) {
+        if (id == null || widget == null) return;
+        ENTRIES.put(id, new Entry(Type.WIDGET, widget, null));
     }
 
-    public static void registerLabelingTextBoxTooltip(List<Component> tooltip) {
-        labelingTextBoxTooltip = List.copyOf(tooltip);
+    public static void registerTooltip(String id, List<Component> tooltip) {
+        if (id == null || tooltip == null) return;
+        ENTRIES.put(id, new Entry(Type.TOOLTIP, null, List.copyOf(tooltip)));
     }
 
-    public static void registerTargetWidgetTooltip(List<Component> tooltip) {
-        targetWidgetTooltip = List.copyOf(tooltip);
-    }
-
-    public static boolean isSourceTypeSelectorWidget(AbstractSimiWidget widget) {
-        return widget != null && widget == sourceTypeSelectorWidget;
-    }
-
-    public static boolean isLabelingTextBoxTooltip(List<Component> tooltip) {
-        return !labelingTextBoxTooltip.isEmpty() && labelingTextBoxTooltip.equals(tooltip);
-    }
-
-    public static boolean isTargetWidgetTooltip(List<Component> tooltip) {
-        return !targetWidgetTooltip.isEmpty() && targetWidgetTooltip.equals(tooltip);
+    public static boolean shouldDefer(AbstractSimiWidget self, List<Component> currentTooltip) {
+        for (Entry entry : ENTRIES.values()) {
+            if (entry.matches(self, currentTooltip)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void defer(List<Component> tooltip, int mouseX, int mouseY) {

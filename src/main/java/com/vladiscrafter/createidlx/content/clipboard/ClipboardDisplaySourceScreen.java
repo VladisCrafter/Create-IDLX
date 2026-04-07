@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
+import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -261,6 +262,8 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
         addRenderableWidget(sourceWidget);
         addRenderableWidget(sourceTypeSelector);
+
+        CreateIDLXGuiTooltipBuffer.registerWidget("SourceWidget", sourceWidget);
     }
 
     private void renderClipboardVisual() {

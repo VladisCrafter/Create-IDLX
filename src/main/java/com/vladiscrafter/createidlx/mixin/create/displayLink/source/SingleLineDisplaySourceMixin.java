@@ -57,7 +57,7 @@ public abstract class SingleLineDisplaySourceMixin {
     @Inject(method = "addLabelingTextBox", at = @At("TAIL"))
     @OnlyIn(Dist.CLIENT)
     private void createidlx$cacheLabelingTextBoxTooltip(ModularGuiLineBuilder builder, CallbackInfo ci) {
-        CreateIDLXGuiTooltipBuffer.registerLabelingTextBoxTooltip(ImmutableList.of(
+        CreateIDLXGuiTooltipBuffer.registerTooltip("LabelingTextBox", ImmutableList.of(
                 CreateLang.translateDirect("display_source.label")
                         .withStyle(s -> s.withColor(0x5391E1)),
                 CreateLang.translateDirect("gui.schedule.lmb_edit")
