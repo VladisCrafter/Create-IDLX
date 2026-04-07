@@ -53,12 +53,33 @@ public class CreateIDLX {
         return Component.translatable(ID + "." + key, args1);
     }
 
-    public static List<MutableComponent> translateMultiline(String key, ChatFormatting style, Object... args) {
-        String raw = CreateIDLX.translate(key, args).getString();
+    public static List<MutableComponent> translateMultiline(String key, int color, Object... args) {
+        String raw = CreateIDLX.translate(key, "%s").getString();
         String[] splitStr = raw.split(Pattern.quote("\n"));
         List<MutableComponent> split = new ArrayList<>(List.of());
-        for (String string : splitStr) split.add(Component.literal(string).withStyle(style));
+        String[] parts;
+        for (String string : splitStr) {
+            if (string.contains("%s")) {
+                parts = string.split(Pattern.quote("%s"));
+                split.add(Component.literal(parts[0]).withStyle(s -> s.withColor(color))
+                        .append((MutableComponent) args[0]).append(Component.literal(parts[1]).withStyle(s -> s.withColor(color))));
+            }
+            else split.add(Component.literal(string).withStyle(s -> s.withColor(color)));
+        }
         return split;
+    }
+
+    public static List<Component> translateMultilineList(List<MutableComponent>... elements) {
+        List<Component> finalList = new ArrayList<>(List.of());
+        for (List<MutableComponent> element : elements) finalList.addAll(element);
+        return finalList;
+    }
+
+    public static List<Component> translateMultilineTooltip(String key, int elementsWithoutHeader, int headerColor, int textStyle) {
+        List<Component> finalList = new ArrayList<>(List.of());
+        finalList.add(CreateIDLX.translate(key + "_header").withStyle(s -> s.withColor(headerColor)));
+        for (int i = 1; i < elementsWithoutHeader + 1; i++) finalList.addAll(CreateIDLX.translateMultiline(key + "_" + i, textStyle));
+        return finalList;
     }
 
     public static List<Component> translatedOptions(String prefix, String... keys) {
