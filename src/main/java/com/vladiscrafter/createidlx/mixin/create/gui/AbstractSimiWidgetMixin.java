@@ -20,9 +20,7 @@ public abstract class AbstractSimiWidgetMixin {
         if (!self.isHovered()) return;
 
         List<Component> tooltip = self.getToolTip();
-        if (!CreateIDLXGuiTooltipBuffer.isSourceTypeSelectorWidget(self)
-                && !CreateIDLXGuiTooltipBuffer.isLabelingTextBoxTooltip(tooltip)
-                && !CreateIDLXGuiTooltipBuffer.isTargetWidgetTooltip(tooltip)) return;
+        if (!CreateIDLXGuiTooltipBuffer.shouldDefer(self, tooltip)) return;
 
         CreateIDLXGuiTooltipBuffer.defer(tooltip, mouseX, mouseY);
         ci.cancel();

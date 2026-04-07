@@ -83,7 +83,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                     .setState(currentState);
 
             addRenderableWidget(sourceTypeSelector);
-            CreateIDLXGuiTooltipBuffer.registerSourceTypeSelectorWidget(sourceTypeSelector);
+            CreateIDLXGuiTooltipBuffer.registerWidget("SourceTypeSelector", sourceTypeSelector);
             initGathererSourceSubOptions(currentState);
             return;
         }
@@ -99,13 +99,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
                 .setState(0);
 
         addRenderableWidget(sourceTypeSelector);
-        CreateIDLXGuiTooltipBuffer.registerSourceTypeSelectorWidget(sourceTypeSelector);
+        CreateIDLXGuiTooltipBuffer.registerWidget("SourceTypeSelector", sourceTypeSelector);
         initGathererSourceSubOptions(0);
     }
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"))
     private void createidlx$cacheTargetWidgetTooltip(CallbackInfo ci) {
-        CreateIDLXGuiTooltipBuffer.registerTargetWidgetTooltip(List.of(
+        CreateIDLXGuiTooltipBuffer.registerTooltip("TargetWidget", List.of(
                 CreateLang.translateDirect("display_link.writing_to"),
                 targetState.getBlock().getName()
                         .withStyle(s -> s.withColor(target == null ? 0xF68989 : 0xF2C16D)),
