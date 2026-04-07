@@ -22,11 +22,10 @@
 
   "createidlx.gui.clipboard_display_source.display_link_icon.copy": "Origin Display Link",
   "createidlx.gui.clipboard_display_source.display_link_icon.paste": "Inheritor Display Link",
-  "createidlx.gui.clipboard_display_source.display_link_icon.hint": "Click to open the Display Link Interface",
   "createidlx.gui.clipboard_display_source.display_source.copy": "Origin Display Source",
   "createidlx.gui.clipboard_display_source.display_source.paste": "Inheritor Display Source",
   "createidlx.gui.clipboard_display_source.display_source.invalid": "Invalid Display Source",
-  "createidlx.gui.clipboard_display_source.display_source.hint": "Click on the Display Link icon to open the Interface",
+  "createidlx.gui.clipboard_display_source.source_widgets.hint": "Click to open the Display Link Interface",
 
   "createidlx.gui.clipboard_display_source.label_button.copy": "Copy the Attached Label",
   "createidlx.gui.clipboard_display_source.label_button.paste": "Apply the Attached Label",

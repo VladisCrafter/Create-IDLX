@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(DisplayLinkScreen.class)
@@ -115,6 +115,15 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         ));
     }
 
+    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    private void createidlx$injectClipboardButton(CallbackInfo ci) {
+        IconButton clipboardButton = new IconButton(guiLeft + 36,
+                guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, AllIcons.I_NONE);
+        clipboardButton.active = false;
+
+        this.addRenderableWidget(clipboardButton);
+    }
+
     @Override
     protected void removeWidget(@NotNull GuiEventListener widget) {
         super.removeWidget(widget);
@@ -150,19 +159,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
         placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
-            ScreenOpener.transitionTo(PonderUI.of(AllBlocks.DISPLAY_LINK.asStack()));
+            var scene = PonderUI.of(ResourceLocation.fromNamespaceAndPath(/*"createidlx", "attached_label"*/ "create", "display_link"));
+            ScreenOpener.transitionTo(scene);
+            CreateIDLX.LOGGER.info("Current scene: {}", scene.getActiveScene().getId());
         });
 
-        placeholdersGuideButton.getToolTip().addAll(List.of(
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_header")
-                        .withStyle(s -> s.withColor(0x5391E1)),
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_1")
-                        .withStyle(ChatFormatting.GRAY),
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_2")
-                        .withStyle(ChatFormatting.GRAY),
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_3")
-                        .withStyle(ChatFormatting.GRAY)
-        ));
+        placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip(
+                "gui.display_link.placeholders_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
 
         if (isActiveSpecifiersTooltipEnabled) {
             placeholdersGuideButton.getToolTip().add(
@@ -175,37 +178,30 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         }
 
         if (isProgressBarSupportStateTooltipEnabled && (isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled)) {
-            placeholdersGuideButton.getToolTip().add(
-                CreateIDLX.translate("gui.display_link.placeholders_tooltip_5",
+            placeholdersGuideButton.getToolTip().addAll(
+                CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_5", ChatFormatting.DARK_GRAY.getColor(),
                         (isCrudeProgressBarSupportEnabled)
                                 ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withStyle(s -> s.withColor(0xe0b653))
                                 : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")
-                ).withStyle(ChatFormatting.DARK_GRAY)
-            );
+                ));
         }
 
-        IconButton clipboardButton = new IconButton(guiLeft + 36, guiTop + 67, 16, 16, AllIcons.I_NONE);
-        clipboardButton.active = false;
 
         this.addRenderableWidget(placeholdersGuideButton);
-        this.addRenderableWidget(clipboardButton);
 //        this.createidlx$specifierHelpButton = placeholdersGuideButton;
     }
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
     private void injectClipboardIcon(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         int itemX = guiLeft + 37;
-        int itemY = guiTop + 68;
+        int itemY = guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 68 : 47);
 
         ItemStack clipboard = AllBlocks.CLIPBOARD.asStack();
         clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardType.WRITTEN));
         graphics.renderItem(clipboard, itemX, itemY);
 
-        List<Component> clipboardTip = new ArrayList<>(List.of());
-        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_1", ChatFormatting.GRAY));
-        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_2", ChatFormatting.GRAY));
-        clipboardTip.addAll(CreateIDLX.translateMultiline("gui.display_link.clipboard_tooltip_3", ChatFormatting.GRAY));
-        clipboardTip.addFirst(CreateIDLX.translate("gui.display_link.clipboard_tooltip_header").withStyle(s -> s.withColor(0x5391E1)));
+        List<Component> clipboardTip = CreateIDLX.translateMultilineTooltip(
+                "gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor());
 
         if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
             graphics.renderComponentTooltip(Minecraft.getInstance().font, clipboardTip, mouseX, mouseY);

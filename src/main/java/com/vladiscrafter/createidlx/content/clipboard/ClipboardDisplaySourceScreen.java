@@ -17,6 +17,7 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
+import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.gui.widget.ElementWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
@@ -242,7 +243,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
         sourceWidget.getToolTip().addAll(List.of(
                 translateLocalBin("display_link_icon").withStyle(s -> s.withColor(0x5391E1)),
-                translateLocal("display_link_icon.hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
+                translateLocal("source_widgets.hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
         ));
 
         Component displaySourceName = displayLink.activeSource != null ? displayLink.activeSource.getName() : translateLocal("display_source.invalid");
@@ -253,8 +254,10 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
                 .titled(translateLocalBin("display_source"))
                 .setState(0);
 
-        sourceTypeSelector.getToolTip().add(translateLocal("display_source.hint")
+        sourceTypeSelector.getToolTip().add(translateLocal("source_widgets.hint")
                 .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+
+        sourceTypeSelector.withCallback((mX, mY) -> ScreenOpener.open(new DisplayLinkScreen(displayLink)));
 
         addRenderableWidget(sourceWidget);
         addRenderableWidget(sourceTypeSelector);
