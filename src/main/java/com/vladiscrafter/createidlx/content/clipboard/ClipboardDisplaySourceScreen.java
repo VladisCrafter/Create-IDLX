@@ -198,7 +198,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
         if (clipboardSnapshot != null)
             targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource"), "TargetPos").orElse(BlockPos.ZERO);
 
-        if (!paste && displayLink.getTargetPosition() == null) {
+        if (!paste && displayLink.activeTarget == null) {
             includeTarget = targetAvailable = false;
             targetUnavailabilityReason = "target_invalid";
         } else if (paste && !clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim")) {
@@ -308,33 +308,49 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
         clipboardWidget.getToolTip().add(translateLocalBin("clipboard_visual.title").withStyle(s -> s.withColor(0x5391E1)));
 
         Component label = translateLocalBin("clipboard_visual.contents.prefix",
-                translateLocal("clipboard_visual.contents.label").withStyle(ChatFormatting.GRAY))
+                translateLocal("clipboard_visual.contents.label").withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + ((!paste && !includeConfig && !includeTarget) ||
+                        (paste && !configAvailable && clipboardSnapshot != null && !clipboardSnapshot.getCompound("DisplaySource").contains("SourceConfig") && !targetAvailable && !clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim")) ? "last_" : "") + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
         Component config = translateLocalBin("clipboard_visual.contents.prefix",
-                translateLocal("clipboard_visual.contents.config").withStyle(ChatFormatting.GRAY))
+                translateLocal("clipboard_visual.contents.config").withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + ((!paste && !includeTarget) ||
+                        (paste && !targetAvailable && clipboardSnapshot != null && !clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim")) ? "last_" : "") + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
         Component target = translateLocalBin("clipboard_visual.contents.prefix",
-                translateLocal("clipboard_visual.contents.target").withStyle(ChatFormatting.GRAY))
+                translateLocal("clipboard_visual.contents.target").withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + "last_" + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
 
         Component labelDetailed = translateLocalBin("clipboard_visual.contents.prefix",
-                translateLocal("clipboard_visual.contents.label.detailed" + (labelStr.isEmpty() ? "_empty" : ""), labelStr).withStyle(ChatFormatting.GRAY))
+                translateLocal("clipboard_visual.contents.label.detailed" + (labelStr.isEmpty() ? "_empty" : ""), labelStr).withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + ((!paste && !includeConfig && !includeTarget) ||
+                        (paste && !configAvailable && clipboardSnapshot != null && !clipboardSnapshot.getCompound("DisplaySource").contains("SourceConfig") && !targetAvailable && !clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim")) ? "last_" : "") + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
         Component configDetailed = translateLocalBin("clipboard_visual.contents.prefix",
-                translateLocal("clipboard_visual.contents.config.detailed", sourceConfig.size()).withStyle(ChatFormatting.GRAY))
+                translateLocal("clipboard_visual.contents.config.detailed." + (sourceConfig.size() == 1 ? "single" : (sourceConfig.size() <= 4 ? "plural" : "plural_alt")), sourceConfig.size()).withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + ((!paste && !includeTarget) ||
+                        (paste && !targetAvailable && clipboardSnapshot != null && !clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim")) ? "last_" : "") + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
         Component targetDetailed = translateLocalBin("clipboard_visual.contents.prefix",
                 translateLocal("clipboard_visual.contents.target.detailed",
-                        targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetDim).withStyle(ChatFormatting.GRAY))
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetDim).withStyle(ChatFormatting.GRAY),
+                translateLocal("clipboard_visual.contents.postfix." + "last_" + "entry")
+                .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
 
         List<Component> components = new ArrayList<>();
 
-        if ((labelAvailable && includeLabel) || (paste && (labelAvailable || !labelUnavailabilityReason.equals("not_saved"))))
+        if ((labelAvailable && includeLabel) || (paste && (labelAvailable || clipboardSnapshot != null && clipboardSnapshot.getCompound("DisplaySource").contains("AttachedLabel"))))
             components.add(!AllKeys.shiftDown() ? label : labelDetailed);
-        if ((configAvailable && includeConfig) || (paste && (configAvailable || !configUnavailabilityReason.equals("not_saved"))))
+        if ((configAvailable && includeConfig) || (paste && (configAvailable || clipboardSnapshot != null && clipboardSnapshot.getCompound("DisplaySource").contains("SourceConfig"))))
             components.add(!AllKeys.shiftDown() ? config :configDetailed);
-        if ((targetAvailable && includeTarget) || (paste && (targetAvailable || !targetUnavailabilityReason.equals("not_saved"))))
+        if ((targetAvailable && includeTarget) || (paste && (targetAvailable || clipboardSnapshot != null && clipboardSnapshot.getCompound("DisplaySource").contains("TargetDim"))))
             components.add(!AllKeys.shiftDown() ? target : targetDetailed);
 
         boolean noComponents = components.isEmpty();
