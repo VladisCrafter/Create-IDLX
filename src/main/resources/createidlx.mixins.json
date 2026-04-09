@@ -18,7 +18,8 @@
   ],
   "client": [
     "create.gui.AbstractSimiScreenMixin",
-    "create.gui.AbstractSimiWidgetMixin"
+    "create.gui.AbstractSimiWidgetMixin",
+    "ponder.PonderUIAccessor"
   ],
   "server": []
 }

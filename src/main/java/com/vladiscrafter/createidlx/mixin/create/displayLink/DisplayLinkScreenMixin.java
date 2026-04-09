@@ -15,8 +15,6 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
-import com.vladiscrafter.createidlx.registry.CreateIDLXDisplaySources;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
@@ -24,14 +22,11 @@ import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
-import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -118,15 +113,6 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         ));
     }
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"))
-    private void createidlx$injectClipboardButton(CallbackInfo ci) {
-        IconButton clipboardButton = new IconButton(guiLeft + 36,
-                guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, AllIcons.I_NONE);
-        clipboardButton.active = false;
-
-        this.addRenderableWidget(clipboardButton);
-    }
-
     @Override
     protected void removeWidget(@NotNull GuiEventListener widget) {
         super.removeWidget(widget);
@@ -162,13 +148,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
         placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
-            ScreenOpener.transitionTo(PonderUI.of(AllBlocks.DISPLAY_LINK.asStack()));
+            PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
 
         placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip(
                 "gui.display_link.placeholders_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
 
-        placeholdersGuideButton.getToolTip().addAll(List.of(CreateIDLX.translate("gui.generic.see_ponder").withStyle(ChatFormatting.DARK_GRAY), Component.empty()));
+        placeholdersGuideButton.getToolTip().addAll(List.of(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), Component.empty()));
 
         if (isActiveSpecifiersTooltipEnabled) {
             placeholdersGuideButton.getToolTip().add(
@@ -190,9 +176,14 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
         }
 
+        IconButton clipboardButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, AllIcons.I_NONE);
+        clipboardButton.withCallback((mX, mY) -> {
+            onClose();
+            PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
+        });
 
         this.addRenderableWidget(placeholdersGuideButton);
-//        this.createidlx$specifierHelpButton = placeholdersGuideButton;
+        this.addRenderableWidget(clipboardButton);
     }
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
@@ -207,7 +198,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         List<Component> clipboardTip = CreateIDLX.translateMultilineTooltip(
                 "gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor());
 
-        clipboardTip.addLast(CreateIDLX.translate("gui.generic.see_ponder").withStyle(ChatFormatting.DARK_GRAY));
+        clipboardTip.addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
         if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
             graphics.renderComponentTooltip(Minecraft.getInstance().font, clipboardTip, mouseX, mouseY);

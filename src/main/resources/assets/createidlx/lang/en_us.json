@@ -77,7 +77,7 @@
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.unknown": "in '%s'",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.hint": "Shift to Show the Values",
 
-  "createidlx.gui.generic.see_ponder": "See the respective Ponder scene for details.",
+  "createidlx.gui.generic.click_to_ponder": "Click to open the respective Ponder scene",
 
   "createidlx.gui.binaryScrollInput.scrollOrClickToToggle": "Scroll or Left-Click to toggle",
   "createidlx.gui.binaryScrollInput.true": "✔",

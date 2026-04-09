@@ -77,7 +77,7 @@
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.unknown": "в «%s»",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.hint": "Зажмите Shift для проявления значений",
 
-  "createidlx.gui.generic.see_ponder": "Подробнее — в соответствующей сцене размышления.",
+  "createidlx.gui.generic.click_to_ponder": "Кликните для просмотра соответствующей сцены размышления",
 
   "createidlx.gui.binaryScrollInput.scrollOrClickToToggle": "Прокрутка или ЛКМ для переключения",
   "createidlx.gui.binaryScrollInput.true": "✔",
