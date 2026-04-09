@@ -82,6 +82,12 @@ public class CreateIDLX {
         return finalList;
     }
 
+    public static List<Component> translateMultilineTooltip(String key, int elementsWithoutHeader, int textStyle) {
+        List<Component> finalList = new ArrayList<>(List.of());
+        for (int i = 1; i < elementsWithoutHeader + 1; i++) finalList.addAll(CreateIDLX.translateMultiline(key + "_" + i, textStyle));
+        return finalList;
+    }
+
     public static List<Component> translatedOptions(String prefix, String... keys) {
         List<Component> result = new ArrayList<>(keys.length);
         for (String key : keys)

@@ -27,7 +27,9 @@ public class CreateIDLXIcons implements ScreenElement {
     private int iconY;
 
     public static final CreateIDLXIcons
-            I_SPECIFIER = newRow();
+            I_PLACEHOLDER = newRow(),
+            I_CLIPBOARD = next(),
+            I_CLIPBOARD_ITEM = next();
 
     public CreateIDLXIcons(int x, int y) {
         iconX = x * 16;

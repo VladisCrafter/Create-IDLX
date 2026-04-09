@@ -240,7 +240,7 @@ public class AttachedLabelScenes {
 
         scene.addLazyKeyframe();
 
-        scene.overlay().showControls(util.vector().centerOf(linkPos), Pointing.LEFT, 100).showing(CreateIDLXIcons.I_SPECIFIER);
+        scene.overlay().showControls(util.vector().centerOf(linkPos), Pointing.LEFT, 100).showing(CreateIDLXIcons.I_PLACEHOLDER);
         scene.idle(10);
         scene.overlay().showText(100)
                 .text("Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders")
