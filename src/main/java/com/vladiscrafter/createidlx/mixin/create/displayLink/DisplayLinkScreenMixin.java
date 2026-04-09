@@ -1,15 +1,12 @@
 package com.vladiscrafter.createidlx.mixin.create.displayLink;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.AllKeys;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
-import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
-import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
-import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
@@ -23,15 +20,14 @@ import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -39,8 +35,6 @@ import java.util.List;
 
 @Mixin(DisplayLinkScreen.class)
 public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
-//    @Unique
-//    private IconButton createidlx$specifierHelpButton;
 
     @Shadow private List<DisplaySource> sources;
     @Shadow private ScrollInput sourceTypeSelector;
@@ -52,8 +46,18 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Shadow private BlockState targetState;
     @Shadow private DisplayTarget target;
 
-    @Shadow
-    public abstract void onClose();
+    @Shadow public abstract void onClose();
+
+    @Unique private IconButton createidlx$placeholdersGuideButton;
+    @Unique private IconButton createidlx$clipboardGuideButton;
+
+    @Unique boolean createidlx$isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
+    @Unique boolean createidlx$isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();
+    @Unique boolean createidlx$isProgressBarSupportStateTooltipEnabled = CIDLXConfigs.client.enableProgressBarSupportStateTooltip.get();
+
+    @Unique boolean createidlx$isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
+    @Unique boolean createidlx$isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+    @Unique boolean createidlx$isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"))
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
@@ -130,79 +134,61 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
-        boolean isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
-        boolean isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();
-        boolean isProgressBarSupportStateTooltipEnabled = CIDLXConfigs.client.enableProgressBarSupportStateTooltip.get();
-
-        if (!isPlaceholdersGuideButtonEnabled) return;
-
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
+        if (!createidlx$isPlaceholdersGuideButtonEnabled) return;
 
         if (i < 0 || i >= sources.size()) return;
 
         DisplaySource source = sources.get(i);
         if (!(source instanceof SingleLineDisplaySource)) return;
 
-        IconButton placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_SPECIFIER);
-        placeholdersGuideButton.withCallback((mX, mY) -> {
+        createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_PLACEHOLDER);
+        createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
 
-        placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip(
-                "gui.display_link.placeholders_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
-
-        placeholdersGuideButton.getToolTip().addAll(List.of(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), Component.empty()));
-
-        if (isActiveSpecifiersTooltipEnabled) {
-            placeholdersGuideButton.getToolTip().add(
-                    ((isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_4",
-                            ((isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withStyle(s -> s.withColor(0x53e053))
-                                    : (!isDollarSignSpecifierEnabled && isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withStyle(s -> s.withColor(0xe0b653))
-                                    : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.DARK_GRAY)
-                            : CreateIDLX.translate("gui.display_link.placeholders_tooltip_4_disabled").withStyle(s -> s.withColor(0xe05353)))
-            );
-        }
-
-        if (isProgressBarSupportStateTooltipEnabled && (isDollarSignSpecifierEnabled || isBracketsSpecifierEnabled)) {
-            placeholdersGuideButton.getToolTip().addAll(
-                CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_5", ChatFormatting.DARK_GRAY.getColor(),
-                        (isCrudeProgressBarSupportEnabled)
-                                ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withStyle(s -> s.withColor(0xe0b653))
-                                : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")
-                ));
-
-        }
-
-        IconButton clipboardButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, AllIcons.I_NONE);
-        clipboardButton.withCallback((mX, mY) -> {
+        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.I_CLIPBOARD);
+        createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
         });
 
-        this.addRenderableWidget(placeholdersGuideButton);
-        this.addRenderableWidget(clipboardButton);
+        createidlx$clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
+        createidlx$clipboardGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+
+        this.addRenderableWidget(createidlx$placeholdersGuideButton);
+        this.addRenderableWidget(createidlx$clipboardGuideButton);
     }
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
-    private void injectClipboardIcon(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        int itemX = guiLeft + 37;
-        int itemY = guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 68 : 47);
+    private void injectPlaceholdersStatus(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        if (createidlx$placeholdersGuideButton != null && !AllKeys.shiftDown()) {
 
-        ItemStack clipboard = AllBlocks.CLIPBOARD.asStack();
-        clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardType.WRITTEN));
-        graphics.renderItem(clipboard, itemX, itemY);
+            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_header").withColor(0x5391E1));
+            createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.placeholders_tooltip", 3, ChatFormatting.GRAY.getColor()));
+            createidlx$placeholdersGuideButton.getToolTip().addAll(List.of(
+                    CreateIDLX.translate("gui.display_link.placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+                    CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)));
 
-        List<Component> clipboardTip = CreateIDLX.translateMultilineTooltip(
-                "gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor());
+        } else if (createidlx$placeholdersGuideButton != null) {
 
-        clipboardTip.addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_header").withColor(0x5391E1));
 
-        if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= itemY && mouseY < itemY + 16) {
-            graphics.renderComponentTooltip(Minecraft.getInstance().font, clipboardTip, mouseX, mouseY);
+            if (createidlx$isActiveSpecifiersTooltipEnabled) {
+                createidlx$placeholdersGuideButton.getToolTip().add(
+                        ((createidlx$isDollarSignSpecifierEnabled || createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1",
+                                ((createidlx$isDollarSignSpecifierEnabled && createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withColor(0x53e053)
+                                        : (!createidlx$isDollarSignSpecifierEnabled && createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withColor(0xe0b653)
+                                        : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withColor(0xe0b653))).withStyle(ChatFormatting.GRAY)
+                                : CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1_disabled").withColor(0xe05353)));
+            }
+
+            if (createidlx$isProgressBarSupportStateTooltipEnabled && (createidlx$isDollarSignSpecifierEnabled || createidlx$isBracketsSpecifierEnabled)) {
+                createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_detailed_2", ChatFormatting.GRAY.getColor(),
+                                (createidlx$isCrudeProgressBarSupportEnabled) ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withColor(0xe0b653)
+                                        : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")));
+            }
+
         }
     }
-
 }
