@@ -19,6 +19,7 @@ import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.gui.element.ScreenElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -141,13 +142,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         DisplaySource source = sources.get(i);
         if (!(source instanceof SingleLineDisplaySource)) return;
 
-        createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.I_PLACEHOLDER);
+        createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
         createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
 
-        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.I_CLIPBOARD);
+        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
         createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
@@ -166,9 +167,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
             createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_header").withColor(0x5391E1));
             createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.placeholders_tooltip", 3, ChatFormatting.GRAY.getColor()));
-            createidlx$placeholdersGuideButton.getToolTip().addAll(List.of(
-                    CreateIDLX.translate("gui.display_link.placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-                    CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)));
+            createidlx$placeholdersGuideButton.getToolTip().add(CreateIDLX.translate("gui.display_link.placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
         } else if (createidlx$placeholdersGuideButton != null) {
 
@@ -190,5 +189,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
             }
 
         }
+
+        createidlx$placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 }

@@ -3,6 +3,7 @@ package com.vladiscrafter.createidlx.foundation.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.simibubi.create.foundation.gui.AllIcons;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.element.ScreenElement;
@@ -30,6 +31,13 @@ public class CreateIDLXIcons implements ScreenElement {
             I_PLACEHOLDER = newRow(),
             I_CLIPBOARD = next(),
             I_CLIPBOARD_ITEM = next();
+
+    public static final ScreenElement
+            placeholdersIcon = I_PLACEHOLDER,
+            clipboardIcon = /*!isAltClipboardIconSelected ?*/ I_CLIPBOARD /*: I_CLIPBOARD_ITEM*/,
+            labelIcon = AllIcons.I_WHITELIST_OR,
+            configIcon = AllIcons.I_VIEW_SCHEDULE,
+            targetIcon = AllIcons.I_PASSIVE;
 
     public CreateIDLXIcons(int x, int y) {
         iconX = x * 16;

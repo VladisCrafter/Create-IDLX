@@ -15,13 +15,13 @@
   "createidlx.gui.display_link.progress_bar_support.enabled": "enabled",
   "createidlx.gui.display_link.progress_bar_support.disabled": "disabled",
 
-  "createidlx.gui.display_link.clipboard_tooltip_header": "Duplicating Display Link Settings",
+  "createidlx.gui.display_link.clipboard_tooltip_header": "Duplicating Display Link Properties",
   "createidlx.gui.display_link.clipboard_tooltip_1": "Use a clipboard to carry the settings\nover from one Display Link to another:",
   "createidlx.gui.display_link.clipboard_tooltip_2": "right-click the first one to select\nwhich settings will be copied from it,",
   "createidlx.gui.display_link.clipboard_tooltip_3": "then left-click the other one to choose\nwhat to apply from the saved settings.",
 
-  "createidlx.gui.clipboard_display_source.title.copy": "Copying Display Link Settings",
-  "createidlx.gui.clipboard_display_source.title.paste": "Applying Display Link Settings",
+  "createidlx.gui.clipboard_display_source.title.copy": "Copying Display Link Properties",
+  "createidlx.gui.clipboard_display_source.title.paste": "Applying Display Link Properties",
 
   "createidlx.gui.clipboard_display_source.display_link_icon.copy": "Origin Display Link",
   "createidlx.gui.clipboard_display_source.display_link_icon.paste": "Inheritor Display Link",
@@ -144,5 +144,28 @@
   "createidlx.ponder.attached_label.text_10": "TOTAL PRICE: \\${}/STACK",
   "createidlx.ponder.attached_label.text_11": "As long as there are no unescaped placeholders present in the label altogether, default concatenation by a space will be applied",
   "createidlx.ponder.attached_label.text_12": "\\$ \\{} \\$ \\{} \\$ \\{}",
-  "createidlx.ponder.attached_label.text_13": "Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders"
+  "createidlx.ponder.attached_label.text_13": "Hover over the Placeholders Usage Guide button in the Interface to see a tooltip briefly explaining placeholders",
+
+  "createidlx.ponder.clipboard_copying.header": "Duplicating Display Link Properties using a Clipboard",
+  "createidlx.ponder.clipboard_copying.text_1": "Setting up multiple Display Links with identical settings can be time-consuming",
+  "createidlx.ponder.clipboard_copying.text_2": "$ REMAINING",
+  "createidlx.ponder.clipboard_copying.text_3": "-> Remaining SU",
+  "createidlx.ponder.clipboard_copying.text_4": "A Clipboard can be used to speed up the process of setting identical values",
+  "createidlx.ponder.clipboard_copying.text_5": "Right-click the Display Link with the Clipboard to open the Copying Interface...",
+  "createidlx.ponder.clipboard_copying.text_6": "...and choose which settings to save",
+  "createidlx.ponder.clipboard_copying.text_7": "The available options will be selected by default...",
+  "createidlx.ponder.clipboard_copying.text_8": "Copy the Attached Label",
+  "createidlx.ponder.clipboard_copying.text_9": "Copy Type-Specific Parameters",
+  "createidlx.ponder.clipboard_copying.text_10": "Copy the Target Display Position",
+  "createidlx.ponder.clipboard_copying.text_11": "...but you can deselect any of them, and respective settings won't be saved",
+  "createidlx.ponder.clipboard_copying.text_12": "Copy the Target Display Position",
+  "createidlx.ponder.clipboard_copying.text_13": "Then left-click the other Display Link with the Clipboard to open the Applying Interface",
+  "createidlx.ponder.clipboard_copying.text_14": "The options saved before will also be selected by default...",
+  "createidlx.ponder.clipboard_copying.text_15": "Apply the Attached Label",
+  "createidlx.ponder.clipboard_copying.text_16": "Apply Type-Specific Parameters",
+  "createidlx.ponder.clipboard_copying.text_17": "...but you can deselect any of them here as well, and respective settings won't be applied",
+  "createidlx.ponder.clipboard_copying.text_18": "Apply the Attached Label",
+
+  "createidlx.ponder.shared.consumption_label": "CONSUMPTION:",
+  "createidlx.ponder.shared.kinetic_stress_option": "-> Stress in SU"
 }
