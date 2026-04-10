@@ -1,6 +1,6 @@
 package com.vladiscrafter.createidlx;
 
-import com.vladiscrafter.createidlx.foundation.ponder.CIDLXPonderPlugin;
+import com.vladiscrafter.createidlx.infrastructure.ponder.CIDLXPonderPlugin;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.neoforged.api.distmarker.Dist;

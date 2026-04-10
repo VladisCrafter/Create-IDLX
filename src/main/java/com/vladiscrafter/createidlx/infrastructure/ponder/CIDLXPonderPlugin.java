@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.foundation.ponder;
+package com.vladiscrafter.createidlx.infrastructure.ponder;
 
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.createmod.ponder.api.registration.PonderPlugin;
@@ -26,6 +26,8 @@ public class CIDLXPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerSharedText(SharedTextRegistrationHelper helper) {
+        helper.registerSharedText("consumption_label", "CONSUMPTION:");
+        helper.registerSharedText("kinetic_stress_option", "-> Stress in SU");
     }
 
 }

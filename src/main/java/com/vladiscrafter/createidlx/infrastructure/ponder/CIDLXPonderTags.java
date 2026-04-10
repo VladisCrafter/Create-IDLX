@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.foundation.ponder;
+package com.vladiscrafter.createidlx.infrastructure.ponder;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;

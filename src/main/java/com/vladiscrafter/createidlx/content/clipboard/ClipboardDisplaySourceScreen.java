@@ -11,12 +11,14 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
+import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.gui.widget.ElementWidget;
@@ -72,7 +74,6 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
     protected IconButton labelButton;
     protected IconButton configButton;
     protected IconButton targetButton;
-
     protected IconButton confirmButton;
 
     public ClipboardDisplaySourceScreen(DisplayLinkBlockEntity displayLink, boolean paste,
@@ -95,9 +96,9 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
         checkOptionsAvailability();
 
-        labelButton = new IconButton(x + (!paste ? 36 : 103), y + (!paste ? 64 : 25), AllIcons.I_WHITELIST_OR);
-        configButton = new IconButton(x + (!paste ? 76 : 143), y + (!paste ? 64 : 25), AllIcons.I_VIEW_SCHEDULE);
-        targetButton = new IconButton(x + (!paste ? 116 : 183), y + (!paste ? 64 : 25), AllIcons.I_PASSIVE);
+        labelButton = new IconButton(x + (!paste ? 36 : 103), y + (!paste ? 64 : 25), CreateIDLXIcons.labelIcon);
+        configButton = new IconButton(x + (!paste ? 76 : 143), y + (!paste ? 64 : 25), CreateIDLXIcons.configIcon);
+        targetButton = new IconButton(x + (!paste ? 116 : 183), y + (!paste ? 64 : 25), CreateIDLXIcons.targetIcon);
 
         labelButton.setToolTip(translateLocalBin("label_button")
                 .withStyle(s -> s.withColor(0x5391E1)));
