@@ -163,14 +163,13 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
     private void injectPlaceholdersStatus(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        if (createidlx$placeholdersGuideButton != null && !AllKeys.shiftDown()) {
+        if (createidlx$placeholdersGuideButton == null) return;
 
+        if (!AllKeys.shiftDown()) {
             createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_header").withColor(0x5391E1));
             createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.placeholders_tooltip", 3, ChatFormatting.GRAY.getColor()));
             createidlx$placeholdersGuideButton.getToolTip().add(CreateIDLX.translate("gui.display_link.placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-
-        } else if (createidlx$placeholdersGuideButton != null) {
-
+        } else {
             createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_header").withColor(0x5391E1));
 
             if (createidlx$isActiveSpecifiersTooltipEnabled) {
