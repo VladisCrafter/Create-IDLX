@@ -1,18 +1,11 @@
-package com.vladiscrafter.createidlx.content.source;
+package com.vladiscrafter.createidlx.content.displayLink.source;
 
-import com.google.common.collect.ImmutableList;
-import com.simibubi.create.content.contraptions.elevator.ElevatorColumn;
-import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.api.distmarker.Dist;

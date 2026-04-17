@@ -1,10 +1,9 @@
-package com.vladiscrafter.createidlx.content.source;
+package com.vladiscrafter.createidlx.content.displayLink.source;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.content.kinetics.clock.CuckooClockBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
-import com.simibubi.create.content.redstone.displayLink.source.TimeOfDayDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 
@@ -18,7 +17,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.List;
 import java.util.Locale;
 
 public class CountdownDisplaySource extends SingleLineDisplaySource {
@@ -56,10 +54,13 @@ public class CountdownDisplaySource extends SingleLineDisplaySource {
         MutableComponent component;
 
         if (diff <= total) {
+            int hours = ((total - diff) / 60 / 60 / 20) % 60;
             int minutes = ((total - diff) / 60 / 20) % 60;
             int seconds = ((total - diff) / 20) % 60;
 
-            component = Component.literal(String.format(Locale.ROOT, "%01d:%02d", minutes, seconds));
+            component = hours > 0
+                    ? Component.literal(String.format(Locale.ROOT, "%01d:%02d:%02d", hours, minutes, seconds))
+                    : Component.literal(String.format(Locale.ROOT, "%01d:%02d", minutes, seconds));
         } else {
             component = !overrideLabelOnFinish ? Component.literal(finishLabel) : Component.literal("0:00");
             context.sourceConfig().putBoolean("IsCountdownFinished", true);;

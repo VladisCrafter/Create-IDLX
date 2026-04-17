@@ -8,7 +8,7 @@ import com.simibubi.create.content.redstone.displayLink.source.StopWatchDisplayS
 import com.simibubi.create.content.redstone.displayLink.source.TimeOfDayDisplaySource;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.content.source.*;
+import com.vladiscrafter.createidlx.content.displayLink.source.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.RegisterEvent;

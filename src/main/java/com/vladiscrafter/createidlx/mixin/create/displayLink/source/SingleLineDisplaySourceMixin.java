@@ -13,7 +13,7 @@ import com.simibubi.create.content.trains.display.FlapDisplaySection;
 
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
-import com.vladiscrafter.createidlx.content.source.CountdownDisplaySource;
+import com.vladiscrafter.createidlx.content.displayLink.source.CountdownDisplaySource;
 import com.vladiscrafter.createidlx.util.CreateIDLXMixinUtils;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;

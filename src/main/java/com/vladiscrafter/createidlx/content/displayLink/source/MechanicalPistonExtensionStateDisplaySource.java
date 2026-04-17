@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.content.source;
+package com.vladiscrafter.createidlx.content.displayLink.source;
 
 import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
