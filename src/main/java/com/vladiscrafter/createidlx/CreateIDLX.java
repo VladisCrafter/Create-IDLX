@@ -69,6 +69,7 @@ public class CreateIDLX {
         return split;
     }
 
+    @SafeVarargs
     public static List<Component> translateMultilineList(List<MutableComponent>... elements) {
         List<Component> finalList = new ArrayList<>(List.of());
         for (List<MutableComponent> element : elements) finalList.addAll(element);

@@ -3,6 +3,10 @@ package com.vladiscrafter.createidlx.foundation.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
+import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -13,6 +17,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -35,9 +40,9 @@ public class CreateIDLXIcons implements ScreenElement {
     public static final ScreenElement
             placeholdersIcon = I_PLACEHOLDER,
             clipboardIcon = /*!isAltClipboardIconSelected ?*/ I_CLIPBOARD /*: I_CLIPBOARD_ITEM*/,
-            labelIcon = AllIcons.I_WHITELIST_OR,
+            labelIcon = AllIcons.I_PASSIVE,
             configIcon = AllIcons.I_VIEW_SCHEDULE,
-            targetIcon = AllIcons.I_PASSIVE;
+            targetIcon = AllIcons.I_TOOL_DEPLOY;
 
     public CreateIDLXIcons(int x, int y) {
         iconX = x * 16;
