@@ -18,7 +18,7 @@ public class CIDLXPonderScenes {
                                 AllCreatePonderTags.DISPLAY_SOURCES, AllCreatePonderTags.DISPLAY_TARGETS)
                         .addStoryBoard("clipboard_copying", DisplayLinkExtendedScenes::clipboardCopying,
                                 AllCreatePonderTags.DISPLAY_SOURCES, AllCreatePonderTags.DISPLAY_TARGETS)
-                        .addStoryBoard("clipboard_copying_properties", DisplayLinkExtendedScenes::clipboardCopyingProperties,
+                        .addStoryBoard("clipboard_copiable_properties", DisplayLinkExtendedScenes::clipboardCopiableProperties,
                                 AllCreatePonderTags.DISPLAY_SOURCES, AllCreatePonderTags.DISPLAY_TARGETS);
     }
 }
