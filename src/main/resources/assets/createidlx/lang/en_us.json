@@ -73,12 +73,13 @@
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.config.detailed.plural": "%s Type-Specific Parameters",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.config.detailed.plural_alt": "%s Type-Specific Parameters",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target": "Target Display Position",
-  "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed": "[%1$s, %2$s, %3$s] %4$s",
+  "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed": "[%1$s, %2$s, %3$s] %4$s (%5$s)",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.overworld": "in the Overworld",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.nether": "in the Nether",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.end": "in the End",
   "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.dimension.unknown": "in '%s'",
-  "createidlx.gui.clipboard_display_source.clipboard_visual.contents.hint": "Shift to Show the Values",
+  "createidlx.gui.clipboard_display_source.clipboard_visual.contents.target.detailed.line.single_line": "Single Line",
+  "createidlx.gui.clipboard_display_source.clipboard_visual.contents.hint": "Shift to Show the Details",
 
   "createidlx.gui.generic.click_to_ponder": "Click to open the respective Ponder scene",
 

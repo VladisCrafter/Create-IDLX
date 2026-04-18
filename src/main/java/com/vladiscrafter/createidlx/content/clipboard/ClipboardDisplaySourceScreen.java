@@ -3,11 +3,13 @@ package com.vladiscrafter.createidlx.content.clipboard;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllKeys;
+import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
@@ -291,10 +293,18 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
                             : targetDimStr.equals("minecraft:the_end") ? "end"
                                 : "unknown"), targetDimStr);
 
+        DisplayTarget activeTarget = displayLink.activeTarget;
         BlockPos targetPos = BlockPos.ZERO;
-        if (!paste) targetPos = displayLink.getTargetPosition();
-        else if (clipboardSnapshot != null)
+        int targetLine = 0;
+
+        if (!paste) {
+            targetPos = displayLink.getTargetPosition();
+            targetLine = displayLink.targetLine;
+        }
+        else if (clipboardSnapshot != null) {
             targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource"), "TargetPos").orElse(BlockPos.ZERO);
+            targetLine = clipboardSnapshot.getCompound("DisplaySource").getInt("TargetLine");
+        }
 
         ItemStack clipboard = AllBlocks.CLIPBOARD.asStack();
         if (!paste) clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(
@@ -340,7 +350,9 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
         Component targetDetailed = translateLocalBin("clipboard_visual.contents.prefix",
                 translateLocal("clipboard_visual.contents.target.detailed",
-                        targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetDim).withStyle(ChatFormatting.GRAY),
+                        targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetDim,
+                        (activeTarget != null ? (activeTarget.getLineOptionText(targetLine).getString().equals(CreateLang.translateDirect("display_target.single_line").getString())
+                                        ? translateLocal("clipboard_visual.contents.target.detailed.line.single_line") : activeTarget.getLineOptionText(targetLine)) : "—")).withStyle(ChatFormatting.GRAY),
                 translateLocal("clipboard_visual.contents.postfix." + "last_" + "entry")
                 .withStyle(ChatFormatting.GRAY))
                 .withStyle(!paste ? ChatFormatting.GREEN : ChatFormatting.WHITE);
