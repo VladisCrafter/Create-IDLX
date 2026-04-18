@@ -197,7 +197,7 @@ public class DisplayLinkExtendedScenes {
                 .colored(PonderPalette.INPUT)
                 .placeNearTarget();
         scene.idle(30);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.attached_label.text_10").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.attached_label.text_8").getString()
                 .replaceAll("\\\\\\$", Matcher.quoteReplacement("$"))
                 .replaceAll("\\{}", "12")));
         scene.world().flashDisplayLink(linkPos);
@@ -437,7 +437,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Copy the Attached Label")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.label_button.copy").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -445,7 +445,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Copy Type-Specific Parameters")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.config_button.copy").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -453,7 +453,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Copy the Target Display Position")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.target_button.copy").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -468,7 +468,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Copy the Target Display Position")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.target_button.copy").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.BLACK)
                 .placeNearTarget();
@@ -493,7 +493,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Apply the Attached Label")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.label_button.paste").getString())
                 .pointAt(util.vector().centerOf(link2Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -501,7 +501,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Apply Type-Specific Parameters")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.config_button.paste").getString())
                 .pointAt(util.vector().centerOf(link2Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -516,7 +516,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(70);
 
         scene.overlay().showText(60)
-                .text("Apply the Attached Label")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.label_button.paste").getString())
                 .pointAt(util.vector().centerOf(link2Pos))
                 .colored(PonderPalette.BLACK)
                 .placeNearTarget();
@@ -747,7 +747,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link2Pos), Pointing.DOWN, 40).withItem(AllBlocks.CLIPBOARD.asStack()).rightClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Copy the Attached Label")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.label_button.copy").getString())
                 .pointAt(util.vector().centerOf(link2Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -757,7 +757,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link3Pos), Pointing.DOWN, 40).withItem(filledClipboard).leftClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Apply the Attached Label")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.label_button.paste").getString())
                 .pointAt(util.vector().centerOf(link3Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -862,7 +862,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
 
         scene.effects().indicateSuccess(link5Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_10").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_8").getString()
                 .replaceAll("\\$", Component.literal("15:55").getString())));
         scene.world().flashDisplayLink(link5Pos);
         scene.idle(20);
@@ -885,7 +885,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
 
         scene.effects().indicateSuccess(link6Pos);
-        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_11").getString()
+        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_9").getString()
                 .replaceAll("\\$", Component.literal(" 3:55 ").append(CreateLang.translateDirect("generic.daytime.pm")).getString())));
         scene.world().flashDisplayLink(link6Pos);
         scene.idle(20);
@@ -912,7 +912,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link5Pos), Pointing.DOWN, 40).withItem(AllBlocks.CLIPBOARD.asStack()).rightClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Copy Type-Specific Parameters")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.config_button.copy").getString())
                 .pointAt(util.vector().centerOf(link5Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -922,7 +922,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link6Pos), Pointing.DOWN, 40).withItem(filledClipboard).leftClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Apply Type-Specific Parameters")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.config_button.paste").getString())
                 .pointAt(util.vector().centerOf(link6Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -930,7 +930,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(65);
 
         scene.effects().indicateSuccess(link6Pos);
-        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_11").getString()
+        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_9").getString()
                 .replaceAll("\\$", Component.literal("15:55").getString())));
         scene.world().flashDisplayLink(link6Pos);
         scene.idle(60);
@@ -1032,7 +1032,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link8Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state.used_n_total").getString())
+                .sharedText("selector", CreateIDLX.translate("display_source.mechanical_piston_extension_state.used_n_total").getString())
                 .pointAt(util.vector().centerOf(link8Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1040,7 +1040,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.effects().indicateSuccess(link8Pos);
         scene.world().dyeDisplayBoard(secBoard, 0, DyeColor.YELLOW);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
@@ -1058,7 +1058,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link9Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state").getString())
+                .sharedText("selector", CreateIDLX.translate("display_source.mechanical_piston_extension_state").getString())
                 .pointAt(util.vector().centerOf(link9Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1071,14 +1071,14 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link9Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state.used_percent").getString())
+                .sharedText("selector", CreateIDLX.translate("display_source.mechanical_piston_extension_state.used_percent").getString())
                 .pointAt(util.vector().centerOf(link9Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
         scene.idle(30);
 
         scene.effects().indicateSuccess(link9Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_16").getString()
                 .replaceAll("\\$", "100%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(20);
@@ -1092,19 +1092,19 @@ public class DisplayLinkExtendedScenes {
         scene.world().moveSection(piston1Element, util.vector().of(1, 0, 0), 80);
         scene.world().moveSection(piston2Element, util.vector().of(1, 0, 0), 80);
         scene.idle(40);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0,5", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_16").getString()
                 .replaceAll("\\$", "50%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "1", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_16").getString()
                 .replaceAll("\\$", "0%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
@@ -1119,7 +1119,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link8Pos), Pointing.DOWN, 40).withItem(AllBlocks.CLIPBOARD.asStack()).rightClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Copy the Target Display Position")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.target_button.copy").getString())
                 .pointAt(util.vector().centerOf(link8Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -1129,7 +1129,7 @@ public class DisplayLinkExtendedScenes {
         scene.overlay().showControls(util.vector().centerOf(link9Pos), Pointing.DOWN, 40).withItem(filledClipboard).leftClick();
         scene.idle(50);
         scene.overlay().showText(60)
-                .text("Apply the Target Display Position")
+                .sharedText("holder", CreateIDLX.translate("gui.clipboard_display_source.target_button.paste").getString())
                 .pointAt(util.vector().centerOf(link9Pos))
                 .colored(PonderPalette.MEDIUM)
                 .placeNearTarget();
@@ -1137,7 +1137,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(65);
 
         scene.effects().indicateSuccess(link9Pos);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         String.valueOf(1), String.valueOf(1)).getString())));
         scene.world().flashDisplayLink(link9InitialPos);
@@ -1152,19 +1152,19 @@ public class DisplayLinkExtendedScenes {
         scene.world().moveSection(piston1Element, util.vector().of(-1, 0, 0), 80);
         scene.world().moveSection(piston2Element, util.vector().of(-1, 0, 0), 80);
         scene.idle(40);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0,5", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_16").getString()
                 .replaceAll("\\$", "50%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_16").getString()
                 .replaceAll("\\$", "100%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
