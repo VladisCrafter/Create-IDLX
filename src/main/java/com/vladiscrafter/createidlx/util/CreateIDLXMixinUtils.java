@@ -10,20 +10,20 @@ import java.util.regex.Matcher;
 public final class CreateIDLXMixinUtils {
     private CreateIDLXMixinUtils() {}
 
-    public static boolean hasUnescapedSpecifiers(String s) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+    public static boolean hasUnescapedPlaceholders(String s) {
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
 
         for (int i = 0; i < s.length(); i++) {
-            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\') && isDollarSignSpecifierEnabled)
-                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\') && isBracketsSpecifierEnabled)) {
+            if ((s.charAt(i) == '$' && (i == 0 || s.charAt(i - 1) != '\\') && isDollarSignPlaceholderEnabled)
+                    || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && (i == 0 || s.charAt(i - 1) != '\\') && isBracketsPlaceholderEnabled)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean hasEscapedSpecifiers(String s) {
+    public static boolean hasEscapedPlaceholders(String s) {
         for (int i = 1; i < s.length(); i++) {
             if ((s.charAt(i) == '$' && s.charAt(i - 1) == '\\') || (s.charAt(i) == '{' && s.charAt(i + 1) == '}' && s.charAt(i - 1) == '\\')) {
                 return true;
@@ -38,69 +38,69 @@ public final class CreateIDLXMixinUtils {
 
 //    @Deprecated (not yet)
     public static String assembleFullLine(DisplayLinkContext context, String raw) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+        boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
 
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return raw;
 
         String result = label;
-        if (hasUnescapedSpecifiers(label)) {
-            if (isDollarSignSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
-            if (isBracketsSpecifierEnabled) result = result.replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
+        if (hasUnescapedPlaceholders(label)) {
+            if (isDollarSignPlaceholderEnabled) result = result.replaceAll("(?<!\\\\)\\$", Matcher.quoteReplacement(raw));
+            if (isBracketsPlaceholderEnabled) result = result.replaceAll("(?<!\\\\)\\{}", Matcher.quoteReplacement(raw));
         } else {
             result = label + " " + raw;
         }
 
-        if (isDollarSignSpecifierEnabled) result = result.replaceAll("\\\\\\$", "\\$");
-        if (isBracketsSpecifierEnabled) result = result.replaceAll("\\\\\\{}", "{}");
-        if (hideEscapingOfDisabledSpecifiers) result = result
+        if (isDollarSignPlaceholderEnabled) result = result.replaceAll("\\\\\\$", "\\$");
+        if (isBracketsPlaceholderEnabled) result = result.replaceAll("\\\\\\{}", "{}");
+        if (hideEscapingOfDisabledPlaceholders) result = result
                 .replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\\{}", "{}");
 
         return result;
     }
 
-    public static Tuple<ArrayList<Object>, Integer> breakDownLabelWithSpecifiers(String label) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
+    public static Tuple<ArrayList<Object>, Integer> breakDownLabelWithPlaceholders(String label) {
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+        boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
 
         StringBuilder breakableLabel = new StringBuilder(label);
         ArrayList<Object> labelParts = new ArrayList<>();
-        int amountOfSpecifiers = 0;
+        int amountOfPlaceholders = 0;
 
         while (!breakableLabel.isEmpty()) {
             StringBuilder labelPart = new StringBuilder();
-            boolean foundSpecifier = false;
+            boolean foundPlaceholder = false;
 
             for (int i = 0; i < breakableLabel.length(); i++) {
                 if ((breakableLabel.charAt(i) == '$' && (i == 0 || breakableLabel.charAt(i - 1) != '\\')
-                && isDollarSignSpecifierEnabled)
+                && isDollarSignPlaceholderEnabled)
                 || (breakableLabel.charAt(i) == '{' && breakableLabel.charAt(i + 1) == '}' && (i == 0 || breakableLabel.charAt(i - 1) != '\\')
-                && isBracketsSpecifierEnabled)) {
+                && isBracketsPlaceholderEnabled)) {
                     if (!labelPart.isEmpty()) {
                         labelParts.add(labelPart.toString());
                     }
 
                     labelParts.add((char) '$');
-                    amountOfSpecifiers++;
+                    amountOfPlaceholders++;
                     breakableLabel.delete(0, i + (breakableLabel.charAt(i) == '$' ? 1 : 2));
-                    foundSpecifier = true;
+                    foundPlaceholder = true;
                     break;
                 }
 
 //                if (i > 0 && ((label.charAt(i) == '$' && label.charAt(i - 1) == '\\'
-//                        && (isDollarSignSpecifierEnabled || hideEscapingOfDisabledSpecifiers))
+//                        && (isDollarSignPlaceholderEnabled || hideEscapingOfDisabledPlaceholders))
 //                        || (label.charAt(i) == '{' && label.charAt(i + 1) == '}' && label.charAt(i - 1) == '\\'
-//                        && (isBracketsSpecifierEnabled || hideEscapingOfDisabledSpecifiers)))) {
+//                        && (isBracketsPlaceholderEnabled || hideEscapingOfDisabledPlaceholders)))) {
 //                    breakableLabel.delete(0, i - 1);
 //                }
 
                 labelPart.append(breakableLabel.charAt(i));
             }
 
-            if (!foundSpecifier) {
+            if (!foundPlaceholder) {
                 labelParts.add(breakableLabel.toString());
                 breakableLabel.setLength(0);
             }
@@ -110,27 +110,27 @@ public final class CreateIDLXMixinUtils {
 //        if (labelParts.getLast() instanceof Character) labelParts.addLast("");
 //        CreateIDLX.LOGGER.info(String.valueOf(labelParts));
 
-        Tuple<ArrayList<Object>, Integer> labelPartsAndAmountOfSpecifiers = new Tuple<>(labelParts, amountOfSpecifiers);
-        return labelPartsAndAmountOfSpecifiers;
+        Tuple<ArrayList<Object>, Integer> labelPartsAndAmountOfPlaceholders = new Tuple<>(labelParts, amountOfPlaceholders);
+        return labelPartsAndAmountOfPlaceholders;
     }
 
-    public static int getLabelSizeAccountingSpecifiers(String label) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
+    public static int getLabelSizeAccountingPlaceholders(String label) {
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+        boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
 
         int labelSize = label.length();
 
         for (int i = 0; i < label.length(); i++) {
             if ((label.charAt(i) == '$'
-                    && (i == 0 || label.charAt(i - 1) != '\\') && isDollarSignSpecifierEnabled)) labelSize -= 1;
+                    && (i == 0 || label.charAt(i - 1) != '\\') && isDollarSignPlaceholderEnabled)) labelSize -= 1;
             if (label.charAt(i) == '{'
-                    && label.charAt(i + 1) == '}' && (i == 0 || label.charAt(i - 1) != '\\') && isBracketsSpecifierEnabled) labelSize -= 2;
+                    && label.charAt(i + 1) == '}' && (i == 0 || label.charAt(i - 1) != '\\') && isBracketsPlaceholderEnabled) labelSize -= 2;
 
             if (i > 0 && ((label.charAt(i) == '$' && label.charAt(i - 1) == '\\'
-                    && (isDollarSignSpecifierEnabled || hideEscapingOfDisabledSpecifiers))
+                    && (isDollarSignPlaceholderEnabled || hideEscapingOfDisabledPlaceholders))
             || (label.charAt(i) == '{' && label.charAt(i + 1) == '}' && label.charAt(i - 1) == '\\'
-                    && (isBracketsSpecifierEnabled || hideEscapingOfDisabledSpecifiers)))) {
+                    && (isBracketsPlaceholderEnabled || hideEscapingOfDisabledPlaceholders)))) {
                 labelSize -= 1;
             }
         }
@@ -138,22 +138,22 @@ public final class CreateIDLXMixinUtils {
         return labelSize;
     }
 
-    public static int countUnescapedSpecifiers(String label) {
-        boolean isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-        boolean isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
-        boolean hideEscapingOfDisabledSpecifiers = CIDLXConfigs.server.hideEscapingOfDisabledSpecifiers.get();
+    public static int countUnescapedPlaceholders(String label) {
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+        boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
 
-        int specifiers = 0;
+        int placeholders = 0;
 
         for (int i = 0; i < label.length(); i++) {
             if ((label.charAt(i) == '$' && (i == 0 || label.charAt(i - 1) != '\\')
-                    && isDollarSignSpecifierEnabled)
+                    && isDollarSignPlaceholderEnabled)
             || (label.charAt(i) == '{' && label.charAt(i + 1) == '}' && (i == 0 || label.charAt(i - 1) != '\\')
-                    && isBracketsSpecifierEnabled)) {
-                specifiers++;
+                    && isBracketsPlaceholderEnabled)) {
+                placeholders++;
             }
         }
 
-        return specifiers;
+        return placeholders;
     }
 }

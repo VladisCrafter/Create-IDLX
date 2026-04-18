@@ -53,11 +53,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Unique private IconButton createidlx$clipboardGuideButton;
 
     @Unique boolean createidlx$isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
-    @Unique boolean createidlx$isActiveSpecifiersTooltipEnabled = CIDLXConfigs.client.enableActiveSpecifiersTooltip.get();
+    @Unique boolean createidlx$isActivePlaceholdersTooltipEnabled = CIDLXConfigs.client.enableActivePlaceholdersTooltip.get();
     @Unique boolean createidlx$isProgressBarSupportStateTooltipEnabled = CIDLXConfigs.client.enableProgressBarSupportStateTooltip.get();
 
-    @Unique boolean createidlx$isDollarSignSpecifierEnabled = CIDLXConfigs.server.enableDollarSpecifier.get();
-    @Unique boolean createidlx$isBracketsSpecifierEnabled = CIDLXConfigs.server.enableBracketsSpecifier.get();
+    @Unique boolean createidlx$isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+    @Unique boolean createidlx$isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
     @Unique boolean createidlx$isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"))
@@ -172,16 +172,16 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         } else {
             createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_header").withColor(0x5391E1));
 
-            if (createidlx$isActiveSpecifiersTooltipEnabled) {
+            if (createidlx$isActivePlaceholdersTooltipEnabled) {
                 createidlx$placeholdersGuideButton.getToolTip().add(
-                        ((createidlx$isDollarSignSpecifierEnabled || createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1",
-                                ((createidlx$isDollarSignSpecifierEnabled && createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withColor(0x53e053)
-                                        : (!createidlx$isDollarSignSpecifierEnabled && createidlx$isBracketsSpecifierEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withColor(0xe0b653)
+                        ((createidlx$isDollarSignPlaceholderEnabled || createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1",
+                                ((createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withColor(0x53e053)
+                                        : (!createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withColor(0xe0b653)
                                         : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withColor(0xe0b653))).withStyle(ChatFormatting.GRAY)
                                 : CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1_disabled").withColor(0xe05353)));
             }
 
-            if (createidlx$isProgressBarSupportStateTooltipEnabled && (createidlx$isDollarSignSpecifierEnabled || createidlx$isBracketsSpecifierEnabled)) {
+            if (createidlx$isProgressBarSupportStateTooltipEnabled && (createidlx$isDollarSignPlaceholderEnabled || createidlx$isBracketsPlaceholderEnabled)) {
                 createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_detailed_2", ChatFormatting.GRAY.getColor(),
                                 (createidlx$isCrudeProgressBarSupportEnabled) ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withColor(0xe0b653)
                                         : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")));
