@@ -19,7 +19,6 @@ import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
-import net.createmod.catnip.gui.element.ScreenElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -52,7 +51,8 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Unique private IconButton createidlx$placeholdersGuideButton;
     @Unique private IconButton createidlx$clipboardGuideButton;
 
-    @Unique boolean createidlx$isPlaceholdersGuideButtonEnabled = CIDLXConfigs.client.enablePlaceholdersGuideButton.get();
+    @Unique boolean createidlx$areGuideButtonsEnabled = CIDLXConfigs.client.enableGuideButtons.get();
+    @Unique boolean createidlx$areGuideButtonRedirectsEnabled = CIDLXConfigs.client.enableGuideButtonRedirects.get();
     @Unique boolean createidlx$isActivePlaceholdersTooltipEnabled = CIDLXConfigs.client.enableActivePlaceholdersTooltip.get();
     @Unique boolean createidlx$isProgressBarSupportStateTooltipEnabled = CIDLXConfigs.client.enableProgressBarSupportStateTooltip.get();
 
@@ -135,7 +135,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
-        if (!createidlx$isPlaceholdersGuideButtonEnabled) return;
+        if (!createidlx$areGuideButtonsEnabled) return;
 
         if (i < 0 || i >= sources.size()) return;
 
@@ -143,19 +143,21 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (!(source instanceof SingleLineDisplaySource)) return;
 
         createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
-        createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
+        else createidlx$placeholdersGuideButton.active = false;
 
         createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
-        createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
         });
+        else createidlx$clipboardGuideButton.active = false;
 
         createidlx$clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
-        createidlx$clipboardGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
         this.addRenderableWidget(createidlx$placeholdersGuideButton);
         this.addRenderableWidget(createidlx$clipboardGuideButton);
@@ -189,6 +191,6 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
         }
 
-        createidlx$placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 }

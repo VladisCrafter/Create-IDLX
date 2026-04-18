@@ -41,7 +41,7 @@
   "createidlx.gui.clipboard_display_source.target_button.tip": "Может быть применено к любому передатчику\nв пределах допустимой дальности.",
 
   "createidlx.gui.clipboard_display_source.button.disabled": "Отключено по умолчанию:",
-  "createidlx.gui.clipboard_display_source.label_button.disabled_reason.empty": "Добавочная надпись\nкопируемого передатчика пуста\n(её применение сотрёт текущую\nнадпись перенимающего)",
+  "createidlx.gui.clipboard_display_source.label_button.disabled_reason.empty": "Добавочная надпись\nкопируемого передатчика пуста\n(её применение сотрёт текущую\nнадпись перенимающего).",
 
   "createidlx.gui.clipboard_display_source.button.unavailable": "Недоступно:",
   "createidlx.gui.clipboard_display_source.label_button.unavailable_reason.origin_labelless": "тип информации копируемого передатчика\nне поддерживает «добавочную надпись».",
