@@ -12,6 +12,7 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
@@ -77,6 +78,8 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
     protected IconButton configButton;
     protected IconButton targetButton;
     protected IconButton confirmButton;
+
+    boolean isEmptyAttachedLabelDeselected = CIDLXConfigs.client.deselectEmptyAttachedLabel.get();
 
     public ClipboardDisplaySourceScreen(DisplayLinkBlockEntity displayLink, boolean paste,
                                         @Nullable CompoundTag clipboardSnapshot, Direction interactionFace) {
@@ -173,8 +176,8 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
         } else if (paste && !clipboardSnapshot.getCompound("DisplaySource").contains("AttachedLabel")) {
             includeLabel = labelAvailable = false;
             labelUnavailabilityReason = "not_saved";
-        } else if ((!paste && displayLink.getSourceConfig().getString("Label").isEmpty())
-                || (paste && clipboardSnapshot.getCompound("DisplaySource").getString("AttachedLabel").isEmpty())) {
+        } else if (isEmptyAttachedLabelDeselected && ((!paste && displayLink.getSourceConfig().getString("Label").isEmpty())
+                || (paste && clipboardSnapshot.getCompound("DisplaySource").getString("AttachedLabel").isEmpty()))) {
             includeLabel = labelEnabled = false;
             labelAvailable = true;
         }
