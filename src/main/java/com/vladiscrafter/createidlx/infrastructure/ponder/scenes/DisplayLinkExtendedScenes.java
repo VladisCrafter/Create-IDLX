@@ -306,7 +306,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link1Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .sharedText("kinetic_stress_option")
+                .sharedText("selector", CreateLang.translateDirect("display_source.kinetic_stress.current").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -395,13 +395,13 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link1Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Remaining SU")
+                .sharedText("selector", CreateLang.translateDirect("display_source.kinetic_stress.remaining").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .placeNearTarget();
         scene.idle(30);
 
         scene.effects().indicateSuccess(link1Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copying.text_2").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copying.text_1").getString()
                 .replaceAll("\\$", Component.literal("16,128 ").append(CreateLang.translateDirect("generic.unit.stress")).getString())));
         scene.world().flashDisplayLink(link1Pos);
         scene.idle(20);
@@ -532,7 +532,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(90);
 
         scene.effects().indicateSuccess(link3Pos);
-        scene.world().setDisplayBoardText(board, 3, Component.literal(CreateIDLX.translate("ponder.clipboard_copying.text_2").getString()
+        scene.world().setDisplayBoardText(board, 3, Component.literal(CreateIDLX.translate("ponder.clipboard_copying.text_1").getString()
                 .replaceAll("\\$", Component.literal("12,288 ").append(CreateLang.translateDirect("generic.unit.stress")).getString())));
         scene.world().flashDisplayLink(link3Pos);
         scene.idle(60);
@@ -653,7 +653,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link1Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Rotation Speed (RPM)")
+                .sharedText("selector", CreateLang.translateDirect("display_source.kinetic_speed").getString())
                 .pointAt(util.vector().centerOf(link1Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -666,7 +666,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
 
         scene.effects().indicateSuccess(link1Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_2").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_1").getString()
                 .replaceAll("\\$", Component.literal("68 ").append(CreateLang.translateDirect("generic.unit.rpm")).getString())));
         scene.world().flashDisplayLink(link1Pos);
         scene.idle(20);
@@ -720,13 +720,13 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link3Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Network Stress")
+                .sharedText("selector", CreateLang.translateDirect("display_source.kinetic_stress").getString())
                 .pointAt(util.vector().centerOf(link3Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
         scene.idle(30);
         scene.overlay().showText(25)
-                .text("-> Stress in SU")
+                .sharedText("selector", CreateLang.translateDirect("display_source.kinetic_stress.current").getString())
                 .pointAt(util.vector().centerOf(link3Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -765,7 +765,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(65);
 
         scene.effects().indicateSuccess(link3Pos);
-        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_2").getString()
+        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_1").getString()
                 .replaceAll("\\$", Component.literal("1,088 ").append(CreateLang.translateDirect("generic.unit.stress")).getString())));
         scene.world().flashDisplayLink(link3Pos);
         scene.idle(60);
@@ -798,7 +798,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link4Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> List matching Fluids")
+                .sharedText("selector", CreateLang.translateDirect("display_source.list_fluids").getString())
                 .pointAt(util.vector().centerOf(link4Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -842,7 +842,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link5Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Time of Day")
+                .sharedText("selector", CreateLang.translateDirect("display_source.time_of_day").getString())
                 .pointAt(util.vector().centerOf(link5Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -855,14 +855,14 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link5Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> 24-hour")
+                .sharedText("selector", CreateLang.translateDirect("display_source.time.24_hour").getString())
                 .pointAt(util.vector().centerOf(link5Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
         scene.idle(30);
 
         scene.effects().indicateSuccess(link5Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_15").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_10").getString()
                 .replaceAll("\\$", Component.literal("15:55").getString())));
         scene.world().flashDisplayLink(link5Pos);
         scene.idle(20);
@@ -871,7 +871,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(10);
 
         scene.overlay().showText(20)
-                .text("-> Time of Day")
+                .sharedText("selector", CreateLang.translateDirect("display_source.time_of_day").getString())
                 .pointAt(util.vector().centerOf(link6Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -885,7 +885,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
 
         scene.effects().indicateSuccess(link6Pos);
-        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_18").getString()
+        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_11").getString()
                 .replaceAll("\\$", Component.literal(" 3:55 ").append(CreateLang.translateDirect("generic.daytime.pm")).getString())));
         scene.world().flashDisplayLink(link6Pos);
         scene.idle(20);
@@ -930,7 +930,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(65);
 
         scene.effects().indicateSuccess(link6Pos);
-        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_18").getString()
+        scene.world().setDisplayBoardText(board, 2, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_11").getString()
                 .replaceAll("\\$", Component.literal("15:55").getString())));
         scene.world().flashDisplayLink(link6Pos);
         scene.idle(60);
@@ -954,7 +954,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link7Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Player Deaths")
+                .sharedText("selector", CreateLang.translateDirect("display_source.player_deaths").getString())
                 .pointAt(util.vector().centerOf(link7Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1019,7 +1019,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link8Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Mechanical Piston Extension State")
+                .sharedText("selector", CreateIDLX.translate("display_source.mechanical_piston_extension_state").getString())
                 .pointAt(util.vector().centerOf(link8Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1032,7 +1032,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link8Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Used to Total Extension Poles Ratio")
+                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state.used_n_total").getString())
                 .pointAt(util.vector().centerOf(link8Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1040,7 +1040,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.effects().indicateSuccess(link8Pos);
         scene.world().dyeDisplayBoard(secBoard, 0, DyeColor.YELLOW);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
@@ -1058,7 +1058,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link9Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Mechanical Piston Extension State")
+                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state").getString())
                 .pointAt(util.vector().centerOf(link9Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
@@ -1071,14 +1071,14 @@ public class DisplayLinkExtendedScenes {
         scene.idle(30);
         scene.overlay().showControls(util.vector().centerOf(link9Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Used Extension Poles Percentage")
+                .sharedText("selector", CreateLang.translateDirect("display_source.mechanical_piston_extension_state.used_percent").getString())
                 .pointAt(util.vector().centerOf(link9Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();
         scene.idle(30);
 
         scene.effects().indicateSuccess(link9Pos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_31").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
                 .replaceAll("\\$", "100%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(20);
@@ -1092,19 +1092,19 @@ public class DisplayLinkExtendedScenes {
         scene.world().moveSection(piston1Element, util.vector().of(1, 0, 0), 80);
         scene.world().moveSection(piston2Element, util.vector().of(1, 0, 0), 80);
         scene.idle(40);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0,5", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_31").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
                 .replaceAll("\\$", "50%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
-        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(secBoard, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "1", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_31").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
                 .replaceAll("\\$", "0%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
@@ -1137,7 +1137,7 @@ public class DisplayLinkExtendedScenes {
         scene.idle(65);
 
         scene.effects().indicateSuccess(link9Pos);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         String.valueOf(1), String.valueOf(1)).getString())));
         scene.world().flashDisplayLink(link9InitialPos);
@@ -1152,19 +1152,19 @@ public class DisplayLinkExtendedScenes {
         scene.world().moveSection(piston1Element, util.vector().of(-1, 0, 0), 80);
         scene.world().moveSection(piston2Element, util.vector().of(-1, 0, 0), 80);
         scene.idle(40);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0,5", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_31").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
                 .replaceAll("\\$", "50%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
-        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_28").getString()
+        scene.world().setDisplayBoardText(board, 0, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_19").getString()
                 .replaceAll("\\$", CreateIDLX.translate("display_source.mechanical_piston_extension_state.ratio_template",
                         "0", "1").getString())));
         scene.world().flashDisplayLink(link8InitialPos);
-        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_31").getString()
+        scene.world().setDisplayBoardText(board, 1, Component.literal(CreateIDLX.translate("ponder.clipboard_copiable_properties.text_20").getString()
                 .replaceAll("\\$", "100%")));
         scene.world().flashDisplayLink(link9InitialPos);
         scene.idle(40);
@@ -1217,7 +1217,7 @@ public class DisplayLinkExtendedScenes {
 
         scene.overlay().showControls(util.vector().centerOf(link10Pos), Pointing.DOWN, 25).scroll();
         scene.overlay().showText(25)
-                .text("-> Boiler Status")
+                .sharedText("selector", CreateLang.translateDirect("display_source.boiler_status").getString())
                 .pointAt(util.vector().centerOf(link10Pos))
                 .colored(PonderPalette.WHITE)
                 .placeNearTarget();

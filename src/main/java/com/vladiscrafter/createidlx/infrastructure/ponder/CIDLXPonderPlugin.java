@@ -26,8 +26,8 @@ public class CIDLXPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerSharedText(SharedTextRegistrationHelper helper) {
+        helper.registerSharedText("selector", "-> %s");
         helper.registerSharedText("consumption_label", "CONSUMPTION:");
-        helper.registerSharedText("kinetic_stress_option", "-> Stress in SU");
     }
 
 }
