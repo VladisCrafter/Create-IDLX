@@ -85,7 +85,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label) && !hasOverridingFinishLabel) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedPlaceholders(label) && !CreateIDLXMixinUtils.hasEscapedPlaceholders(label) && !hasOverridingFinishLabel) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, ((raw == SingleLineDisplaySource.EMPTY_LINE) ? "" : raw.getString()));
@@ -114,7 +114,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return originalValue;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label) && !hasOverridingFinishLabel) return originalValue;
+        if (!CreateIDLXMixinUtils.hasUnescapedPlaceholders(label) && !CreateIDLXMixinUtils.hasEscapedPlaceholders(label) && !hasOverridingFinishLabel) return originalValue;
 
         MutableComponent raw = this.createidlx$invokeProvideLine(context, stats);
         String fullLine = CreateIDLXMixinUtils.assembleFullLine(context, ((raw == SingleLineDisplaySource.EMPTY_LINE) ? "" : raw.getString()));
@@ -140,7 +140,7 @@ public abstract class SingleLineDisplaySourceMixin {
         String label = context.sourceConfig().getString("Label");
         if (label.isEmpty()) return;
 
-        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)
+        if (!CreateIDLXMixinUtils.hasUnescapedPlaceholders(label) && !CreateIDLXMixinUtils.hasEscapedPlaceholders(label)
                 && (!hasOverridingFinishLabel || !isCountdownFinished)) return;
 
         String layoutName = (hasOverridingFinishLabel)
@@ -173,14 +173,14 @@ public abstract class SingleLineDisplaySourceMixin {
 //        String label = context.sourceConfig().getString("Label");
 //        if (label.isEmpty()) return;
 //
-//        int actualLabelSize = CreateIDLXMixinUtils.getLabelSizeAccountingSpecifiers(label);
+//        int actualLabelSize = CreateIDLXMixinUtils.getLabelSizeAccountingPlaceholders(label);
 //
-//        if (!CreateIDLXMixinUtils.hasUnescapedSpecifiers(label) && !CreateIDLXMixinUtils.hasEscapedSpecifiers(label)) return;
+//        if (!CreateIDLXMixinUtils.hasUnescapedPlaceholders(label) && !CreateIDLXMixinUtils.hasEscapedPlaceholders(label)) return;
 //
-//        ArrayList<Object> labelParts = CreateIDLXMixinUtils.breakDownLabelWithSpecifiers(label).getA();
-//        int amountOfSpecifiers = CreateIDLXMixinUtils.breakDownLabelWithSpecifiers(label).getB();
+//        ArrayList<Object> labelParts = CreateIDLXMixinUtils.breakDownLabelWithPlaceholders(label).getA();
+//        int amountOfPlaceholders = CreateIDLXMixinUtils.breakDownLabelWithPlaceholders(label).getB();
 //
-//        String layoutName = "IDLX_WithSpecifiers_" + actualLabelSize + "_" + labelParts.toArray().length + "_" + amountOfSpecifiers;
+//        String layoutName = "IDLX_WithPlaceholders_" + actualLabelSize + "_" + labelParts.toArray().length + "_" + amountOfPlaceholders;
 //        if (layout.isLayout(layoutName)) {
 //            ci.cancel();
 //            return;
@@ -203,7 +203,7 @@ public abstract class SingleLineDisplaySourceMixin {
 //            }
 //
 //            if (part instanceof Character) {
-//                int valueSize = Math.max(1, Math.round((float) valueCharCount / amountOfSpecifiers));
+//                int valueSize = Math.max(1, Math.round((float) valueCharCount / amountOfPlaceholders));
 //
 //                FlapDisplaySection valueSection = createidlx$invokeCreateSectionForValue(context, valueSize);
 //                CreateIDLX.LOGGER.info("Created valueSection '{}' with size of {} (actually {})", valueSection, valueSize, valueSection.getSize());

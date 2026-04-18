@@ -6,7 +6,7 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool enablePlaceholdersGuideButton = b(true, "enableGuideButtons", Comments.enablePlaceholdersGuideButton);
 
     public final ConfigGroup guideTooltipCustomization = group(2, "guideTooltipCustomization", "Guide Tooltip Customization");
-    public final ConfigBool enableActiveSpecifiersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActiveSpecifiersTooltip);
+    public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip);
     public final ConfigBool enableProgressBarSupportStateTooltip = b(true, "enableProgressBarSupportStateTooltip", Comments.enableProgressBarSupportStateTooltip);
 
     public final ConfigGroup textFieldsEnhancements = group(2, "textFieldsEnhancements", "Text Fields Enhancements");
@@ -33,7 +33,7 @@ public class CIDLXClient extends CIDLXConfigBase {
 
         static String enablePlaceholdersGuideButton = "Show the hover-on Placeholders & String Slicing Usage Guides tooltip buttons in Display Link interface.";
 
-        static String enableActiveSpecifiersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
+        static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
         static String enableProgressBarSupportStateTooltip = "Show the Progress Bar display format support part of the Placeholders Usage Guide tooltip.";
 
         static String truncateOverflowingStrings = "Hide the overflowing ends of long strings to make them fit into their text fields.";
