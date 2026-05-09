@@ -6,19 +6,19 @@
   "mixins": [
     "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkBlockEntityMixin",
-    "create.displayLink.DisplayLinkScreenMixin",
     "create.displayLink.source.CurrentFloorDisplaySourceMixin",
     "create.displayLink.source.SingleLineDisplaySourceMixin",
     "create.displayLink.source.TrainStatusDisplaySourceMixin",
     "create.elevator.ElevatorColumnMixin",
     "create.elevator.ElevatorContactBlockEntityMixin",
     "create.elevator.ElevatorContraptionMixin",
-    "create.gui.ModularGuiLineBuilderMixin",
     "create.piston.MechanicalPistonBlockEntityAccessor"
   ],
   "client": [
     "create.gui.AbstractSimiScreenMixin",
     "create.gui.AbstractSimiWidgetMixin",
+    "create.displayLink.DisplayLinkScreenMixin",
+    "create.gui.ModularGuiLineBuilderMixin",
     "ponder.PonderUIAccessor"
   ],
   "server": []
