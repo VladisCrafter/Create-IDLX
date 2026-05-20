@@ -4,7 +4,6 @@ import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEnt
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
-import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.util.elevator.ElevatorContactBlockEntityExt;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
@@ -47,24 +46,5 @@ public class CurrentFloorExtendedDisplaySource extends SingleLineDisplaySource {
     @Override
     protected String getTranslationKey() {
         return "current_floor_extended";
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder,
-                                         boolean isFirstLine) {
-        super.initConfigurationWidgets(context, builder, isFirstLine);
-        if (isFirstLine)
-            return;
-
-        builder.addSelectionScrollInput(0, 116, (ssi, l) -> {
-            ssi.forOptions(CreateIDLX.translatedOptions("display_source.current_floor_extended",
-                            "short_name", "long_name", "short_n_long", "long_n_short"))
-                    .titled(CreateIDLX.translate("display_source.current_floor_extended.display"));
-        }, "FloorDisplayMode");
-
-        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(120, 17, (ssi, l) -> {
-            ssi.titled(CreateIDLX.translate("display_source.current_floor_extended.show_empty_floor_description"));
-        }, "ShowEmptyFloorDescription");
     }
 }

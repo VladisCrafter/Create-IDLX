@@ -142,6 +142,14 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         DisplaySource source = sources.get(i);
         if (!(source instanceof SingleLineDisplaySource)) return;
 
+        // Remove old buttons if they exist
+        if (createidlx$placeholdersGuideButton != null) {
+            this.removeWidget(createidlx$placeholdersGuideButton);
+        }
+        if (createidlx$clipboardGuideButton != null) {
+            this.removeWidget(createidlx$clipboardGuideButton);
+        }
+
         createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
         if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
@@ -149,7 +157,8 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         });
         else createidlx$placeholdersGuideButton.active = false;
 
-        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (blockEntity.activeSource instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
+        // Position clipboard button at a fixed offset below the placeholders button to prevent overlap
+        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + 67, 16, 16, CreateIDLXIcons.clipboardIcon);
         if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);

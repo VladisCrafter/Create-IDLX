@@ -21,7 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.RenderHighlightEvent.Block;
 
-@EventBusSubscriber
+@EventBusSubscriber(modid = "createidlx", value = Dist.CLIENT)
 public class ClipboardDisplayLinkBlockOutlineHandler {
 
     @SubscribeEvent

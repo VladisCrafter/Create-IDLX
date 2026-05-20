@@ -4,7 +4,6 @@ import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEnti
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
-import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -48,20 +47,5 @@ public class ElevatorMovementDirectionDisplaySource extends SingleLineDisplaySou
     @Override
     protected String getTranslationKey() {
         return "elevator_movement_direction";
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder,
-                                         boolean isFirstLine) {
-        super.initConfigurationWidgets(context, builder, isFirstLine);
-        if (isFirstLine)
-            return;
-
-        builder.addSelectionScrollInput(0, 137, (ssi, l) -> {
-            ssi.forOptions(CreateIDLX.translatedOptions("display_source.elevator_movement_direction",
-                            "arrows", "triangles", "words"))
-                    .titled(CreateIDLX.translate("display_source.elevator_movement_direction.display"));
-        }, "DisplayMode");
     }
 }

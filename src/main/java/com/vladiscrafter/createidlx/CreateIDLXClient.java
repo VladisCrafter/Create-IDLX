@@ -26,7 +26,6 @@ public class CreateIDLXClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new CIDLXPonderPlugin());
-
     }
 
     @SubscribeEvent

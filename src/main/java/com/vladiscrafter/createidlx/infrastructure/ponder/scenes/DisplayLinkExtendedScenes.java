@@ -613,12 +613,12 @@ public class DisplayLinkExtendedScenes {
         Selection steam = util.select().fromTo(0, 6, 1, 6, 7, 3);
         BlockPos link10InitialPos = util.grid().at(3, 8, 1);
         BlockPos link10Pos = util.grid().at(3, 3, 1);
-        Selection link10 = util.select().position(link10InitialPos);
+         Selection link10 = util.select().position(link10InitialPos);
 
-        ElementLink<WorldSectionElement> inputReplacementElement = scene.world().makeSectionIndependent(inputReplacement);
+        ElementLink<WorldSectionElement> inputReplacementElement = scene.world().showIndependentSection(inputReplacement, Direction.DOWN);
         scene.world().moveSection(inputReplacementElement, util.vector().of(0, -64, 0), 0);
         scene.world().hideIndependentSection(inputReplacementElement, Direction.DOWN);
-        ElementLink<WorldSectionElement> outputReplacementElement = scene.world().makeSectionIndependent(outputReplacement);
+        ElementLink<WorldSectionElement> outputReplacementElement = scene.world().showIndependentSection(outputReplacement, Direction.DOWN);
         scene.world().moveSection(outputReplacementElement, util.vector().of(0, -64, 0), 0);
         scene.world().hideIndependentSection(outputReplacementElement, Direction.DOWN);
 
@@ -703,7 +703,8 @@ public class DisplayLinkExtendedScenes {
         scene.addKeyframe();
 
         scene.world().hideIndependentSection(shaftElement, Direction.SOUTH);
-        ElementLink<WorldSectionElement> link1Element = scene.world().makeSectionIndependent(link1);
+        scene.world().hideSection(link1, Direction.DOWN);
+        ElementLink<WorldSectionElement> link1Element = scene.world().showIndependentSection(link1, Direction.DOWN);
         scene.world().moveSection(link1Element, util.vector().of(0.5, 0, 0), 15);
         scene.idle(15);
 
@@ -1243,7 +1244,8 @@ public class DisplayLinkExtendedScenes {
 
         scene.addKeyframe();
 
-        ElementLink<WorldSectionElement> basePlateElement = scene.world().makeSectionIndependent(basePlate);
+        scene.world().hideSection(basePlate, Direction.DOWN);
+        ElementLink<WorldSectionElement> basePlateElement = scene.world().showIndependentSection(basePlate, Direction.DOWN);
         scene.world().hideIndependentSection(basePlateElement, Direction.DOWN);
         scene.world().hideIndependentSection(inputReplacementElement, Direction.DOWN);
         scene.world().hideIndependentSection(outputReplacementElement, Direction.DOWN);
