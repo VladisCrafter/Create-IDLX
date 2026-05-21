@@ -60,4 +60,12 @@ public class CreateIDLXDisplaySources {
         Registry.register(CreateBuiltInRegistries.DISPLAY_SOURCE, displaySourceIdRL, displaySource);
         for (BlockEntry<?> block : blocks) DisplaySource.BY_BLOCK.add(block.get(), displaySource);
     }
+
+    @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
+    public void addCustomConfigWidgets(
+            com.simibubi.create.foundation.gui.ModularGuiLineBuilder builder,
+            com.simibubi.create.content.redstone.displayLink.DisplayLinkContext context
+    ) {
+        // Default: Does noting
+    }
 }

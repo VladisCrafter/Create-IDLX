@@ -17,6 +17,8 @@
     "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkScreenMixin",
     "create.displayLink.source.SingleLineDisplaySourceClientMixin",
+    "create.displayLink.source.SingleLineDisplaySourceCustomConfigMixin",
+    "create.displayLink.source.SingleLineDisplaySourceInitConfigMixin",
     "create.gui.AbstractSimiScreenMixin",
     "create.gui.AbstractSimiWidgetMixin",
     "create.gui.ModularGuiLineBuilderMixin",

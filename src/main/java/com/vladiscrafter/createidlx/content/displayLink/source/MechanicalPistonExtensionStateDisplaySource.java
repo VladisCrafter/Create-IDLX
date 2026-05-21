@@ -5,6 +5,7 @@ import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.PercentOrProgressBarDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
+import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.mixin.create.piston.MechanicalPistonBlockEntityAccessor;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
@@ -113,5 +114,19 @@ public class MechanicalPistonExtensionStateDisplaySource extends PercentOrProgre
     @Override
     protected String getTranslationKey() {
         return "mechanical_piston_extension_state";
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void addCustomConfigWidgets(ModularGuiLineBuilder builder, DisplayLinkContext context) {
+        builder.addSelectionScrollInput(0, 116, (ssi, l) -> {
+            ssi.forOptions(CreateIDLX.translatedOptions("display_source.mechanical_piston_extension_state",
+                            "progress_bar", "used_percent", "spare_percent", "used", "spare", "total", "used_n_total", "spare_n_total"))
+                    .titled(CreateIDLX.translate("display_source.mechanical_piston_extension_state.display"));
+        }, "Mode");
+
+        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(120, 17, (ssi, l) -> {
+            ssi.titled(CreateIDLX.translate("display_source.mechanical_piston_extension_state.round_floats"))
+                    .setState(1);
+        }, "RoundFloats");
     }
 }

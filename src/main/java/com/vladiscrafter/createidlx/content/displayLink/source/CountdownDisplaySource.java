@@ -6,6 +6,8 @@ import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
+import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
+import com.simibubi.create.foundation.utility.CreateLang;
 
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
@@ -16,7 +18,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
-import java.util.List;
 
 public class CountdownDisplaySource extends SingleLineDisplaySource {
 
@@ -62,7 +63,7 @@ public class CountdownDisplaySource extends SingleLineDisplaySource {
                     : Component.literal(String.format(Locale.ROOT, "%01d:%02d", minutes, seconds));
         } else {
             component = !overrideLabelOnFinish ? Component.literal(finishLabel) : Component.literal("0:00");
-            context.sourceConfig().putBoolean("IsCountdownFinished", true);;
+            context.sourceConfig().putBoolean("IsCountdownFinished", true);
         }
         return component;
     }
@@ -99,5 +100,25 @@ public class CountdownDisplaySource extends SingleLineDisplaySource {
     @Override
     protected String getTranslationKey() {
         return "countdown";
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void addCustomConfigWidgets(ModularGuiLineBuilder builder, DisplayLinkContext context) {
+        ((ModularGuiLineBuilderExt) builder).createidlx$addTimerScrollInput(0, 40, (si, l) -> {
+            si.titled(CreateIDLX.translate("display_source.countdown.time"))
+                    .calling(v -> onSignalReset(context));
+        }, "CountdownTime");
+
+        builder.addTextInput(44, 72, (e, t) -> {
+            e.setValue("");
+            t.withTooltip(ImmutableList.of(CreateIDLX.translate("display_source.countdown.finish_label")
+                            .withStyle(s -> s.withColor(0x5391E1)),
+                    CreateLang.translateDirect("gui.schedule.lmb_edit")
+                            .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)));
+        }, "FinishLabel");
+
+        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(120, 17, (ssi, l) -> {
+            ssi.titled(CreateIDLX.translate("display_source.countdown.overlap_label"));
+        }, "OverrideLabelOnFinish");
     }
 }
