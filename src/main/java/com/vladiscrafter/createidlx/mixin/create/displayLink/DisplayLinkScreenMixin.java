@@ -5,10 +5,8 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
-import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
@@ -135,32 +133,25 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         CreateIDLXGuiContext.exit();
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
-    private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    private void createidlx$initGuideButtons(int i, CallbackInfo ci) {
         if (!createidlx$areGuideButtonsEnabled) return;
 
+        if (createidlx$placeholdersGuideButton != null) this.removeWidget(createidlx$placeholdersGuideButton);
+        if (createidlx$clipboardGuideButton != null) this.removeWidget(createidlx$clipboardGuideButton);
+
         if (i < 0 || i >= sources.size()) return;
-
         DisplaySource source = sources.get(i);
-        if (!(source instanceof SingleLineDisplaySource)) return;
-
-        // Remove old buttons if they exist
-        if (createidlx$placeholdersGuideButton != null) {
-            this.removeWidget(createidlx$placeholdersGuideButton);
-        }
-        if (createidlx$clipboardGuideButton != null) {
-            this.removeWidget(createidlx$clipboardGuideButton);
-        }
 
         createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
+        createidlx$placeholdersGuideButton.visible = source instanceof SingleLineDisplaySource;
         if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
         else createidlx$placeholdersGuideButton.active = false;
 
-        // Position clipboard button at a fixed offset below the placeholders button to prevent overlap
-        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + 67, 16, 16, CreateIDLXIcons.clipboardIcon);
+        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (source instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
         if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
