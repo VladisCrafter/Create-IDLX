@@ -7,7 +7,7 @@ import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStat
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.mixin.create.piston.MechanicalPistonBlockEntityAccessor;
+import com.vladiscrafter.createidlx.mixin.accessor.create.MechanicalPistonBlockEntityAccessor;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -78,8 +78,8 @@ public class MechanicalPistonExtensionStateDisplaySource extends PercentOrProgre
         if (extensionLength == 0) return 0f;
 
         return switch (getMode(context)) {
-            case 0, 2 -> offset / extensionLength;
-            case 1, 3 -> 1f - (offset / extensionLength);
+            case 0, 1, 3 -> offset / extensionLength;
+            case 2, 4 -> 1f - (offset / extensionLength);
             default -> 0f;
         };
     }
