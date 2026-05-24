@@ -108,7 +108,7 @@ public class CountdownDisplaySource extends SingleLineDisplaySource {
                                          boolean isFirstLine) {
         super.initConfigurationWidgets(context, builder, isFirstLine);
         if (isFirstLine) return;
-        
+
         ((ModularGuiLineBuilderExt) builder).createidlx$addTimerScrollInput(0, 40, (si, l) -> {
             si.titled(CreateIDLX.translate("display_source.countdown.time"))
                     .calling(v -> onSignalReset(context));
