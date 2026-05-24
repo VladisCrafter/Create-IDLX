@@ -49,8 +49,13 @@ public class CurrentFloorExtendedDisplaySource extends SingleLineDisplaySource {
         return "current_floor_extended";
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void addCustomConfigWidgets(ModularGuiLineBuilder builder, DisplayLinkContext context) {
+    public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder,
+                                         boolean isFirstLine) {
+        super.initConfigurationWidgets(context, builder, isFirstLine);
+        if (isFirstLine) return;
+
         builder.addSelectionScrollInput(0, 116, (ssi, l) -> {
             ssi.forOptions(CreateIDLX.translatedOptions("display_source.current_floor_extended",
                             "short_name", "long_name", "short_n_long", "long_n_short"))

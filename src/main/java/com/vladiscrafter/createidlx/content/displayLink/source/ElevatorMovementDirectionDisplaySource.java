@@ -50,8 +50,13 @@ public class ElevatorMovementDirectionDisplaySource extends SingleLineDisplaySou
         return "elevator_movement_direction";
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void addCustomConfigWidgets(ModularGuiLineBuilder builder, DisplayLinkContext context) {
+    public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder,
+                                         boolean isFirstLine) {
+        super.initConfigurationWidgets(context, builder, isFirstLine);
+        if (isFirstLine) return;
+
         builder.addSelectionScrollInput(0, 137, (ssi, l) -> {
             ssi.forOptions(CreateIDLX.translatedOptions("display_source.elevator_movement_direction",
                             "arrows", "triangles", "words"))

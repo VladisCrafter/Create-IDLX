@@ -116,8 +116,13 @@ public class MechanicalPistonExtensionStateDisplaySource extends PercentOrProgre
         return "mechanical_piston_extension_state";
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void addCustomConfigWidgets(ModularGuiLineBuilder builder, DisplayLinkContext context) {
+    public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder,
+                                         boolean isFirstLine) {
+        super.initConfigurationWidgets(context, builder, isFirstLine);
+        if (isFirstLine) return;
+
         builder.addSelectionScrollInput(0, 116, (ssi, l) -> {
             ssi.forOptions(CreateIDLX.translatedOptions("display_source.mechanical_piston_extension_state",
                             "progress_bar", "used_percent", "spare_percent", "used", "spare", "total", "used_n_total", "spare_n_total"))
