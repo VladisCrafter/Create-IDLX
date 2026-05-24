@@ -26,4 +26,3 @@ public abstract class SingleLineDisplaySourceClientMixin {
                         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)));
     }
 }
-

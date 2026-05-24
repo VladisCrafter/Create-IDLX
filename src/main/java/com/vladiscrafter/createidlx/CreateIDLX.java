@@ -59,13 +59,10 @@ public class CreateIDLX {
 
     private static Object[] resolveBuildersReflection(Object... args) {
         try {
-            // Try to use LangBuilder.resolveBuilders via reflection to avoid loading client-only classes
             Class<?> langBuilderClass = Class.forName("net.createmod.catnip.lang.LangBuilder");
             var method = langBuilderClass.getDeclaredMethod("resolveBuilders", Object[].class);
             return (Object[]) method.invoke(null, (Object) args);
         } catch (Exception e) {
-            // If LangBuilder is not available, just return the args as-is
-            // This is safe because the method is optional for common code
             LOGGER.debug("LangBuilder not available, using args directly", e);
             return args;
         }

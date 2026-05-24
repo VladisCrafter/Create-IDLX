@@ -51,9 +51,6 @@ public abstract class SingleLineDisplaySourceMixin {
 
     // ------ MODIFIERS & INJECTORS ------
 
-    // Note: The @Inject for addLabelingTextBox has been moved to SingleLineDisplaySourceClientMixin
-    // to avoid loading client-side classes on the server
-
     @ModifyReturnValue(method = "provideText", at = @At("RETURN"), remap = false)
     private List<MutableComponent> createidlx$modifyProvideText(List<MutableComponent> originalValue,
                                                                 DisplayLinkContext context, DisplayTargetStats stats) {
