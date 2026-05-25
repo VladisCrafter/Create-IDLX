@@ -1,23 +1,16 @@
-## `1.4` - 2026-04-18 (18.04.2026)
+## `1.5` - 2026-05-26 (26.05.2026)
 
 ### Additions
-- Added ability to **duplicate Display Link properties** using a Clipboard:
-  However, unlike how it's done with existing Create mod components being the simple R-click here and L-click there, the properties of Display Links to copy & apply are selected through a **brand-new GUI**;
-- Added two new **ponder scenes** that explain Clipboard interaction with Display Links in the tiniest details;
-- Added a **Duplicating Display Link Properties** button to the Display Link Interface, that opens the abovementioned ponder scenes on clicked;
-- Added a fancy **block outline** for Display Links when holding a Clipboard (somewhat conditional and highly configurable);
-- Added a new **display source**:
-  - **Mechanical Piston Extension State** (for **Mechanical Piston**, both regular and sticky): with the idea taken from the [Create Addon Hub](https://discord.gg/3AvrppcgG3) Discord server (suggested by [Nerd](https://discord.com/channels/891929048895356948/1449264811635376138)), it displays how much the Piston is currently retracted in the following display formats:
-    - `Progress Bar`;
-    - `Used Extension Poles Percentage`;
-    - `Spare Extension Poles Percentage`;
-    - `Used Extension Poles`;
-    - `Spare Extension Poles`;
-    - `Total Extension Poles`;
-    - `Used to Total Extension Poles Ratio`;
-    - `Spare to Total Extension Poles Ratio`.
+- Added **Visualization Settings** to the Display Link Interface:
+  - **Center Text**: `the displayed text will be center-aligned on the Board`;
+  - **Mark Truncation with Ellipsis**: `in case of the displayed text not fitting onto the Board and getting truncated, its last visible character will be replaced with ellipsis (…)`;
+
+Currently, those options are available only for **single line** display sources and only for **Display Boards** as Target Displays (expanded support for both the sources and the targets is in the works).
 ### Improvements
-- Improved the **Placeholders Usage Guide** button in the Display Link Interface: now clicking it will open the respective ponder scene, and the Placeholders status details were hidden behind holding Shift;
-- Improved the **Mysterious Cuckoo Clock** from Create: now it supports all the Display Sources as its normal counterpart.
+- Massively improved - revamped from the ground-up, to be precise - the core architecture of the **flap display sections assembly**, thanks to which all the flap cycling animations now look how they were supposed to.
 ### Fixes
-- Fixed hours not being displayed by the by Countdown display source ([#13](https://github.com/VladisCrafter/Create-IDLX/issues/13)).
+- Fixed **progress bars rendering incorrectly** when used with placeholders (being the mod's oldest issue) thanks to the abovementioned rework ([#1](https://github.com/VladisCrafter/Create-IDLX/issues/1));
+- Fixed crashing on **dedicated server** ([#14](https://github.com/VladisCrafter/Create-IDLX/issues/14)) thanks to a Pull Request ([#19](https://github.com/VladisCrafter/Create-IDLX/pull/19)) by [@Flinkpfote](https://github.com/Flinkpfote);
+- Fixed crashing on opening the **Types of Copiable Display Link Properties** ponder scene ([#15](https://github.com/VladisCrafter/Create-IDLX/issues/15));
+- Fixed some formats of **Mechanical Piston Extension State** display source being incorrectly transposed ([#16](https://github.com/VladisCrafter/Create-IDLX/issues/16));
+- Fixed visual glitching of **Guide Buttons** in the Display Link Interface when scrolling through available sources.
