@@ -20,6 +20,14 @@
   "createidlx.gui.display_link.clipboard_tooltip_2": "right-click the first one to select\nwhich settings will be copied from it,",
   "createidlx.gui.display_link.clipboard_tooltip_3": "then left-click the other one to choose\nwhat to apply from the saved settings.",
 
+  "createidlx.gui.display_link.visualization_settings.show_visualization_settings": "Show Visualization Settings",
+
+  "createidlx.gui.display_link.visualization_settings.center_text": "Center Text",
+  "createidlx.gui.display_link.visualization_settings.center_text_tooltip": "The displayed text will be\ncenter-aligned on the Board.",
+
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis": "Mark Truncation with Ellipsis",
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis_tooltip": "In case of the displayed text not fitting\nonto the Board and getting truncated,\nits last visible character will be\nreplaced with ellipsis (…).",
+
   "createidlx.gui.clipboard_display_source.title.copy": "Copying Display Link Properties",
   "createidlx.gui.clipboard_display_source.title.paste": "Applying Display Link Properties",
 

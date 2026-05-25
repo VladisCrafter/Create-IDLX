@@ -4,11 +4,12 @@ public class CIDLXClient extends CIDLXConfigBase {
 
     public final ConfigGroup displayLinkGUI = group(1, "displayLinkGUI", "Display Link GUI");
     public final ConfigBool enableGuideButtons = b(true, "enableGuideButtons", Comments.enableGuideButtons);
-    public final ConfigBool enableGuideButtonRedirects = b(true, "enableGuideButtonRedirects", Comments.enableGuideButtonRedirects, Comments.onlyTakesEffectGuideButtons);
+    public final ConfigBool enableVisualizationSettingsButtons = b(true, "enableVisualizationSettingsButtons", Comments.enableVisualizationSettingsButtons);
 
-    public final ConfigGroup guideTooltipsCustomization = group(2, "guideTooltipsCustomization", "Guide Tooltips Customization");
-    public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip);
-    public final ConfigBool enableProgressBarSupportStateTooltip = b(true, "enableProgressBarSupportStateTooltip", Comments.enableProgressBarSupportStateTooltip);
+    public final ConfigGroup guideButtonsCustomization = group(2, "guideButtonsCustomization", "Guide Buttons Customization");
+    public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideButtons);
+    public final ConfigBool enableAlternativeClipboardIcon = b(false, "enableAlternativeClipboardIcon", Comments.enableAlternativeClipboardIcon, Comments.onlyTakesEffectGuideButtons);
+    public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.onlyTakesEffectGuideButtons);
 
     public final ConfigGroup clipboardDisplaySourceGUI = group(1, "clipboardDisplaySourceGUI", "Clipboard Display Source GUI");
     public final ConfigBool deselectEmptyAttachedLabel = b(true, "deselectEmptyAttachedLabel", Comments.deselectEmptyAttachedLabel);
@@ -46,10 +47,11 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
 
         static String enableGuideButtons = "Show the 'Placeholders Usage Guide' & 'Duplicating Display Link Properties' buttons in Display Link interface.";
-        static String enableGuideButtonRedirects = "Allow the guide buttons to redirect to their respective Ponder scenes on clicked.";
+        static String enableVisualizationSettingsButtons = "Show the 'Show Visualization Settings' button in Display Link interface.";
 
         static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
-        static String enableProgressBarSupportStateTooltip = "Show the Progress Bar display format support part of the Placeholders Usage Guide tooltip.";
+        static String enableAlternativeClipboardIcon = "Change the icon on the 'Duplicating Display Link Properties' button to a more item-like looking one.";
+        static String enableRedirectsToPonderScenes = "Allow the guide buttons to redirect to their respective Ponder scenes on clicked.";
 
         static String deselectEmptyAttachedLabel = "Prevent the 'Copy the Attached Label' from being automatically selected if the Attached Label is empty.";
 

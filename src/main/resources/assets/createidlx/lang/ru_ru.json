@@ -20,6 +20,14 @@
   "createidlx.gui.display_link.clipboard_tooltip_2": "Кликните ПКМ по первому и в интерфейсе выберите,\nкакие его свойства будут скопированы,",
   "createidlx.gui.display_link.clipboard_tooltip_3": "затем ЛКМ по второму, чтобы указать,\nкакие из сохранённых свойств применить.",
 
+  "createidlx.gui.display_link.visualization_settings.show_visualization_settings": "Показать настройки визуализации",
+
+  "createidlx.gui.display_link.visualization_settings.center_text": "Центрировать текст",
+  "createidlx.gui.display_link.visualization_settings.center_text_tooltip": "Отображаемый текст будет\nвыведен по центру табло.",
+
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis": "Обозначать обрезанный текст многоточием",
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis_tooltip": "В случае, если текст не поместится\nна табло и будет обрезан,\nего последний символ будет\nзаменён на многоточие «…».",
+
   "createidlx.gui.clipboard_display_source.title.copy": "Копирование свойств передатчика",
   "createidlx.gui.clipboard_display_source.title.paste": "Применение свойств передатчика",
 

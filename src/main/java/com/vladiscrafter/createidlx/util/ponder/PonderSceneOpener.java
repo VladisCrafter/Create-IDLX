@@ -1,6 +1,6 @@
 package com.vladiscrafter.createidlx.util.ponder;
 
-import com.vladiscrafter.createidlx.mixin.ponder.PonderUIAccessor;
+import com.vladiscrafter.createidlx.mixin.accessor.ponder.PonderUIAccessor;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.util.Mth;
