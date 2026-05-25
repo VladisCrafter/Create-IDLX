@@ -5,7 +5,6 @@ import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.mixin.accessor.create.FlapDisplaySectionAccessor;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkVisualizationConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,8 +17,8 @@ import java.util.regex.Matcher;
 
 import static com.simibubi.create.content.trains.display.FlapDisplaySection.*;
 
-public class CreateIDLXMixinUtils {
-    private CreateIDLXMixinUtils() {}
+public class SingleLineDisplaySourceMixinUtils {
+    private SingleLineDisplaySourceMixinUtils() {}
 
     public static boolean anyVisualizationConfigEnabled(DisplayLinkContext context) {
         return getCenterText(context) /*|| getCutOutSectionGaps(context)*/ || getMarkTruncationWithEllipsis(context);
@@ -251,10 +250,13 @@ public class CreateIDLXMixinUtils {
             float sectionWidth = section.getSize();
             totalWidth += sectionWidth;
 
+//            send(String.format("Checking section '%s' with a width of %f (total width with it: %f, max width: %f)",
+//                    section.getText().getString(), sectionWidth, totalWidth, maxWidth));
 
             if (totalWidth == maxWidth && truncateLast) {
                 maxWidth -= MONOSPACE;
                 lastTruncated = true;
+//                send("Truncation engaged; ellipsis: " + ellipsis);
             }
 
             if (totalWidth > maxWidth && section.getText() != null) {
@@ -270,6 +272,8 @@ public class CreateIDLXMixinUtils {
                 section.setText(Component.literal(clampedSectionText));
                 totalWidth -= (unclampedSectionText.length() - clampedSectionText.length()) * MONOSPACE;
 
+//                send(String.format("Unclamped section '%s' is overflowing by %f; trimmed to %d characters and added '%s' as the last section.",
+//                        unclampedSectionText, overflow, trimmedTextLength, section.getText().getString()));
                 clampedSections.add(section);
 
                 trimmed = true;
@@ -277,6 +281,7 @@ public class CreateIDLXMixinUtils {
         }
 
         if (lastTruncated) maxWidth += MONOSPACE;
+//        send(String.format("Final totalWidth: %f (leftSpace: %f)", totalWidth, maxWidth - totalWidth));
         return Pair.of(clampedSections, maxWidth - totalWidth);
     }
 
@@ -306,6 +311,9 @@ public class CreateIDLXMixinUtils {
         return signature.toString();
     }
 
+//    public static void send(String text) {
+//        if (Minecraft.getInstance().player != null) Minecraft.getInstance().player.sendSystemMessage(Component.literal(text));
+//    }
 
     @Deprecated
     public static String assembleFullLine(DisplayLinkContext context, String raw) {

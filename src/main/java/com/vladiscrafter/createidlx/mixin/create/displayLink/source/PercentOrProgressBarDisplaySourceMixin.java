@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import static com.vladiscrafter.createidlx.util.CreateIDLXMixinUtils.*;
+import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
 @Mixin(PercentOrProgressBarDisplaySource.class)
 public class PercentOrProgressBarDisplaySourceMixin {
