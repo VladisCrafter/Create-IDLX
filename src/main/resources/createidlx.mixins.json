@@ -21,8 +21,6 @@
     "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkScreenMixin",
     "create.displayLink.source.SingleLineDisplaySourceClientMixin",
-    "create.flapDisplay.FlapDisplayLayoutMixin",
-    "create.flapDisplay.FlapDisplayRendererMixin",
     "create.gui.AbstractSimiScreenMixin",
     "create.gui.AbstractSimiWidgetMixin",
     "create.gui.ModularGuiLineBuilderMixin"
