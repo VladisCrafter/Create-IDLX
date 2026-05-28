@@ -9,7 +9,7 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 displayURL = "https://github.com/VladisCrafter/Create-IDLX"
 logoFile = "icon.png"
-credits = "LiukRast, swzo"
+credits = "LiukRast, swzo, Flinkpfote"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
 
@@ -33,6 +33,6 @@ config = "${mod_id}.mixins.json"
 [[dependencies.${mod_id}]]
     modId = "create"
     mandatory = true
-    versionRange = "[6.0.0,6.1.0)"
+    versionRange = "[6.0.7,6.1.0)"
     ordering = "AFTER"
     side = "BOTH"
