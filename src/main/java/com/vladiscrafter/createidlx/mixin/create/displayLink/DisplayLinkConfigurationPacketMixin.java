@@ -16,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DisplayLinkConfigurationPacket.class)
 public abstract class DisplayLinkConfigurationPacketMixin {
 
-    @Shadow @Final
+    @Shadow(remap = false) @Final
     private CompoundTag configData;
 
-    @Inject(method = "applySettings", at = @At("HEAD"))
-    private void createidlx$voidDuplicatedVisualizationConfig(ServerPlayer player, DisplayLinkBlockEntity be, CallbackInfo ci) {
+    @Inject(method = "applySettings", at = @At("HEAD"), remap = false)
+    private void createidlx$voidDuplicatedVisualizationConfig(DisplayLinkBlockEntity be, CallbackInfo ci) {
         if (!(be instanceof DisplayLinkVisualizationConfigHolder holder)) return;
 
         if (configData.contains("Visualization", Tag.TAG_COMPOUND))

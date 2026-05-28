@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FlapDisplaySection.class)
 public interface FlapDisplaySectionAccessor {
-    @Accessor("size")
+    @Accessor(value = "size", remap = false)
     void createidlx$setSize(float width);
 }

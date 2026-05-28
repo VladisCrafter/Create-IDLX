@@ -29,17 +29,17 @@ import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtil
 @Pseudo
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceMixin {
-    @Invoker("allowsLabeling")
+    @Invoker(value = "allowsLabeling", remap = false)
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected abstract boolean createidlx$invokeAllowsLabeling(DisplayLinkContext context);
 
-    @Invoker("provideLine")
+    @Invoker(value = "provideLine", remap = false)
     protected abstract MutableComponent createidlx$invokeProvideLine(DisplayLinkContext context, DisplayTargetStats stats);
 
-    @Invoker("getFlapDisplayLayoutName")
+    @Invoker(value = "getFlapDisplayLayoutName", remap = false)
     protected abstract String createidlx$invokeGetFlapDisplayLayoutName(DisplayLinkContext context);
 
-    @ModifyReturnValue(method = "provideText", at = @At("RETURN"))
+    @ModifyReturnValue(method = "provideText", at = @At("RETURN"), remap = false)
     private List<MutableComponent> createidlx$placeholderifyProvideText(List<MutableComponent> originalValue,
                                                                         DisplayLinkContext context, DisplayTargetStats stats) {
         if (isCountdownFinished(context) && hasOverridingFinishLabel(context))
@@ -67,7 +67,7 @@ public abstract class SingleLineDisplaySourceMixin {
         return ImmutableList.of(Component.literal(breakDownAndAssembleLabel(label, information)));
     }
 
-    @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
+    @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"), remap = false)
     private List<List<MutableComponent>> createidlx$placeholderifyProvideFlapDisplayText(List<List<MutableComponent>> originalValue,
                                                                                          DisplayLinkContext context, DisplayTargetStats stats) {
         if (isCountdownFinished(context) && hasOverridingFinishLabel(context))
@@ -130,7 +130,7 @@ public abstract class SingleLineDisplaySourceMixin {
         return List.of(breakDownAndAssembleLabelAsComponentList(label, information));
     }
 
-    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "loadFlapDisplayLayout", at = @At("HEAD"), cancellable = true, remap = false)
     private void createidlx$placeholderifyLoadFlapDisplayLayout(DisplayLinkContext context, FlapDisplayBlockEntity flapDisplay,
                                                                 FlapDisplayLayout layout, CallbackInfo ci) {
         if (!this.createidlx$invokeAllowsLabeling(context)) return;

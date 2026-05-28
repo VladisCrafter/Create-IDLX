@@ -12,7 +12,7 @@ import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtil
 
 @Mixin(PercentOrProgressBarDisplaySource.class)
 public class PercentOrProgressBarDisplaySourceMixin {
-    @ModifyVariable(method = "provideLine", at = @At(value = "STORE"), name = "labelSize")
+    @ModifyVariable(method = "provideLine", at = @At(value = "STORE"), name = "labelSize", remap = false)
     private int createidlx$adaptProgressBarLabelSizeForPlaceholders(int labelSize, DisplayLinkContext context, DisplayTargetStats stats) {
         String label = context.sourceConfig().getString("Label");
 
@@ -22,7 +22,7 @@ public class PercentOrProgressBarDisplaySourceMixin {
         return labelSize;
     }
 
-    @ModifyExpressionValue(method = "provideLine", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/redstone/displayLink/source/PercentOrProgressBarDisplaySource;sizeForWideChars(I)I"))
+    @ModifyExpressionValue(method = "provideLine", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/redstone/displayLink/source/PercentOrProgressBarDisplaySource;sizeForWideChars(I)I"), remap = false)
     private int createidlx$adaptProgressBarLength(int length, DisplayLinkContext context, DisplayTargetStats stats) {
         String label = context.sourceConfig().getString("Label");
         int placeholders = getTotalPlaceholdersCountInLabel(label);

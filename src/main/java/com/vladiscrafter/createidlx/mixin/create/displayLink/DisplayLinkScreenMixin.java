@@ -62,7 +62,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Shadow(remap = false) public abstract void onClose();
 
-    @Shadow public abstract void tick();
+    @Shadow(remap = false) public abstract void tick();
 
     @Unique private IconButton createidlx$placeholdersGuideButton;
     @Unique private IconButton createidlx$clipboardGuideButton;
@@ -94,7 +94,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Unique boolean createidlx$isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
     @Unique boolean createidlx$isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
 
-    @Inject(method = "tick", at = @At("TAIL"))
+    @Inject(method = "tick", at = @At("TAIL"), remap = false)
     private void createidlx$tickTooltips(CallbackInfo ci) {
         CompoundTag visualizationConfig = ((DisplayLinkVisualizationConfigHolder) blockEntity).createidlx$getVisualizationConfig();
 
@@ -180,7 +180,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         CreateIDLXGuiContext.exit();
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
     private void createidlx$initGuideButtons(int i, CallbackInfo ci) {
         if (!createidlx$areGuideButtonsEnabled) return;
 
@@ -213,7 +213,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         this.addRenderableWidget(createidlx$clipboardGuideButton);
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
     private void createidlx$initVisualizationSettingsButton(int i, CallbackInfo ci) {
 
         if (createidlx$showVisualizationSettingsButton != null) this.removeWidget(createidlx$showVisualizationSettingsButton);
@@ -316,7 +316,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         tip.addAll(CreateIDLX.translateMultiline("gui.display_link.visualization_settings." + key, ChatFormatting.GRAY.getColor()));
     }
 
-    @Inject(method = "renderWindow", at = @At("TAIL"))
+    @Inject(method = "renderWindow", at = @At("TAIL"), remap = false)
     private void createidlx$injectPlaceholdersStatus(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (createidlx$placeholdersGuideButton == null) return;
 
@@ -347,7 +347,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (createidlx$areRedirectsToPonderScenesEnabled) createidlx$placeholdersGuideButton.getToolTip().add(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 
-    @Inject(method = "onClose", at = @At(value = "INVOKE", target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V"))
+    @Inject(method = "onClose", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/network/simple/SimpleChannel;sendToServer(Ljava/lang/Object;)V"), remap = false)
     private void createidlx$writeVisualizationConfig(CallbackInfo ci, @Local(name = "sourceData") CompoundTag sourceData) {
         CompoundTag createidlx$visualizationConfig = ((DisplayLinkVisualizationConfigHolder) blockEntity).createidlx$getVisualizationConfig();
         CompoundTag visualizationData = new CompoundTag();

@@ -40,15 +40,15 @@ public abstract class DisplayLinkBlockEntityMixin implements DisplayLinkVisualiz
         createidlx$visualizationConfig = (tag == null) ? new CompoundTag() : tag.copy();
     }
 
-    @Inject(method = "read", at = @At("RETURN"))
-    private void createidlx$readVisualizationConfig(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci) {
+    @Inject(method = "read", at = @At("RETURN"), remap = false)
+    private void createidlx$readVisualizationConfig(CompoundTag tag, boolean clientPacket, CallbackInfo ci) {
         if (tag.contains("Visualization", Tag.TAG_COMPOUND))
             createidlx$visualizationConfig = tag.getCompound("Visualization").copy();
         else
             createidlx$visualizationConfig = new CompoundTag();
     }
 
-    @Inject(method = "writeGatheredData", at = @At("TAIL"))
+    @Inject(method = "writeGatheredData", at = @At("TAIL"), remap = false)
     private void createidlx$writeVisualizationConfig(CompoundTag tag, CallbackInfo ci) {
         if (!createidlx$visualizationConfig.isEmpty())
             tag.put("Visualization", createidlx$visualizationConfig.copy());

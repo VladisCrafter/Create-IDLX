@@ -6,8 +6,8 @@ import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import net.minecraft.ChatFormatting;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceClientMixin {
 
-    @Inject(method = "addLabelingTextBox", at = @At("TAIL"))
+    @Inject(method = "addLabelingTextBox", at = @At("TAIL"), remap = false)
     private void createidlx$cacheLabelingTextBoxTooltip(ModularGuiLineBuilder builder, CallbackInfo ci) {
         CreateIDLXGuiTooltipBuffer.registerTooltip("LabelingTextBox", ImmutableList.of(
                 CreateLang.translateDirect("display_source.label")
