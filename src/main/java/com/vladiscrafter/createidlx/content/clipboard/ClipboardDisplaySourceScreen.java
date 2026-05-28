@@ -1,10 +1,9 @@
 package com.vladiscrafter.createidlx.content.clipboard;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
-import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
+import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides.ClipboardType;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
@@ -12,6 +11,7 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.CreateIDLXPackets;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
@@ -21,11 +21,8 @@ import net.createmod.catnip.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.gui.widget.ElementWidget;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -37,7 +34,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +44,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
     private final DisplayLinkBlockEntity displayLink;
     private final boolean paste;
-    private final @Nullable CompoundTag clipboardSnapshot;
+    private final @ParametersAreNonnullByDefault CompoundTag clipboardSnapshot;
     private final Direction interactionFace;
 
     BlockState sourceState;
@@ -82,7 +79,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
     boolean isEmptyAttachedLabelDeselected = CIDLXConfigs.client.deselectEmptyAttachedLabel.get();
 
     public ClipboardDisplaySourceScreen(DisplayLinkBlockEntity displayLink, boolean paste,
-                                        @Nullable CompoundTag clipboardSnapshot, Direction interactionFace) {
+                                        @ParametersAreNonnullByDefault CompoundTag clipboardSnapshot, Direction interactionFace) {
         this.displayLink = displayLink;
         this.paste = paste;
         this.background = !paste ? CreateIDLXGuiTextures.CLIPBOARD_DISPLAY_SOURCE_COPYING : CreateIDLXGuiTextures.CLIPBOARD_DISPLAY_SOURCE_PASTING;
@@ -118,25 +115,25 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
         List<MutableComponent> labelButtonTooltipComponents =
                 translateLocalMultiline("label_button.unavailable_reason." + labelUnavailabilityReason, ChatFormatting.GRAY);
-        labelButtonTooltipComponents.addFirst(translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
+        labelButtonTooltipComponents.add(0, translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
 
         List<MutableComponent> labelButtonTooltipComponentsDisabled =
                 translateLocalMultiline("label_button.disabled_reason.empty", ChatFormatting.GRAY);
-        labelButtonTooltipComponentsDisabled.addFirst(translateLocal("button.disabled").withStyle(s -> s.withColor(0xe0b653)));
+        labelButtonTooltipComponentsDisabled.add(0, translateLocal("button.disabled").withStyle(s -> s.withColor(0xe0b653)));
 
         labelButton.getToolTip().addAll(!labelAvailable ? labelButtonTooltipComponents
                         : labelEnabled ? translateLocalMultiline("label_button.tip", ChatFormatting.GRAY) : labelButtonTooltipComponentsDisabled);
 
         List<MutableComponent> configButtonTooltipComponents =
                 translateLocalMultiline("config_button.unavailable_reason." + configUnavailabilityReason, ChatFormatting.GRAY);
-        configButtonTooltipComponents.addFirst(translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
+        configButtonTooltipComponents.add(0, translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
 
         configButton.getToolTip().addAll(!configAvailable ? configButtonTooltipComponents
                         : translateLocalMultiline("config_button.tip", ChatFormatting.GRAY));
 
         List<MutableComponent> targetButtonTooltipComponents =
                 translateLocalMultiline("target_button.unavailable_reason." + targetUnavailabilityReason, ChatFormatting.GRAY);
-        targetButtonTooltipComponents.addFirst(translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
+        targetButtonTooltipComponents.add(0, translateLocal("button.unavailable").withStyle(s -> s.withColor(0xff5d6c)));
 
         targetButton.getToolTip().addAll(!targetAvailable ? targetButtonTooltipComponents
                         : translateLocalMultiline("target_button.tip", ChatFormatting.GRAY));
@@ -202,7 +199,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
         BlockPos targetPos = BlockPos.ZERO;
         if (clipboardSnapshot != null)
-            targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource"), "TargetPos").orElse(BlockPos.ZERO);
+            targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource").getCompound("TargetPos"));
 
         if (!paste && displayLink.activeTarget == null) {
             includeTarget = targetAvailable = false;
@@ -305,16 +302,18 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
             targetLine = displayLink.targetLine;
         }
         else if (clipboardSnapshot != null) {
-            targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource"), "TargetPos").orElse(BlockPos.ZERO);
+            targetPos = NbtUtils.readBlockPos(clipboardSnapshot.getCompound("DisplaySource").getCompound("TargetPos"));
             targetLine = clipboardSnapshot.getCompound("DisplaySource").getInt("TargetLine");
         }
 
         ItemStack clipboard = AllBlocks.CLIPBOARD.asStack();
-        if (!paste) clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(
+        CompoundTag clipboardTag = clipboard.getOrCreateTag();
+        if (!paste) clipboardTag.putInt("Type",
                 ((includeLabel && labelAvailable) || (includeConfig && configAvailable) || (includeTarget && targetAvailable))
-                        ? ClipboardType.WRITTEN : ClipboardType.EMPTY));
-        else clipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(
-                clipboardSnapshot != null ? ClipboardType.WRITTEN : ClipboardType.EMPTY));
+                        ? ClipboardOverrides.ClipboardType.WRITTEN.ordinal() : ClipboardOverrides.ClipboardType.EMPTY.ordinal());
+        else clipboardTag.putInt("Type",
+                clipboardSnapshot != null ? ClipboardOverrides.ClipboardType.WRITTEN.ordinal() : ClipboardOverrides.ClipboardType.EMPTY.ordinal());
+        clipboard.setTag(clipboardTag);
 
         clipboardWidget = new ElementWidget(guiLeft + (!paste ? 180 : 41), guiTop + (!paste ? 65 : 26))
                 .showingElement(GuiGameElement.of(clipboard));
@@ -408,7 +407,7 @@ public class ClipboardDisplaySourceScreen extends AbstractSimiScreen {
 
     @Override
     public void onClose() {
-        CatnipServices.NETWORK.sendToServer(new ClipboardDisplaySourceConfigurationPacket(
+        CreateIDLXPackets.NETWORK.sendToServer(new ClipboardDisplaySourceConfigurationPacket(
                 displayLink.getBlockPos(), paste, includeLabel, includeConfig, includeTarget));
         super.onClose();
     }

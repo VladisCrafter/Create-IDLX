@@ -42,7 +42,7 @@ legacyForge {
 //            property "mixin.env.remapRefMap", "true"
 //            property "mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg"
 
-            programArguments.addAll "--quickPlaySingleplayer", "EnhancedDisplayLink_test"
+            programArguments.addAll "--quickPlaySingleplayer", "EnhancedDisplayLink_test_legacy"
         }
 
         server {

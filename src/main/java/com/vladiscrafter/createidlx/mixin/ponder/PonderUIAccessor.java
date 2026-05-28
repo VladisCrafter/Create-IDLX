@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mixin(PonderUI.class)
 public interface PonderUIAccessor {
-    @Accessor("scenes") List<PonderScene> createidlx$getScenes();
-    @Accessor("index") void createidlx$setIndex(int index);
-    @Accessor("lazyIndex") LerpedFloat createidlx$getLazyIndex();
+    @Accessor(value = "scenes", remap = false) List<PonderScene> createidlx$getScenes();
+    @Accessor(value = "index", remap = false) void createidlx$setIndex(int index);
+    @Accessor(value = "lazyIndex", remap = false) LerpedFloat createidlx$getLazyIndex();
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Mixin(DisplayLinkBlockEntity.class)
 public abstract class DisplayLinkBlockEntityMixin {
 
-    @Inject(method = "addBehaviours", at = @At("TAIL"))
+    @Inject(method = "addBehaviours", at = @At("TAIL"), remap = false)
     private void createidlx$addClipboardBehaviour(List<BlockEntityBehaviour> behaviours, CallbackInfo ci) {
         SmartBlockEntity self = (SmartBlockEntity) (Object) this;
 

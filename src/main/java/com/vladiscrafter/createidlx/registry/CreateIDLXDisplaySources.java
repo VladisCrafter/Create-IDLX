@@ -11,7 +11,7 @@ import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.content.displayLink.source.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegisterEvent;
 
 public class CreateIDLXDisplaySources {
 

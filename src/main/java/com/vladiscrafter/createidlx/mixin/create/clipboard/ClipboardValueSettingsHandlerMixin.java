@@ -1,8 +1,6 @@
 package com.vladiscrafter.createidlx.mixin.create.clipboard;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
 import com.simibubi.create.content.equipment.clipboard.ClipboardValueSettingsHandler;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.vladiscrafter.createidlx.CreateIDLX;
@@ -18,8 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.bus.api.ICancellableEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+//import net.minecraftforge.eventbus.api.ICancellableEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClipboardValueSettingsHandler.class)
 public abstract class ClipboardValueSettingsHandlerMixin {
 
-    @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "interact", at = @At("HEAD"), cancellable = true, remap = false)
     private static void createidlx$openDisplayLinkClipboardScreen(PlayerInteractEvent event, boolean paste, CallbackInfo ci) {
         if (!(event.getLevel().getBlockEntity(event.getPos()) instanceof DisplayLinkBlockEntity displayLink))
             return;
@@ -39,15 +37,13 @@ public abstract class ClipboardValueSettingsHandlerMixin {
 
         if (event.getLevel().isClientSide()) {
             CompoundTag snapshot = event.getItemStack()
-                    .getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY)
-                    .copiedValues()
-                    .orElse(null);
+                    .getOrCreateTag().getCompound("CopiedValues");
 
             ScreenOpener.open(new ClipboardDisplaySourceScreen(displayLink, paste, snapshot, event.getFace()));
         }
 
-        if (event instanceof ICancellableEvent cancellable) {
-            cancellable.setCanceled(true);
+        if (event.isCancelable()) {
+            event.setCanceled(true);
         }
 
         if (event instanceof PlayerInteractEvent.RightClickBlock rcb) {
@@ -61,7 +57,7 @@ public abstract class ClipboardValueSettingsHandlerMixin {
         ci.cancel();
     }
 
-//    @Inject(method = "interact", at = @At("TAIL"))
+//    @Inject(method = "interact", at = @At("TAIL"), remap = false)
 //    private static void createidlx$displayLinkClipboardMessages(PlayerInteractEvent event, boolean paste, CallbackInfo ci) {
 //        Level level = event.getLevel();
 //        if (level.isClientSide()) return;

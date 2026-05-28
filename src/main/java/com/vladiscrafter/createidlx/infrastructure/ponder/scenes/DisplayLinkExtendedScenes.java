@@ -1,8 +1,6 @@
 package com.vladiscrafter.createidlx.infrastructure.ponder.scenes;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
 import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
@@ -254,7 +252,7 @@ public class DisplayLinkExtendedScenes {
         scene.showBasePlate();
 
         ItemStack filledClipboard = AllBlocks.CLIPBOARD.asStack();
-        filledClipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardOverrides.ClipboardType.WRITTEN));
+        ClipboardOverrides.switchTo(ClipboardOverrides.ClipboardType.WRITTEN, filledClipboard);
 
         Selection shaft1 = util.select().fromTo(6, 1, 2, 0, 1, 2);
         Selection shaft2 = util.select().fromTo(6, 1, 1, 0, 1, 1);
@@ -558,7 +556,7 @@ public class DisplayLinkExtendedScenes {
         //
         // BOILER STATUS:  IDLE
         ItemStack filledClipboard = AllBlocks.CLIPBOARD.asStack();
-        filledClipboard.set(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY.setType(ClipboardOverrides.ClipboardType.WRITTEN));
+        ClipboardOverrides.switchTo(ClipboardOverrides.ClipboardType.WRITTEN, filledClipboard);
 
         Selection shaft = util.select().fromTo(6, 1, 1, 0, 1, 1);
         Selection input = util.select().position(6, 2, 1);

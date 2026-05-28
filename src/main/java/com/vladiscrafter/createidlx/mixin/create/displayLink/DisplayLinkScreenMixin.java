@@ -24,7 +24,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,17 +36,17 @@ import java.util.List;
 @Mixin(DisplayLinkScreen.class)
 public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
-    @Shadow private List<DisplaySource> sources;
-    @Shadow private ScrollInput sourceTypeSelector;
-    @Shadow private Label sourceTypeLabel;
+    @Shadow(remap = false) private List<DisplaySource> sources;
+    @Shadow(remap = false) private ScrollInput sourceTypeSelector;
+    @Shadow(remap = false) private Label sourceTypeLabel;
 
-    @Shadow protected abstract void initGathererSourceSubOptions(int i);
+    @Shadow(remap = false) protected abstract void initGathererSourceSubOptions(int i);
 
-    @Shadow private DisplayLinkBlockEntity blockEntity;
-    @Shadow private BlockState targetState;
-    @Shadow private DisplayTarget target;
+    @Shadow(remap = false) private DisplayLinkBlockEntity blockEntity;
+    @Shadow(remap = false) private BlockState targetState;
+    @Shadow(remap = false) private DisplayTarget target;
 
-    @Shadow public abstract void onClose();
+    @Shadow(remap = false) public abstract void onClose();
 
     @Unique private IconButton createidlx$placeholdersGuideButton;
     @Unique private IconButton createidlx$clipboardGuideButton;
@@ -60,7 +60,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Unique boolean createidlx$isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
     @Unique boolean createidlx$isCrudeProgressBarSupportEnabled = CIDLXConfigs.server.enableCrudeProgressBarSupport.get();
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$replaceSourceTypeSelector(CallbackInfo ci) {
         if (sources == null || sources.isEmpty()) return;
         if (sourceTypeSelector instanceof InBoundsSelectionScrollInput) return;
@@ -106,7 +106,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         initGathererSourceSubOptions(0);
     }
 
-    @Inject(method = "initGathererOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererOptions", at = @At("TAIL"), remap = false)
     private void createidlx$cacheTargetWidgetTooltip(CallbackInfo ci) {
         CreateIDLXGuiTooltipBuffer.registerTooltip("TargetWidget", List.of(
                 CreateLang.translateDirect("display_link.writing_to"),
@@ -119,21 +119,21 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     }
 
     @Override
-    protected void removeWidget(@NotNull GuiEventListener widget) {
+    protected void removeWidget(@ParametersAreNonnullByDefault GuiEventListener widget) {
         super.removeWidget(widget);
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("HEAD"), remap = false)
     private void createidlx$enterSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.enter(sources.get(i));
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("RETURN"), remap = false)
     private void createidlx$exitSourceConfig(int i, CallbackInfo ci) {
         CreateIDLXGuiContext.exit();
     }
 
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
+    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"), remap = false)
     private void createidlx$injectGuideButtons(int i, CallbackInfo ci) {
         if (!createidlx$areGuideButtonsEnabled) return;
 
@@ -157,40 +157,40 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         else createidlx$clipboardGuideButton.active = false;
 
         createidlx$clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, 0x5391E1, ChatFormatting.GRAY.getColor()));
-        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$clipboardGuideButton.getToolTip().add(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
         this.addRenderableWidget(createidlx$placeholdersGuideButton);
         this.addRenderableWidget(createidlx$clipboardGuideButton);
     }
 
-    @Inject(method = "renderWindow", at = @At("TAIL"))
+    @Inject(method = "renderWindow", at = @At("TAIL"), remap = false)
     private void injectPlaceholdersStatus(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (createidlx$placeholdersGuideButton == null) return;
 
         if (!AllKeys.shiftDown()) {
-            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_header").withColor(0x5391E1));
+            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_header").withStyle(s -> s.withColor(0x5391E1)));
             createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.placeholders_tooltip", 3, ChatFormatting.GRAY.getColor()));
             createidlx$placeholdersGuideButton.getToolTip().add(CreateIDLX.translate("gui.display_link.placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         } else {
-            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_header").withColor(0x5391E1));
+            createidlx$placeholdersGuideButton.setToolTip(CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_header").withStyle(s -> s.withColor(0x5391E1)));
 
             if (createidlx$isActivePlaceholdersTooltipEnabled) {
                 createidlx$placeholdersGuideButton.getToolTip().add(
                         ((createidlx$isDollarSignPlaceholderEnabled || createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1",
-                                ((createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withColor(0x53e053)
-                                        : (!createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withColor(0xe0b653)
-                                        : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withColor(0xe0b653))).withStyle(ChatFormatting.GRAY)
-                                : CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1_disabled").withColor(0xe05353)));
+                                ((createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.both").withStyle(s -> s.withColor(0x53e053))
+                                        : (!createidlx$isDollarSignPlaceholderEnabled && createidlx$isBracketsPlaceholderEnabled) ? CreateIDLX.translate("gui.display_link.active_placeholder.brackets_only").withStyle(s -> s.withColor(0xe0b653))
+                                        : CreateIDLX.translate("gui.display_link.active_placeholder.dollar_only").withStyle(s -> s.withColor(0xe0b653)))).withStyle(ChatFormatting.GRAY)
+                                : CreateIDLX.translate("gui.display_link.placeholders_tooltip_detailed_1_disabled").withStyle(s -> s.withColor(0xe05353))));
             }
 
             if (createidlx$isProgressBarSupportStateTooltipEnabled && (createidlx$isDollarSignPlaceholderEnabled || createidlx$isBracketsPlaceholderEnabled)) {
                 createidlx$placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_detailed_2", ChatFormatting.GRAY.getColor(),
-                                (createidlx$isCrudeProgressBarSupportEnabled) ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withColor(0xe0b653)
+                                (createidlx$isCrudeProgressBarSupportEnabled) ? CreateIDLX.translate("gui.display_link.progress_bar_support.enabled").withStyle(s -> s.withColor(0xe0b653))
                                         : CreateIDLX.translate("gui.display_link.progress_bar_support.disabled")));
             }
 
         }
 
-        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        if (createidlx$areGuideButtonRedirectsEnabled) createidlx$placeholdersGuideButton.getToolTip().add(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 }

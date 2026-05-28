@@ -20,7 +20,6 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import java.util.ArrayList;
@@ -36,16 +35,18 @@ public class CreateIDLX {
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateIDLX.ID);
 
     public CreateIDLX() {
+        @SuppressWarnings("removal")
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
+        @SuppressWarnings("removal")
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
         CreateIDLX.REGISTRATE.registerEventListeners(modEventBus);
 
         modEventBus.addListener(CreateIDLXDisplaySources::register);
-        modEventBus.addListener(CreateIDLXPackets::register);
 
+        CreateIDLXPackets.register();
         CIDLXConfigs.register(modLoadingContext::registerConfig);
 
         modEventBus.addListener(this::onLoadConfig);

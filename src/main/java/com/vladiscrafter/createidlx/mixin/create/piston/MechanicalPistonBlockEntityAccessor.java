@@ -6,5 +6,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(MechanicalPistonBlockEntity.class)
 public interface MechanicalPistonBlockEntityAccessor {
-    @Accessor("extensionLength") int $createidlx$getExtensionLength();
+    @Accessor(value = "extensionLength", remap = false) int $createidlx$getExtensionLength();
 }

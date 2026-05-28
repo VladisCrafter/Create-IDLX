@@ -88,7 +88,8 @@ public class DisplayLinkBehaviour extends BlockEntityBehaviour {
         }
 
         if (includeTarget && displaySourceTag.contains("TargetDim")) {
-            targetPos = NbtUtils.readBlockPos(displaySourceTag, "TargetPos").orElse(BlockPos.ZERO);
+            targetPos = NbtUtils.readBlockPos(displaySourceTag.getCompound("TargetPos"));
+            if (targetPos == null) targetPos = BlockPos.ZERO;
             targetLine = displaySourceTag.getInt("TargetLine");
 
             be.target(targetPos);

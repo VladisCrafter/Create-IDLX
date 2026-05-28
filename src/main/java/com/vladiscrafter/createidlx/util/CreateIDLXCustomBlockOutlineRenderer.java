@@ -39,12 +39,14 @@ public class CreateIDLXCustomBlockOutlineRenderer {
                 b = 85f;
             }
 
-            vb.addVertex(transform.pose(), (float) x1, (float) y1, (float) z1)
-                    .setColor(r / 255f, g / 255f, b / 255f, (isCustomOutlineForDisplayLinksEnabled ? customOutlineAlpha : .4f))
-                    .setNormal(transform.copy(), xDiff, yDiff, zDiff);
-            vb.addVertex(transform.pose(), (float) x2, (float) y2, (float) z2)
-                    .setColor(r / 255f, g / 255f, b / 255f, (isCustomOutlineForDisplayLinksEnabled ? customOutlineAlpha : .4f))
-                    .setNormal(transform.copy(), xDiff, yDiff, zDiff);
+            vb.vertex(transform.pose(), (float) x1, (float) y1, (float) z1)
+                    .color(r / 255f, g / 255f, b / 255f, (isCustomOutlineForDisplayLinksEnabled ? customOutlineAlpha : .4f))
+                    .normal(transform.normal(), xDiff, yDiff, zDiff)
+                    .endVertex();
+            vb.vertex(transform.pose(), (float) x2, (float) y2, (float) z2)
+                    .color(r / 255f, g / 255f, b / 255f, (isCustomOutlineForDisplayLinksEnabled ? customOutlineAlpha : .4f))
+                    .normal(transform.normal(), xDiff, yDiff, zDiff)
+                    .endVertex();
 
         });
     }
