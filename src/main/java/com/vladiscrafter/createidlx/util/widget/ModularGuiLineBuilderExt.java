@@ -4,10 +4,14 @@ import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
+import com.simibubi.create.foundation.gui.widget.TooltipArea;
+import net.minecraft.client.gui.components.EditBox;
 
 import java.util.function.BiConsumer;
 
+@SuppressWarnings("UnusedReturnValue")
 public interface ModularGuiLineBuilderExt {
     ModularGuiLineBuilder createidlx$addTimerScrollInput(int x, int width, BiConsumer<ScrollInput, Label> inputTransform, String dataKey);
     ModularGuiLineBuilder createidlx$addBinaryScrollInput(int x, int width, BiConsumer<SelectionScrollInput, Label> inputTransform, String dataKey);
+    ModularGuiLineBuilder createidlx$addLengthUnrestrainedTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform, String dataKey);
 }

@@ -23,7 +23,8 @@
     "create.displayLink.source.SingleLineDisplaySourceClientMixin",
     "create.gui.AbstractSimiScreenMixin",
     "create.gui.AbstractSimiWidgetMixin",
-    "create.gui.ModularGuiLineBuilderMixin"
+    "create.gui.ModularGuiLineBuilderMixin",
+    "minecraft.gui.EditBoxMixin"
   ],
   "server": []
 }
