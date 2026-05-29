@@ -235,7 +235,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
             return;
         }
 
-        createidlx$showVisualizationSettingsButton = new IconButton(x + 6, y + background.getHeight() - 24, AllIcons.I_PLACEMENT_SETTINGS);
+        createidlx$showVisualizationSettingsButton = new IconButton(x + 6, y + background.getHeight() - 24, CreateIDLXIcons.I_VISUALIZATION_SETTINGS);
         createidlx$showVisualizationSettingsButton.withCallback(() -> {
             createidlx$visualizationSettingsVisible ^= true;
             createidlx$initVisualizationSettings();
@@ -257,7 +257,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         int x = guiLeft + 36;
         int y = guiTop + background.getHeight() - 24;
 
-        createidlx$centerTextButton = new IconButton(x, y, AllIcons.I_TOOL_MOVE_XZ);
+        createidlx$centerTextButton = new IconButton(x, y, CreateIDLXIcons.I_CENTER_TEXT);
         createidlx$centerTextButton.green = createidlx$centerText;
         createidlx$centerTextButton.withCallback(() -> {
             createidlx$centerTextButton.green ^= true;
@@ -266,7 +266,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         Collections.addAll(createidlx$visualizationSettingWidgets, createidlx$centerTextButton);
         x += 26;
 
-        /*createidlx$cutOutSectionGapsButton = new IconButton(x, y, AllIcons.VALUE_BOX_HOVER_4PX);
+        /*createidlx$cutOutSectionGapsButton = new IconButton(x, y, CreateIDLXIcons.I_CUT_OUT_SECTION_GAPS);
         createidlx$cutOutSectionGapsButton.green = createidlx$cutOutSectionGaps;
         createidlx$cutOutSectionGapsButton.withCallback(() -> {
             createidlx$cutOutSectionGapsButton.green ^= true;
@@ -275,7 +275,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         Collections.addAll(createidlx$visualizationSettingWidgets, createidlx$cutOutSectionGapsButton);
         x += 26;*/
 
-        createidlx$markTruncationWithEllipsisButton = new IconButton(x, y, AllIcons.I_3x3);
+        createidlx$markTruncationWithEllipsisButton = new IconButton(x, y, CreateIDLXIcons.I_MARK_TRUNCATION_WITH_ELLIPSIS);
         createidlx$markTruncationWithEllipsisButton.green = createidlx$markTruncationWithEllipsis;
         createidlx$markTruncationWithEllipsisButton.withCallback(() -> {
             createidlx$markTruncationWithEllipsisButton.green ^= true;

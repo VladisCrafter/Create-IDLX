@@ -3,10 +3,6 @@ package com.vladiscrafter.createidlx.foundation.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.content.equipment.clipboard.ClipboardContent;
-import com.simibubi.create.content.equipment.clipboard.ClipboardOverrides;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -17,7 +13,6 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -35,7 +30,11 @@ public class CreateIDLXIcons implements ScreenElement {
     public static final CreateIDLXIcons
             I_PLACEHOLDER = newRow(),
             I_CLIPBOARD = next(),
-            I_CLIPBOARD_ITEM = next();
+            I_CLIPBOARD_ITEM = next(),
+            I_VISUALIZATION_SETTINGS = next(),
+            I_CENTER_TEXT = next(),
+            I_CUT_OUT_SECTION_GAPS = next(),
+            I_MARK_TRUNCATION_WITH_ELLIPSIS = next();
 
     public static final ScreenElement
             placeholdersIcon = I_PLACEHOLDER,
