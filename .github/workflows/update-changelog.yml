@@ -11,6 +11,7 @@ permissions: write-all
 
 jobs:
   update:
+    if: ${{ github.repository == 'VladisCrafter/Create-IDLX' }}
     runs-on: ubuntu-latest
 
     steps:
