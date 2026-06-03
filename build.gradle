@@ -24,6 +24,17 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+    create("mixinAgent") {
+        canBeConsumed = false
+        canBeResolved = true
+        defaultDependencies {
+            add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:1.1").setTransitive(false))
+        }
+    }
+}
+
 neoForge {
     version = project.neo_version
 
@@ -61,7 +72,13 @@ neoForge {
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
 
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
             logLevel = org.slf4j.event.Level.DEBUG
+
+            def files = configurations.mixinAgent.files
+            if (!files.isEmpty()) {
+                jvmArgument '-javaagent:' + files.first().toPath()
+            }
         }
     }
 
@@ -74,16 +91,13 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
-}
-
 dependencies {
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+    additionalRuntimeClasspath("dev.vfyjxf:mixin-hotswap-agent:1.1")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -117,6 +131,7 @@ publishing {
         maven {
             url = "file://${project.projectDir}/repo"
         }
+        mavenCentral()
     }
 }
 
