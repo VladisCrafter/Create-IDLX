@@ -20,6 +20,14 @@
   "createidlx.gui.display_link.clipboard_tooltip_2": "右击一个源显示链接器以选择要复制到剪贴板的配置选项，",
   "createidlx.gui.display_link.clipboard_tooltip_3": "左击目标显示链接器以选择要从剪贴板粘贴的配置选项。",
 
+  "createidlx.gui.display_link.visualization_settings.show_visualization_settings": "显示效果设置",
+
+  "createidlx.gui.display_link.visualization_settings.center_text": "居中",
+  "createidlx.gui.display_link.visualization_settings.center_text_tooltip": "将文本显示在目标翻牌显示器的中间位置",
+
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis": "过长内容使用省略号",
+  "createidlx.gui.display_link.visualization_settings.mark_truncation_with_ellipsis_tooltip": "当文本总长超过目标翻牌显示器单行字数上限时，在末端最后一字处使用省略号",
+
   "createidlx.gui.clipboard_display_source.title.copy": "复制显示链接器配置",
   "createidlx.gui.clipboard_display_source.title.paste": "粘贴显示链接器配置",
 
