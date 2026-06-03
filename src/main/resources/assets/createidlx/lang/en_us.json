@@ -140,6 +140,16 @@
 
   "createidlx.display_source.mechanical_piston_extension_state.ratio_template": "%1$s/%2$s",
 
+  "createidlx.display_source.fluid_reservoir_volume": "Fluid Reservoir Volume",
+  "createidlx.display_source.fluid_reservoir_volume.bottomless_display": "Bottomless Supply Display Format",
+  "createidlx.display_source.fluid_reservoir_volume.comparison": "Comparison",
+  "createidlx.display_source.fluid_reservoir_volume.infinity": "Infinity Sign",
+  "createidlx.display_source.fluid_reservoir_volume.words": "Words",
+  "createidlx.display_source.fluid_reservoir_volume.source_only": "Count Fluid Source Blocks only",
+
+  "createidlx.display_source.fluid_reservoir_volume.comparison_template": "≥%s",
+  "createidlx.display_source.fluid_reservoir_volume.infinity_template": "∞",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",

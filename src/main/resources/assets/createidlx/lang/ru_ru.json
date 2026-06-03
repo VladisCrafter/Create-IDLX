@@ -140,6 +140,16 @@
 
   "createidlx.display_source.mechanical_piston_extension_state.ratio_template": "%1$s/%2$s",
 
+  "createidlx.display_source.fluid_reservoir_volume": "Объём жидкостного резервуара",
+  "createidlx.display_source.fluid_reservoir_volume.bottomless_display": "Формат отображения бесконечного снабжения",
+  "createidlx.display_source.fluid_reservoir_volume.comparison": "Сравнение с порогом",
+  "createidlx.display_source.fluid_reservoir_volume.infinity": "Знак бесконечности",
+  "createidlx.display_source.fluid_reservoir_volume.words": "Слова",
+  "createidlx.display_source.fluid_reservoir_volume.source_only": "Считать только блоки-источники жидкости",
+
+  "createidlx.display_source.fluid_reservoir_volume.comparison_template": "≥%s",
+  "createidlx.display_source.fluid_reservoir_volume.infinity_template": "∞",
+
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
   "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",

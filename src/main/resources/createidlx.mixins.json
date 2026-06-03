@@ -5,6 +5,7 @@
   "refmap": "createidlx.refmap.json",
   "mixins": [
     "accessor.create.FlapDisplaySectionAccessor",
+    "accessor.create.HosePulleyBlockEntityAccessor",
     "accessor.create.MechanicalPistonBlockEntityAccessor",
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkConfigurationPacketMixin",
@@ -14,7 +15,8 @@
     "create.displayLink.source.TrainStatusDisplaySourceMixin",
     "create.elevator.ElevatorColumnMixin",
     "create.elevator.ElevatorContactBlockEntityMixin",
-    "create.elevator.ElevatorContraptionMixin"
+    "create.elevator.ElevatorContraptionMixin",
+    "create.fluid.HosePulleyFluidHandlerMixin"
   ],
   "client": [
     "accessor.ponder.PonderUIAccessor",

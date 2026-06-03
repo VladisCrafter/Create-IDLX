@@ -27,6 +27,8 @@ public class CreateIDLXDisplaySources {
 
     public static final DisplaySource MECHANICAL_PISTON_EXTENSION_STATE = new MechanicalPistonExtensionStateDisplaySource();
 
+    public static final DisplaySource FLUID_RESERVOIR_VOLUME = new FluidReservoirVolumeDisplaySource();
+
     public static void register(RegisterEvent event) {
         if (!event.getRegistryKey().equals(CreateBuiltInRegistries.DISPLAY_SOURCE.key())) return;
 
@@ -50,6 +52,9 @@ public class CreateIDLXDisplaySources {
         registerSource(MECHANICAL_PISTON_EXTENSION_STATE, "mechanical_piston_extension_state",
                 AllBlocks.MECHANICAL_PISTON,
                 AllBlocks.STICKY_MECHANICAL_PISTON);
+
+        registerSource(FLUID_RESERVOIR_VOLUME, "fluid_reservoir_volume",
+                AllBlocks.HOSE_PULLEY);
     }
 
     private static void registerSource(DisplaySource displaySource, String displaySourceId, BlockEntry<?>... blocks) {

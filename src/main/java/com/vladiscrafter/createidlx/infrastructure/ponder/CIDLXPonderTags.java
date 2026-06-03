@@ -15,6 +15,7 @@ public class CIDLXPonderTags {
                 .add(AllBlocks.ELEVATOR_CONTACT)
                 .add(AllBlocks.ELEVATOR_PULLEY)
                 .add(AllBlocks.MECHANICAL_PISTON)
-                .add(AllBlocks.STICKY_MECHANICAL_PISTON);
+                .add(AllBlocks.STICKY_MECHANICAL_PISTON)
+                .add(AllBlocks.HOSE_PULLEY);
     }
 }
