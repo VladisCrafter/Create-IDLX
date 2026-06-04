@@ -150,6 +150,20 @@
   "createidlx.display_source.fluid_reservoir_volume.comparison_template": "≥%s",
   "createidlx.display_source.fluid_reservoir_volume.infinity_template": "∞",
 
+  "createidlx.display_source.held_item_durability": "Held Item Durability",
+  "createidlx.display_source.held_item_durability.display": "Displayed Info and Format",
+  "createidlx.display_source.held_item_durability.progress_bar": "Progress Bar",
+  "createidlx.display_source.held_item_durability.percent": "Durability Percentage",
+  "createidlx.display_source.held_item_durability.damage": "Damage",
+  "createidlx.display_source.held_item_durability.current_durability": "Current Durability",
+  "createidlx.display_source.held_item_durability.max_durability": "Maximum Durability",
+  "createidlx.display_source.held_item_durability.damage_n_total": "Damage to Maximum Durability Ratio",
+  "createidlx.display_source.held_item_durability.current_n_total": "Current to Maximum Durability Ratio",
+
+  "createidlx.display_source.held_item_durability.indestructible_template": "∞",
+  "createidlx.display_source.held_item_durability.invalid_damage_template": "-",
+  "createidlx.display_source.held_item_durability.ratio_template": "%1$s/%2$s",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",

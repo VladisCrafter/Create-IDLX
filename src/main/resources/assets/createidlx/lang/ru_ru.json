@@ -150,6 +150,20 @@
   "createidlx.display_source.fluid_reservoir_volume.comparison_template": "≥%s",
   "createidlx.display_source.fluid_reservoir_volume.infinity_template": "∞",
 
+  "createidlx.display_source.held_item_durability": "Прочность предмета",
+  "createidlx.display_source.held_item_durability.display": "Отображаемая информация и формат",
+  "createidlx.display_source.held_item_durability.progress_bar": "Полоса прогресса",
+  "createidlx.display_source.held_item_durability.percent": "Процент прочности",
+  "createidlx.display_source.held_item_durability.damage": "Повреждение",
+  "createidlx.display_source.held_item_durability.current_durability": "Текущая прочность",
+  "createidlx.display_source.held_item_durability.max_durability": "Максимальная прочность",
+  "createidlx.display_source.held_item_durability.damage_n_total": "Доля повреждения от максимальной прочности",
+  "createidlx.display_source.held_item_durability.current_n_total": "Доля текущей прочности от максимальной",
+
+  "createidlx.display_source.held_item_durability.indestructible_template": "∞",
+  "createidlx.display_source.held_item_durability.invalid_damage_template": "-",
+  "createidlx.display_source.held_item_durability.ratio_template": "%1$s/%2$s",
+
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
   "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",

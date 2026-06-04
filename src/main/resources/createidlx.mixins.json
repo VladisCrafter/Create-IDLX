@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "createidlx.refmap.json",
   "mixins": [
+    "accessor.create.DeployerBlockEntityAccessor",
     "accessor.create.FlapDisplaySectionAccessor",
     "accessor.create.HosePulleyBlockEntityAccessor",
     "accessor.create.MechanicalPistonBlockEntityAccessor",

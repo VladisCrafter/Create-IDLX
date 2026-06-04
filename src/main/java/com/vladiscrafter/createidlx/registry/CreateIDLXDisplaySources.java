@@ -29,6 +29,8 @@ public class CreateIDLXDisplaySources {
 
     public static final DisplaySource FLUID_RESERVOIR_VOLUME = new FluidReservoirVolumeDisplaySource();
 
+    public static final DisplaySource HELD_ITEM_DURABILITY = new HeldItemDurabilityDisplaySource();
+
     public static void register(RegisterEvent event) {
         if (!event.getRegistryKey().equals(CreateBuiltInRegistries.DISPLAY_SOURCE.key())) return;
 
@@ -55,6 +57,9 @@ public class CreateIDLXDisplaySources {
 
         registerSource(FLUID_RESERVOIR_VOLUME, "fluid_reservoir_volume",
                 AllBlocks.HOSE_PULLEY);
+
+        registerSource(HELD_ITEM_DURABILITY, "held_item_durability",
+                AllBlocks.DEPLOYER);
     }
 
     private static void registerSource(DisplaySource displaySource, String displaySourceId, BlockEntry<?>... blocks) {
