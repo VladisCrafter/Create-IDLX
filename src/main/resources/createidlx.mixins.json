@@ -11,6 +11,7 @@
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkConfigurationPacketMixin",
     "create.displayLink.source.CurrentFloorDisplaySourceMixin",
+    "create.displayLink.source.NixieTubeDisplaySourceMixin",
     "create.displayLink.source.PercentOrProgressBarDisplaySourceMixin",
     "create.displayLink.source.SingleLineDisplaySourceMixin",
     "create.displayLink.source.TrainStatusDisplaySourceMixin",

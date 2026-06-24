@@ -4,6 +4,7 @@ import com.simibubi.create.content.contraptions.elevator.ElevatorPulleyBlockEnti
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
+import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import net.minecraft.network.chat.Component;
@@ -43,6 +44,16 @@ public class ElevatorMovementDirectionDisplaySource extends SingleLineDisplaySou
     @Override
     protected boolean allowsLabeling(DisplayLinkContext context) {
         return true;
+    }
+
+    @Override
+    protected String getFlapDisplayLayoutName(DisplayLinkContext context) {
+        return "Instant";
+    }
+
+    @Override
+    protected FlapDisplaySection createSectionForValue(DisplayLinkContext context, int size) {
+        return new FlapDisplaySection(size * FlapDisplaySection.MONOSPACE, "instant", false, false);
     }
 
     @Override
