@@ -14,6 +14,8 @@ group = mod_group_id
 repositories {
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
+    maven { url = "https://maven.blamejared.com" } // Veil
+    maven { url = "https://maven.ryanhcode.dev/releases" } // ImGuiMC
 }
 
 base {
@@ -98,6 +100,8 @@ dependencies {
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     additionalRuntimeClasspath("dev.vfyjxf:mixin-hotswap-agent:1.1")
+    runtimeOnly("foundry.veil:veil-neoforge-${minecraft_version}:${veil_version}")
+    runtimeOnly("foundry.imguimc:imguimc-neoforge-${minecraft_version}:${imguimc_version}")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
