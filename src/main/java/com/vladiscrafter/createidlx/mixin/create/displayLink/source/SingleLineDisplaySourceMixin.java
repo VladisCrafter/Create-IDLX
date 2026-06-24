@@ -100,28 +100,14 @@ public abstract class SingleLineDisplaySourceMixin {
             FlapDisplayBlockEntity flapDisplay = ((FlapDisplayBlockEntity) be).getController();
 
             int maxLength = flapDisplay.getMaxCharCount();
-            float maxWidth = maxLength * MONOSPACE;
-            float valueWidth = Math.min(information.length() * (layoutKey.equals("Progress") ? WIDE_MONOSPACE / MONOSPACE : 1), maxWidth);
+            float maxValueWidth = maxLength * MONOSPACE;
+            float valueWidthMod = layoutKey.equals("Progress") ? WIDE_MONOSPACE / MONOSPACE : 1;
 
-            ArrayList<String> labelSections = breakDownLabel(label);
-            ArrayList<FlapDisplaySection> unclampedSections = new ArrayList<>();
-
-            if (getCoveringPlaceholdersInLabel(label).getLeft()) {
-                unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-            }
-
-            if (!labelSections.isEmpty()) for (int i = 0; i < labelSections.size(); i++) {
-                unclampedSections.add(createLabelSection(labelSections.get(i)));
-                if (labelSections.size() > i + 1) {
-                    unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-                }
-            }
-            if (getCoveringPlaceholdersInLabel(label).getRight()) {
-                unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-            }
+            ArrayList<FlapDisplaySection> unclampedSections = breakDownAndAssembleLabelAsSectionList(label, information, layoutKey,
+                    maxValueWidth, valueWidthMod);
 
             Pair<ArrayList<FlapDisplaySection>, Float> sectionsClampResult
-                    = clampSections(unclampedSections, maxWidth, true, getMarkTruncationWithEllipsis(context));
+                    = clampSections(unclampedSections, maxValueWidth, true, getMarkTruncationWithEllipsis(context));
             ArrayList<FlapDisplaySection> clampedSections = sectionsClampResult.getLeft();
 
             return List.of(assembleLabelFromSectionsAsComponentList(clampedSections));
@@ -156,30 +142,16 @@ public abstract class SingleLineDisplaySourceMixin {
 
         int maxLength = flapDisplay.getMaxCharCount();
 
-        float maxWidth = maxLength * MONOSPACE;
-        float valueWidth = Math.min(information.length() * (layoutKey.equals("Progress") ? WIDE_MONOSPACE / MONOSPACE : 1), maxWidth);
+        float maxValueWidth = maxLength * MONOSPACE;
+        float valueWidthMod = layoutKey.equals("Progress") ? WIDE_MONOSPACE / MONOSPACE : 1;
+
+        ArrayList<FlapDisplaySection> unclampedSections = breakDownAndAssembleLabelAsSectionList(label, information, layoutKey,
+                maxValueWidth, valueWidthMod);
 
         String layoutName = buildLayoutSignature(label, layoutKey, Math.max(1, Math.min(information.length(), maxLength)), context);
 
-        ArrayList<String> labelSections = breakDownLabel(label);
-        ArrayList<FlapDisplaySection> unclampedSections = new ArrayList<>();
-
-        if (getCoveringPlaceholdersInLabel(label).getLeft()) {
-            unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-        }
-
-        if (!labelSections.isEmpty()) for (int i = 0; i < labelSections.size(); i++) {
-            unclampedSections.add(createLabelSection(labelSections.get(i)));
-            if (labelSections.size() > i + 1) {
-                unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-            }
-        }
-        if (getCoveringPlaceholdersInLabel(label).getRight()) {
-            unclampedSections.add(createValueSection(valueWidth, layoutKey, information));
-        }
-
         Pair<ArrayList<FlapDisplaySection>, Float> sectionsClampResult
-                = clampSections(unclampedSections, maxWidth, true, getMarkTruncationWithEllipsis(context));
+                = clampSections(unclampedSections, maxValueWidth, true, getMarkTruncationWithEllipsis(context));
         ArrayList<FlapDisplaySection> clampedSections = sectionsClampResult.getLeft();
 
         float totalWidth = sectionsClampResult.getRight();
