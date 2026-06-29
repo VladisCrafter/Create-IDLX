@@ -25,6 +25,7 @@ import java.util.List;
 
 import static com.simibubi.create.content.trains.display.FlapDisplaySection.*;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
+import static com.vladiscrafter.createidlx.util.PlaceholderProcessingUtils.*;
 
 @Pseudo
 @Mixin(SingleLineDisplaySource.class)
