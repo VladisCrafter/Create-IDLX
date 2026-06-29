@@ -32,13 +32,13 @@ public class ExpandedEditBoxUtils {
         int eY = sY + 10 + 4;
 
         for (int i = 0; i < full.length(); i++) {
-            Pair<Integer, PlaceholderType> placeholderLengthAndType = getPlaceholderLengthAndType(full, i, true);
+            Placeholder placeholder = getPlaceholder(full, i);
 
-            int placeholderLength = placeholderLengthAndType.getLeft();
+            int placeholderLength = placeholder.length();
             String pl = full.substring(i, i + placeholderLength);
             int plW = font.width(pl);
 
-            PlaceholderType placeholderType = placeholderLengthAndType.getRight();
+            PlaceholderType placeholderType = placeholder.type();
 
             if (placeholderLength > 0) {
                 int minX = Math.max(widgetX /*- 4*/, fX), maxX = Math.min(fX + plW, widgetX + font.width(visible) /*widgetWidth + 3*/);

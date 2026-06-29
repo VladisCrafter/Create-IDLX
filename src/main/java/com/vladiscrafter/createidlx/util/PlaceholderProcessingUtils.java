@@ -14,37 +14,6 @@ import java.util.function.Consumer;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
 public class PlaceholderProcessingUtils {
-    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, INVALID}
-    static Pair<Integer, PlaceholderType> invalid = Pair.of(0, PlaceholderType.INVALID);
-
-    public static boolean isActive(Pair<Integer, PlaceholderType> placeholder) {
-        return isActive(placeholder.getRight());
-    }
-
-    public static boolean isActive(PlaceholderType placeholderType) {
-        return placeholderType != PlaceholderType.ESCAPED
-                && placeholderType != PlaceholderType.DISABLED
-                && placeholderType != PlaceholderType.INVALID;
-    }
-
-    public static boolean removeEscapeBackslash(PlaceholderType type) {
-        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
-        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
-        boolean isOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableOriginalTrimmingPlaceholder.get();
-        boolean isShortenedOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableShortenedOriginalTrimmingPlaceholder.get();
-        boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
-        boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
-        boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
-
-        return isEscapingOfPlaceholdersEnabled
-                && (isEscapingOfDisabledPlaceholdersHidden
-                || (type == PlaceholderType.DOLLAR && isDollarSignPlaceholderEnabled)
-                || (type == PlaceholderType.BRACKETS && isBracketsPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM && isOriginalTrimmingPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM_SHORT && isShortenedOriginalTrimmingPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM_ALT && isAlternativeTrimmingPlaceholderEnabled));
-    }
-
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
 
@@ -158,14 +127,14 @@ public class PlaceholderProcessingUtils {
         boolean hasEscapedPlaceholders = false;
 
         boolean mergeFirstTwoLabelParts = false;
-        Pair<Integer, PlaceholderType> startPlaceholder = getPlaceholderLengthAndType(breakableLabel.toString(), 0);
-        boolean startsByPlaceholder = breakableLabel.isEmpty() || (startPlaceholder.getLeft() > 0 && isActive(startPlaceholder));
+        Placeholder startPlaceholder = getPlaceholder(breakableLabel.toString(), 0);
+        boolean startsByPlaceholder = breakableLabel.isEmpty() || (startPlaceholder.length() > 0 && startPlaceholder.isActive());
         if (startsByPlaceholder && !breakableLabel.isEmpty()) {
-            placeholders.add(breakableLabel.substring(0, startPlaceholder.getLeft()));
-            breakableLabel.delete(0, startPlaceholder.getLeft());
-        } else if (startPlaceholder.getRight() == PlaceholderType.ESCAPED) {
-            labelParts.add(breakableLabel.substring(0, startPlaceholder.getLeft()));
-            breakableLabel.delete(0, startPlaceholder.getLeft());
+            placeholders.add(breakableLabel.substring(0, startPlaceholder.length()));
+            breakableLabel.delete(0, startPlaceholder.length());
+        } else if (startPlaceholder.type() == PlaceholderType.ESCAPED) {
+            labelParts.add(breakableLabel.substring(0, startPlaceholder.length()));
+            breakableLabel.delete(0, startPlaceholder.length());
             mergeFirstTwoLabelParts = true;
         }
 
@@ -176,25 +145,25 @@ public class PlaceholderProcessingUtils {
             boolean foundPlaceholder = false;
 
             for (int i = 0; i < breakableLabel.length(); i++) {
-                Pair<Integer, PlaceholderType> placeholder = getPlaceholderLengthAndType(breakableLabel.toString(), i);
+                Placeholder placeholder = getPlaceholder(breakableLabel.toString(), i);
 
-                if (placeholder.getLeft() > 0) {
-                    if (isActive(placeholder.getRight())) {
+                if (placeholder.length() > 0) {
+                    if (placeholder.isActive()) {
                         labelParts.add(!labelPart.isEmpty() ? labelPart.toString() : "");
                         if (!label.isEmpty()) breakableLabel.delete(0, labelPart.toString().length());
 
                         foundPlaceholder = true;
-                        placeholders.add(breakableLabel.substring(0, placeholder.getLeft()));
-                        breakableLabel.delete(0, placeholder.getLeft());
+                        placeholders.add(breakableLabel.substring(0, placeholder.length()));
+                        breakableLabel.delete(0, placeholder.length());
 
                         if (breakableLabel.isEmpty()) endsByPlaceholder = true;
 
                         break;
-                    } else if (placeholder.getRight() == PlaceholderType.ESCAPED) {
-                        labelPart.append(breakableLabel, i, i + placeholder.getLeft());
-                        i += placeholder.getLeft() - 1;
+                    } else if (placeholder.type() == PlaceholderType.ESCAPED) {
+                        labelPart.append(breakableLabel, i, i + placeholder.length());
+                        i += placeholder.length() - 1;
                     }
-                } else if (placeholder.getLeft() == 0) {
+                } else if (placeholder.length() == 0) {
                     labelPart.append(breakableLabel.charAt(i));
                 }
             }
@@ -233,11 +202,7 @@ public class PlaceholderProcessingUtils {
         return Pair.of(Pair.of(labelParts, placeholders), Pair.of(hasEscapedPlaceholders, Pair.of(startsByPlaceholder, endsByPlaceholder)));
     }
 
-    public static Pair<Integer, PlaceholderType> getPlaceholderLengthAndType(String text, int i) {
-        return getPlaceholderLengthAndType(text, i, false);
-    }
-
-    public static Pair<Integer, PlaceholderType> getPlaceholderLengthAndType(String text, int i, boolean virtual) {
+    public static Placeholder getPlaceholder(String text, int i) {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
         boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
         boolean isOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableOriginalTrimmingPlaceholder.get();
@@ -245,8 +210,8 @@ public class PlaceholderProcessingUtils {
         boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
         boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
 
-        int length = 0;
-        PlaceholderType type = PlaceholderType.INVALID;
+        int length = invalid.length;
+        PlaceholderType type = invalid.type;
         boolean isEscaped = false;
 
         if (text.isEmpty()) return invalid;
@@ -264,11 +229,11 @@ public class PlaceholderProcessingUtils {
                 type = PlaceholderType.TRIM_ALT;
             }
         } else if (text.charAt(i) == '$' || text.charAt(i) == '}' || text.charAt(i) == '{') {
-            Pair<Integer, PlaceholderType> origLengthAndType = getOriginalTrimmingPlaceholderLengthAndType(text, i);
-            int origLength = origLengthAndType.getLeft();
+            Placeholder original = getOriginalTrimmingPlaceholder(text, i);
+            int origLength = original.length();
             if (origLength > 2) {
                 length += origLength;
-                type = origLengthAndType.getRight();
+                type = original.type();
             } else {
                 if (text.charAt(i) == '$') {
                     length += 1;
@@ -293,10 +258,10 @@ public class PlaceholderProcessingUtils {
             type = PlaceholderType.DISABLED;
         }
 
-        return Pair.of(length, type);
+        return new Placeholder(length, type);
     }
 
-    private static Pair<Integer, PlaceholderType> getOriginalTrimmingPlaceholderLengthAndType(String text, int i) {
+    private static Placeholder getOriginalTrimmingPlaceholder(String text, int i) {
         int length = 0;
         boolean hasLeftHalf = true, hasRightHalf = true;
 
@@ -333,7 +298,7 @@ public class PlaceholderProcessingUtils {
 
         if (hasRightHalf) length += potentialLength;
 
-        return Pair.of((length > 2 ? length : 0), (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
+        return new Placeholder((length > 2 ? length : 0), (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
     }
 
     private static int getAlternativeTrimmingPlaceholderLength(String text, int i) {;
@@ -437,5 +402,38 @@ public class PlaceholderProcessingUtils {
         }
 
         return trimmedInfoParts;
+    }
+
+    public static boolean removeEscapeBackslash(PlaceholderType type) {
+        boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
+        boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+        boolean isOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableOriginalTrimmingPlaceholder.get();
+        boolean isShortenedOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableShortenedOriginalTrimmingPlaceholder.get();
+        boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
+        boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
+        boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
+
+        return isEscapingOfPlaceholdersEnabled && (isEscapingOfDisabledPlaceholdersHidden || switch (type) {
+            case DOLLAR -> isDollarSignPlaceholderEnabled;
+            case BRACKETS -> isBracketsPlaceholderEnabled;
+            case TRIM -> isOriginalTrimmingPlaceholderEnabled;
+            case TRIM_SHORT -> isShortenedOriginalTrimmingPlaceholderEnabled;
+            case TRIM_ALT -> isAlternativeTrimmingPlaceholderEnabled;
+            default -> false;
+        });
+    }
+
+    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, INVALID }
+
+    static Placeholder invalid = new Placeholder(0, PlaceholderType.INVALID);
+
+    public record Placeholder(int length, PlaceholderType type) {
+        public Pair<Integer, PlaceholderType> asPair() {
+            return Pair.of(length, type);
+        }
+
+        public boolean isActive() {
+            return type != PlaceholderType.ESCAPED && type != PlaceholderType.DISABLED && type != PlaceholderType.INVALID;
+        }
     }
 }
