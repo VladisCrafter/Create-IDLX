@@ -132,7 +132,7 @@ public class PlaceholderProcessingUtils {
         if (startsByPlaceholder && !breakableLabel.isEmpty()) {
             placeholders.add(breakableLabel.substring(0, startPlaceholder.length()));
             breakableLabel.delete(0, startPlaceholder.length());
-        } else if (startPlaceholder.type() == PlaceholderType.ESCAPED) {
+        } else if (startPlaceholder.isEscaped() || startPlaceholder.isDisabled()) {
             labelParts.add(breakableLabel.substring(0, startPlaceholder.length()));
             breakableLabel.delete(0, startPlaceholder.length());
             mergeFirstTwoLabelParts = true;
@@ -159,7 +159,7 @@ public class PlaceholderProcessingUtils {
                         if (breakableLabel.isEmpty()) endsByPlaceholder = true;
 
                         break;
-                    } else if (placeholder.type() == PlaceholderType.ESCAPED) {
+                    } else if (placeholder.isEscaped() || placeholder.isDisabled()) {
                         labelPart.append(breakableLabel, i, i + placeholder.length());
                         i += placeholder.length() - 1;
                     }
@@ -245,17 +245,17 @@ public class PlaceholderProcessingUtils {
             }
         }
 
-        if (isEscaped) {
-            if (length == 1) return invalid;
-            else type = PlaceholderType.ESCAPED;
-        }
 
         if ((type == PlaceholderType.DOLLAR && !isDollarSignPlaceholderEnabled)
                 || (type == PlaceholderType.BRACKETS && !isBracketsPlaceholderEnabled)
                 || (type == PlaceholderType.TRIM && !isOriginalTrimmingPlaceholderEnabled)
                 || (type == PlaceholderType.TRIM_SHORT && !isShortenedOriginalTrimmingPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM_ALT && !isAlternativeTrimmingPlaceholderEnabled)) {
+                || (type == PlaceholderType.TRIM_ALT && !isAlternativeTrimmingPlaceholderEnabled))
             type = PlaceholderType.DISABLED;
+
+        if (isEscaped) {
+            if (length == 1) return invalid;
+            else type = type == PlaceholderType.DISABLED ? PlaceholderType.ESCAPED_DISABLED : PlaceholderType.ESCAPED;
         }
 
         return new Placeholder(length, type);
@@ -301,7 +301,7 @@ public class PlaceholderProcessingUtils {
         return new Placeholder((length > 2 ? length : 0), (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
     }
 
-    private static int getAlternativeTrimmingPlaceholderLength(String text, int i) {;
+    private static int getAlternativeTrimmingPlaceholderLength(String text, int i) {
         int lI = i + 2;
         int leftGroupDigits = 0, operators = 0, rightGroupDigits = 0;
         boolean readLeftGroup = false, readRightGroup = false;
@@ -423,7 +423,7 @@ public class PlaceholderProcessingUtils {
         });
     }
 
-    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, INVALID }
+    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, ESCAPED_DISABLED, INVALID }
 
     static Placeholder invalid = new Placeholder(0, PlaceholderType.INVALID);
 
@@ -433,7 +433,16 @@ public class PlaceholderProcessingUtils {
         }
 
         public boolean isActive() {
-            return type != PlaceholderType.ESCAPED && type != PlaceholderType.DISABLED && type != PlaceholderType.INVALID;
+            return type != PlaceholderType.ESCAPED && type != PlaceholderType.DISABLED
+                    && type != PlaceholderType.ESCAPED_DISABLED && type != PlaceholderType.INVALID;
+        }
+
+        public boolean isEscaped() {
+            return type == PlaceholderType.ESCAPED || type == PlaceholderType.ESCAPED_DISABLED;
+        }
+
+        public boolean isDisabled() {
+            return type == PlaceholderType.DISABLED || type == PlaceholderType.ESCAPED_DISABLED;
         }
     }
 }
