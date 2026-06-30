@@ -1,5 +1,7 @@
 package com.vladiscrafter.createidlx.config;
 
+import net.createmod.catnip.config.ui.ConfigAnnotations;
+
 public class CIDLXClient extends CIDLXConfigBase {
 
     public final ConfigGroup displayLinkGUI = group(1, "displayLinkGUI", "Display Link GUI");
@@ -10,6 +12,31 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideButtons);
     public final ConfigBool enableAlternativeClipboardIcon = b(false, "enableAlternativeClipboardIcon", Comments.enableAlternativeClipboardIcon, Comments.onlyTakesEffectGuideButtons);
     public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.onlyTakesEffectGuideButtons);
+
+    public final ConfigGroup attachedLabelVisuals = group(2, "attachedLabelVisuals", "Attached Label Visuals");
+    public final ConfigBool colorPlaceholders = b(true, "colorPlaceholders", Comments.colorPlaceholders);
+    public final ConfigInt placeholdersColorsAlpha = i(0xAA, 0, 255, "placeholdersColorsAlpha", Comments.alpha, Comments.placeholdersColorsAlpha, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigInt coloringBackgroundHeightIncrease = i(0, -1, Integer.MAX_VALUE, "coloringBackgroundHeightIncrease", Comments.pixels, Comments.coloringBackgroundHeightIncrease, Comments.heightReference);
+
+    public final ConfigGroup placeholderColoringCustomization = group(3, "placeholderColoringCustomization", "Placeholder Coloring Customization");
+    public final ConfigBool colorDollarPlaceholders = b(true, "dollarPlaceholders", Comments.colorDollarPlaceholders);
+    public final ConfigInt dollarPlaceholderColor = i(0xEAB444, 0, 16777215, "dollarPlaceholderColor", Comments.rgb, Comments.dollarPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorBracketsPlaceholders = b(true, "bracketsPlaceholders", Comments.colorBracketsPlaceholders);
+    public final ConfigInt bracketsPlaceholderColor = i(0xC3C54F, 0, 16777215, "bracketsPlaceholderColor", Comments.rgb, Comments.bracketsPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorOriginalTrimmingPlaceholders = b(true, "originalTrimmingPlaceholders", Comments.colorOriginalTrimmingPlaceholders);
+    public final ConfigInt originalTrimmingPlaceholderColor = i(0xA0D06B, 0, 16777215, "originalTrimmingPlaceholderColor", Comments.rgb, Comments.originalTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorShortenedTrimmingPlaceholders = b(true, "shortenedTrimmingPlaceholders", Comments.colorShortenedTrimmingPlaceholders);
+    public final ConfigInt shortenedTrimmingPlaceholderColor = i(0x75D78D, 0, 16777215, "shortenedTrimmingPlaceholderColor", Comments.rgb, Comments.shortenedTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorAlternativeTrimmingPlaceholders = b(true, "alternativeTrimmingPlaceholders", Comments.colorAlternativeTrimmingPlaceholders);
+    public final ConfigInt alternativeTrimmingPlaceholderColor = i(0x69D3C6, 0, 16777215, "alternativeTrimmingPlaceholderColor", Comments.rgb, Comments.alternativeTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorEscapedPlaceholders = b(true, "escapedPlaceholders", Comments.colorEscapedPlaceholders);
+    public final ConfigInt escapedPlaceholderColor = i(0x831922, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorDisabledPlaceholders = b(true, "disabledPlaceholders", Comments.colorDisabledPlaceholders);
+    public final ConfigInt disabledPlaceholderColor = i(0x000000, 0, 16777215, "disabledPlaceholderColor", Comments.rgb, Comments.disabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorEscapedDisabledPlaceholders = b(true, "escapedDisabledPlaceholders", Comments.colorEscapedDisabledPlaceholders);
+    public final ConfigInt escapedDisabledPlaceholderColor = i(0x2f0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders);
+    public final ConfigInt invalidPlaceholderColor = i(0x781d59, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
 
     public final ConfigGroup clipboardDisplaySourceGUI = group(1, "clipboardDisplaySourceGUI", "Clipboard Display Source GUI");
     public final ConfigBool deselectEmptyAttachedLabel = b(true, "deselectEmptyAttachedLabel", Comments.deselectEmptyAttachedLabel);
@@ -39,12 +66,16 @@ public class CIDLXClient extends CIDLXConfigBase {
     private static class Comments {
         static String milliseconds = "[in Milliseconds]";
         static String seconds = "[in Seconds]";
-        static String defaultZero = "Set to zero (0.0) to disable.";
+        static String rgb = "[in Hex: #RrGgBb]";
+        static String alpha = "[in Hex: #Aa]";
+        static String pixels = "[in Pixels]";
+        static String defaultZero = "Set to 0 to disable.";
         static String overrides = "Overrides 'Fixed Char Travel Time' and 'Maximal/Minimal String Travel Time'.";
         static String onlyTakesEffectGuideButtons = "Only takes effect if 'Enable Guide Buttons' is enabled.";
         static String onlyTakesEffectMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
         static String onlyTakesEffectOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
+        static String heightReference = "Set to -1 to make it fit within the text height; set to 3 to make it fill the whole text input field height.";
 
         static String enableGuideButtons = "Show the 'Placeholders Usage Guide' & 'Duplicating Display Link Properties' buttons in Display Link interface.";
         static String enableVisualizationSettingsButtons = "Show the 'Show Visualization Settings' button in Display Link interface.";
@@ -52,6 +83,29 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
         static String enableAlternativeClipboardIcon = "Change the icon on the 'Duplicating Display Link Properties' button to a more item-like looking one.";
         static String enableRedirectsToPonderScenes = "Allow the guide buttons to redirect to their respective Ponder scenes on clicked.";
+
+        static String colorPlaceholders = "Apply background coloring to placeholders in the Attached Label field.";
+        static String placeholdersColorsAlpha = "The alpha value of background colorings of placeholders.";
+        static String coloringBackgroundHeightIncrease = "The additional vertical space for placeholders' background coloring rectangles to take.";
+
+        static String colorDollarPlaceholders = "Apply background coloring to all '$' (dollar sign) placeholders.";
+        static String dollarPlaceholderColor = "The background color to apply to all '$' (dollar sign) placeholders.";
+        static String colorBracketsPlaceholders = "Apply background coloring to all '{}' (brackets) placeholders.";
+        static String bracketsPlaceholderColor = "The background color to apply to all '{}' (brackets) placeholders.";
+        static String colorOriginalTrimmingPlaceholders = "Apply background coloring to all 'Ax$yB'-structured (original trimming) placeholders.";
+        static String originalTrimmingPlaceholderColor = "The background color to apply to all 'Ax$yB'-structured (original trimming) placeholders.";
+        static String colorShortenedTrimmingPlaceholders = "Apply background coloring to all 'Ax$'/'$yB'-structured (shortened trimming) placeholders.";
+        static String shortenedTrimmingPlaceholderColor = "The background color to apply to all 'Ax$'/'$yB'-structured (shortened trimming) placeholders.";
+        static String colorAlternativeTrimmingPlaceholders = "Apply background coloring to all '${xABCy}'-structured (alternative trimming) placeholders.";
+        static String alternativeTrimmingPlaceholderColor = "The background color to apply to all '${xABCy}'-structured (alternative trimming) placeholders.";
+        static String colorEscapedPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders.";
+        static String escapedPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders.";
+        static String colorDisabledPlaceholders = "Apply background coloring to all placeholders that are disabled by the server config.";
+        static String disabledPlaceholderColor = "The background color to apply to all placeholders that are disabled by the server config.";
+        static String colorEscapedDisabledPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
+        static String escapedDisabledPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
+        static String colorInvalidPlaceholders = "Apply background coloring to all character sequences that have been recognized to be incorrectly structured placeholders.";
+        static String invalidPlaceholderColor = "The background color to apply to all character sequences that have been recognized to be incorrectly structured placeholders.";
 
         static String deselectEmptyAttachedLabel = "Prevent the 'Copy the Attached Label' from being automatically selected if the Attached Label is empty.";
 

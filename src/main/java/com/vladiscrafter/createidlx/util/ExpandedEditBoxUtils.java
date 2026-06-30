@@ -1,24 +1,16 @@
 package com.vladiscrafter.createidlx.util;
 
+import com.vladiscrafter.createidlx.config.CIDLXClient;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import net.createmod.catnip.config.ConfigBase;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.function.Function;
 
 import static com.vladiscrafter.createidlx.util.PlaceholderProcessingUtils.*;
 
 public class ExpandedEditBoxUtils {
-    static final int HIGHLIGHT_ALPHA_MODIFIER = 0xAA000000;
-
-    static final int DOLLAR_PLACEHOLDER_HIGHLIGHT_COLOR = 0xEAB444;
-    static final int BRACKETS_PLACEHOLDER_HIGHLIGHT_COLOR = 0xC3C54F;
-    static final int TRIM_PLACEHOLDER_HIGHLIGHT_COLOR = 0xA0D06B;
-    static final int TRIM_SHORT_PLACEHOLDER_HIGHLIGHT_COLOR = 0x75D78D;
-    static final int TRIM_ALT_PLACEHOLDER_HIGHLIGHT_COLOR = 0x69D3C6;
-    static final int ESCAPED_PLACEHOLDER_HIGHLIGHT_COLOR = 0x831922;
-    static final int DISABLED_PLACEHOLDER_HIGHLIGHT_COLOR = 0x000000;
-    static final int ESCAPED_DISABLED_PLACEHOLDER_HIGHLIGHT_COLOR = 0x2f0407;
-    static final int INVALID_PLACEHOLDER_HIGHLIGHT_COLOR = 0x781d59;
-
     public static void highlightSpecialCharacters(GuiGraphics graphics, Font font, int displayPos, String full,
                                            int widgetX, int widgetY, int innerWidth, int widgetHeight, boolean isBordered) {
         boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
@@ -33,8 +25,9 @@ public class ExpandedEditBoxUtils {
 
         int fX = x - font.width(full.substring(0, displayPos));
 
-        int sY = y - 1 - 2; // TODO: configurably snap 'y' to field height ('- 2' here and '+ 4' below)
-        int eY = sY + 10 + 4;
+        int heightExpansion = CIDLXConfigs.client.coloringBackgroundHeightIncrease.get();
+        int sY = y - 1 - heightExpansion;
+        int eY = sY + 10 + heightExpansion * 2;
 
         for (int i = 0; i < full.length(); i++) {
             Placeholder placeholder = getPlaceholder(full, i);
@@ -61,16 +54,30 @@ public class ExpandedEditBoxUtils {
     }
 
     private static int getHighlightColor(PlaceholderType placeholderType) {
-        return switch (placeholderType) {
-            case DOLLAR -> DOLLAR_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case BRACKETS -> BRACKETS_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case TRIM -> TRIM_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case TRIM_SHORT -> TRIM_SHORT_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case TRIM_ALT -> TRIM_ALT_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case ESCAPED -> ESCAPED_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case DISABLED -> DISABLED_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case ESCAPED_DISABLED -> ESCAPED_DISABLED_PLACEHOLDER_HIGHLIGHT_COLOR;
-            case null, default -> INVALID_PLACEHOLDER_HIGHLIGHT_COLOR;
-        } | HIGHLIGHT_ALPHA_MODIFIER;
+        CIDLXClient cfg = CIDLXConfigs.client;
+
+        int alpha = cfg.placeholdersColorsAlpha.get() << 24;
+        int invisible = 0x00000000;
+
+        return cfg.colorPlaceholders.get() ? switch (placeholderType) {
+            case DOLLAR -> cfg.colorDollarPlaceholders.get()
+                    ? cfg.dollarPlaceholderColor.get() | alpha : invisible;
+            case BRACKETS -> cfg.colorBracketsPlaceholders.get()
+                    ? cfg.bracketsPlaceholderColor.get() | alpha : invisible;
+            case TRIM -> cfg.colorOriginalTrimmingPlaceholders.get()
+                    ? cfg.originalTrimmingPlaceholderColor.get() | alpha : invisible;
+            case TRIM_SHORT -> cfg.colorShortenedTrimmingPlaceholders.get()
+                    ? cfg.shortenedTrimmingPlaceholderColor.get() | alpha : invisible;
+            case TRIM_ALT -> cfg.colorAlternativeTrimmingPlaceholders.get()
+                    ? cfg.alternativeTrimmingPlaceholderColor.get() | alpha : invisible;
+            case ESCAPED -> cfg.colorEscapedPlaceholders.get()
+                    ? cfg.escapedPlaceholderColor.get() | alpha : invisible;
+            case DISABLED -> cfg.colorDisabledPlaceholders.get()
+                    ? cfg.disabledPlaceholderColor.get() | alpha : invisible;
+            case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
+                    ? cfg.escapedDisabledPlaceholderColor.get() | alpha : invisible;
+            case null, default -> cfg.colorInvalidPlaceholders.get()
+                    ? cfg.invalidPlaceholderColor.get() | alpha : invisible;
+        } : invisible;
     }
 }
