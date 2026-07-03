@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 
 import static com.simibubi.create.content.trains.display.FlapDisplaySection.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.*;
 
 public class SingleLineDisplaySourceMixinUtils {
@@ -122,7 +123,7 @@ public class SingleLineDisplaySourceMixinUtils {
 
     public static String buildLayoutSignature(String label, String layoutKey, int valueSize, DisplayLinkContext context) {
         CompoundTag visualizationConfig = ((DisplayLinkVisualizationConfigHolder) context.blockEntity()).createidlx$getVisualizationConfig();
-        ArrayList<String> brokenDownLabel = breakDownLabel(label);
+        ArrayList<PlainPart> brokenDownLabel = extractPlainParts(label);
         StringBuilder signature = new StringBuilder("IDLX");
 
         signature
@@ -132,7 +133,7 @@ public class SingleLineDisplaySourceMixinUtils {
         if (!brokenDownLabel.isEmpty()) {
             signature.append("->[");
 
-            for (String part : brokenDownLabel) signature.append(part.length()).append("+");
+            for (PlainPart part : brokenDownLabel) signature.append(part.length()).append("+");
             signature.deleteCharAt(signature.lastIndexOf("+"));
 
             signature.append("]");
@@ -144,7 +145,7 @@ public class SingleLineDisplaySourceMixinUtils {
         if (getTotalPlaceholdersCountInLabel(label) > 0) {
             signature.append("->[");
 
-            for (String placeholder : extractPlaceholders(label)) signature.append(placeholder).append("+");
+            for (Placeholder placeholder : extractPlaceholders(label)) signature.append(placeholder.getString()).append("+");
             signature.deleteCharAt(signature.lastIndexOf("+"));
 
             signature.append("]");

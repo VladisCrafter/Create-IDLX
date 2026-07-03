@@ -5,12 +5,13 @@ import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
 public class AttachedLabelProcessingUtils {
@@ -24,14 +25,6 @@ public class AttachedLabelProcessingUtils {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
 
         return label + " " + (isDollarSignPlaceholderEnabled ? "$" : "{}");
-    }
-
-    public static ArrayList<String> breakDownLabel(String label) {
-        return processLabel(label).getLeft().getLeft();
-    }
-
-    public static ArrayList<String> extractPlaceholders(String label) {
-        return processLabel(label).getLeft().getRight();
     }
 
     public static String breakDownAndAssembleLabel(String label, String rawInfo) {
@@ -53,42 +46,22 @@ public class AttachedLabelProcessingUtils {
     }
 
     private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<String> addAction) {
-        ArrayList<String> sections = breakDownLabel(label);
-        ArrayList<String> trimmedInfoParts = trimRawInfo(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = trimRawInfo(label, rawInfo);
 
-        if (getCoveringPlaceholdersInLabel(label).getLeft()) addAction.accept(trimmedInfoParts.getFirst());
-        for (int i = 0; i < sections.size(); i++) {
-            addAction.accept(sections.get(i));
-            if (sections.size() > i + 1 && trimmedInfoParts.size() >= i + 2) addAction.accept(trimmedInfoParts.get(i + 1));
+        for (AttachedLabelBreakdownResult section : sections) {
+            addAction.accept(section.getString());
         }
-        if (getCoveringPlaceholdersInLabel(label).getRight()) addAction.accept(trimmedInfoParts.getLast());
     }
 
     public static ArrayList<FlapDisplaySection> breakDownAndAssembleLabelAsSectionList(String label, String rawInfo,
                                                                                        String layoutKey, float maxValueWidth, float valueWidthMod) {
-        ArrayList<String> labelSections = breakDownLabel(label);
-        ArrayList<String> infoSections = trimRawInfo(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = trimRawInfo(label, rawInfo);
         ArrayList<FlapDisplaySection> result = new ArrayList<>();
-        int vI = 0;
 
-        if (getCoveringPlaceholdersInLabel(label).getLeft()) {
-            result.add(createValueSection(Math.min(infoSections.getFirst().length() * valueWidthMod, maxValueWidth),
-                    layoutKey, infoSections.getFirst()));
-            vI++;
-        }
-
-        if (!labelSections.isEmpty()) for (int i = 0; i < labelSections.size(); i++) {
-            result.add(createLabelSection(labelSections.get(i)));
-            if (labelSections.size() > i + 1) {
-                result.add(createValueSection(Math.min(infoSections.get(vI).length() * valueWidthMod, maxValueWidth),
-                        layoutKey, infoSections.get(vI)));
-                vI++;
-            }
-        }
-        if (getCoveringPlaceholdersInLabel(label).getRight() && vI < infoSections.size()) {
-            result.add(createValueSection(Math.min(infoSections.getLast().length() * valueWidthMod, maxValueWidth),
-                    layoutKey, infoSections.getLast()));
-        }
+        if (!sections.isEmpty()) for (AttachedLabelBreakdownResult section : sections)
+            result.add(section instanceof Placeholder
+                    ? createValueSection(Math.min(section.length() * valueWidthMod, maxValueWidth), layoutKey, section.getString())
+                    : createLabelSection(section.getString()));
 
         return result;
     }
@@ -107,38 +80,37 @@ public class AttachedLabelProcessingUtils {
     }
 
     public static int getTotalPlaceholdersCountInLabel(String label) {
-        return processLabel(label).getLeft().getRight().toArray().length;
+        return extractPlaceholders(label).size();
     }
 
-    public static Pair<Boolean, Boolean> getCoveringPlaceholdersInLabel(String label) {
-        return processLabel(label).getRight().getRight();
+    public static ArrayList<PlainPart> extractPlainParts(String label) {
+        return extractParts(label, PlainPart.class);
+    }
+
+    public static ArrayList<Placeholder> extractPlaceholders(String label) {
+        return extractParts(label, Placeholder.class);
+    }
+
+    private static <T extends AttachedLabelBreakdownResult> ArrayList<T> extractParts(String label, Class<T> type) {
+        return plainifyEscapedPlaceholders(label).stream()
+                .filter(type::isInstance).map(type::cast).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static boolean hasEscapedPlaceholders(String label) {
-        return processLabel(label).getRight().getRight().getLeft();
-    }
-
-    private static Pair<Pair<ArrayList<String>, ArrayList<String>>, Pair<Boolean, Pair<Boolean, Boolean>>> processLabel(String label) {
-        boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
-        boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
-
-        StringBuilder breakableLabel = new StringBuilder(label);
-        ArrayList<String> labelParts = new ArrayList<>(), placeholders = new ArrayList<>();
         boolean hasEscapedPlaceholders = false;
 
-        boolean mergeFirstTwoLabelParts = false;
-        Placeholder startPlaceholder = getPlaceholder(breakableLabel.toString(), 0);
-        boolean startsByPlaceholder = breakableLabel.isEmpty() || (startPlaceholder.length() > 0 && startPlaceholder.isActive());
-        if (startsByPlaceholder && !breakableLabel.isEmpty()) {
-            placeholders.add(breakableLabel.substring(0, startPlaceholder.length()));
-            breakableLabel.delete(0, startPlaceholder.length());
-        } else if (startPlaceholder.isEscaped() || startPlaceholder.isDisabled()) {
-            labelParts.add(breakableLabel.substring(0, startPlaceholder.length()));
-            breakableLabel.delete(0, startPlaceholder.length());
-            mergeFirstTwoLabelParts = true;
-        }
+        for (AttachedLabelBreakdownResult part : processLabel(label))
+            if (part instanceof Placeholder placeholder && placeholder.isEscaped()) hasEscapedPlaceholders = true;
 
-        boolean endsByPlaceholder = false;
+        return hasEscapedPlaceholders;
+    }
+
+    private static ArrayList<AttachedLabelBreakdownResult> processLabel(String label) {
+        boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
+
+        StringBuilder breakableLabel = new StringBuilder(label);
+        ArrayList<AttachedLabelBreakdownResult> brokenDownLabel = new ArrayList<>();
+        boolean hasEscapedPlaceholders = false;
 
         while (!breakableLabel.isEmpty()) {
             StringBuilder labelPart = new StringBuilder();
@@ -148,37 +120,30 @@ public class AttachedLabelProcessingUtils {
                 Placeholder placeholder = getPlaceholder(breakableLabel.toString(), i);
 
                 if (placeholder.length() > 0) {
-                    if (placeholder.isActive()) {
-                        labelParts.add(!labelPart.isEmpty() ? labelPart.toString() : "");
-                        if (!label.isEmpty()) breakableLabel.delete(0, labelPart.toString().length());
+                    if (!labelPart.isEmpty()) brokenDownLabel.add(new PlainPart(labelPart.toString()));
+                    if (!label.isEmpty()) breakableLabel.delete(0, labelPart.toString().length());
 
-                        foundPlaceholder = true;
-                        placeholders.add(breakableLabel.substring(0, placeholder.length()));
-                        breakableLabel.delete(0, placeholder.length());
-
-                        if (breakableLabel.isEmpty()) endsByPlaceholder = true;
-
-                        break;
-                    } else if (placeholder.isEscaped() || placeholder.isDisabled()) {
-                        labelPart.append(breakableLabel, i, i + placeholder.length());
-                        i += placeholder.length() - 1;
-                    }
+                    foundPlaceholder = true;
+                    brokenDownLabel.add(placeholder);
+                    breakableLabel.delete(0, placeholder.length());
+                    break;
                 } else if (placeholder.length() == 0) {
                     labelPart.append(breakableLabel.charAt(i));
                 }
             }
 
             if (!foundPlaceholder) {
-                labelParts.add(breakableLabel.toString());
+                brokenDownLabel.add(new PlainPart(breakableLabel.toString()));
                 breakableLabel.setLength(0);
             }
         }
 
-        if (mergeFirstTwoLabelParts) labelParts.set(0, labelParts.getFirst().concat(labelParts.remove(1)));
-
         if (isEscapingOfPlaceholdersEnabled) {
-            for (int p = 0; p < labelParts.size(); p++) {
-                String part = labelParts.get(p);
+            for (int p = 0; p < brokenDownLabel.size(); p++) {
+                if (!(brokenDownLabel.get(p) instanceof Placeholder placeholder)) continue;
+                if (!placeholder.isEscaped()) continue;
+
+                String part = brokenDownLabel.get(p).getString();
 
                 if (removeEscapeBackslash(PlaceholderType.DOLLAR)) part = part.replace("\\$", "$");
                 if (removeEscapeBackslash(PlaceholderType.BRACKETS)) part = part.replace("\\{}", "{}");
@@ -193,13 +158,26 @@ public class AttachedLabelProcessingUtils {
                 if (removeEscapeBackslash(PlaceholderType.TRIM_ALT))
                     part = part.replaceAll("\\\\(?=\\$\\{\\d+[+-]{3}\\d+})", "");
 
-                labelParts.set(p, part);
+                brokenDownLabel.set(p, new PlainPart(part));
             }
         }
-        /*log("labelParts: " + labelParts);
-        log("placeholders: " + placeholders);*/
 
-        return Pair.of(Pair.of(labelParts, placeholders), Pair.of(hasEscapedPlaceholders, Pair.of(startsByPlaceholder, endsByPlaceholder)));
+        log("\nProcessed label: \n- " + brokenDownLabel.stream()
+                .map(AttachedLabelBreakdownResult::asDebugString).collect(Collectors.joining("\n- ")));
+
+        return brokenDownLabel;
+    }
+
+    public static ArrayList<AttachedLabelBreakdownResult> plainifyEscapedPlaceholders(String label) {
+        ArrayList<AttachedLabelBreakdownResult> oldParts = processLabel(label);
+        ArrayList<AttachedLabelBreakdownResult> newParts = new ArrayList<>();
+
+        for (AttachedLabelBreakdownResult oldPart : oldParts) {
+            if (oldPart instanceof Placeholder placeholder && placeholder.isEscaped()) newParts.add(new PlainPart(oldPart.getString()));
+            else newParts.add(oldPart);
+        }
+
+        return newParts; // currently wraps processLabel() for any chain that gets to rendering the finished text
     }
 
     public static Placeholder getPlaceholder(String text, int i) {
@@ -210,8 +188,9 @@ public class AttachedLabelProcessingUtils {
         boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
         boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
 
-        int length = invalid.length;
-        PlaceholderType type = invalid.type;
+        int inI = i;
+        int length = invalid.length();
+        PlaceholderType type = invalid.type();
         boolean isEscaped = false;
 
         if (text.isEmpty()) return invalid;
@@ -258,10 +237,11 @@ public class AttachedLabelProcessingUtils {
             else type = type == PlaceholderType.DISABLED ? PlaceholderType.ESCAPED_DISABLED : PlaceholderType.ESCAPED;
         }
 
-        return new Placeholder(length, type);
+        return new Placeholder(text.substring(inI, inI + length), type);
     }
 
     private static Placeholder getOriginalTrimmingPlaceholder(String text, int i) {
+        int inI = i;
         int length = 0;
         boolean hasLeftHalf = true, hasRightHalf = true;
 
@@ -298,7 +278,8 @@ public class AttachedLabelProcessingUtils {
 
         if (hasRightHalf) length += potentialLength;
 
-        return new Placeholder((length > 2 ? length : 0), (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
+        return new Placeholder((length > 2 ? text.substring(inI, inI + length) : ""),
+                (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
     }
 
     private static int getAlternativeTrimmingPlaceholderLength(String text, int i) {
@@ -335,11 +316,17 @@ public class AttachedLabelProcessingUtils {
         return lI - i;
     }
 
-    public static ArrayList<String> trimRawInfo(String label, String rawInfo) {
-        ArrayList<String> placeholders = extractPlaceholders(label);
-        ArrayList<String> trimmedInfoParts = new ArrayList<>();
+    public static ArrayList<AttachedLabelBreakdownResult> trimRawInfo(String label, String rawInfo) {
+        ArrayList<AttachedLabelBreakdownResult> parts = plainifyEscapedPlaceholders(label);
+        ArrayList<AttachedLabelBreakdownResult> trimmedInfoParts = new ArrayList<>();
 
-        for (String placeholder : placeholders) {
+        for (AttachedLabelBreakdownResult unspecifiedPart : parts) {
+            if (!(unspecifiedPart instanceof Placeholder part)) {
+                trimmedInfoParts.add(unspecifiedPart);
+                continue;
+            }
+
+            String placeholder = part.getString();
             String infoPart;
 
             if (placeholder.equals("$") || placeholder.equals("{}")) infoPart = rawInfo;
@@ -398,7 +385,7 @@ public class AttachedLabelProcessingUtils {
                 else infoPart = rawInfo;
             }
 
-            trimmedInfoParts.add(infoPart);
+            trimmedInfoParts.add(new Placeholder(infoPart, part.type()));
         }
 
         return trimmedInfoParts;
@@ -421,28 +408,5 @@ public class AttachedLabelProcessingUtils {
             case TRIM_ALT -> isAlternativeTrimmingPlaceholderEnabled;
             default -> false;
         });
-    }
-
-    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, ESCAPED_DISABLED, INVALID }
-
-    static Placeholder invalid = new Placeholder(0, PlaceholderType.INVALID);
-
-    public record Placeholder(int length, PlaceholderType type) {
-        public Pair<Integer, PlaceholderType> asPair() {
-            return Pair.of(length, type);
-        }
-
-        public boolean isActive() {
-            return type != PlaceholderType.ESCAPED && type != PlaceholderType.DISABLED
-                    && type != PlaceholderType.ESCAPED_DISABLED && type != PlaceholderType.INVALID;
-        }
-
-        public boolean isEscaped() {
-            return type == PlaceholderType.ESCAPED || type == PlaceholderType.ESCAPED_DISABLED;
-        }
-
-        public boolean isDisabled() {
-            return type == PlaceholderType.DISABLED || type == PlaceholderType.ESCAPED_DISABLED;
-        }
     }
 }

@@ -2,12 +2,10 @@ package com.vladiscrafter.createidlx.util;
 
 import com.vladiscrafter.createidlx.config.CIDLXClient;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import net.createmod.catnip.config.ConfigBase;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.function.Function;
-
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.*;
 
 public class ExpandedEditBoxUtils {
