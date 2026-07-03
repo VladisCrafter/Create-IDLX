@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 
 import static com.simibubi.create.content.trains.display.FlapDisplaySection.*;
-import static com.vladiscrafter.createidlx.util.PlaceholderProcessingUtils.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.*;
 
 public class SingleLineDisplaySourceMixinUtils {
     private SingleLineDisplaySourceMixinUtils() {}

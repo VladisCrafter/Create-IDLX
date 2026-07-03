@@ -1,4 +1,4 @@
-package com.vladiscrafter.createidlx.util;
+package com.vladiscrafter.createidlx.util.attachedLabel;
 
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
-public class PlaceholderProcessingUtils {
+public class AttachedLabelProcessingUtils {
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
 

@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Function;
 
-import static com.vladiscrafter.createidlx.util.PlaceholderProcessingUtils.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.*;
 
 public class ExpandedEditBoxUtils {
     public static void highlightSpecialCharacters(GuiGraphics graphics, Font font, int displayPos, String full,
