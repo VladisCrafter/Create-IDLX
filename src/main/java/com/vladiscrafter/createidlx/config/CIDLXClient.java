@@ -30,13 +30,13 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool colorAlternativeTrimmingPlaceholders = b(true, "alternativeTrimmingPlaceholders", Comments.colorAlternativeTrimmingPlaceholders);
     public final ConfigInt alternativeTrimmingPlaceholderColor = i(0x69D3C6, 0, 16777215, "alternativeTrimmingPlaceholderColor", Comments.rgb, Comments.alternativeTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorEscapedPlaceholders = b(true, "escapedPlaceholders", Comments.colorEscapedPlaceholders);
-    public final ConfigInt escapedPlaceholderColor = i(0x831922, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigInt escapedPlaceholderColor = i(0x743020, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorDisabledPlaceholders = b(true, "disabledPlaceholders", Comments.colorDisabledPlaceholders);
     public final ConfigInt disabledPlaceholderColor = i(0x000000, 0, 16777215, "disabledPlaceholderColor", Comments.rgb, Comments.disabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorEscapedDisabledPlaceholders = b(true, "escapedDisabledPlaceholders", Comments.colorEscapedDisabledPlaceholders);
-    public final ConfigInt escapedDisabledPlaceholderColor = i(0x2f0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigInt escapedDisabledPlaceholderColor = i(0x2F0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders);
-    public final ConfigInt invalidPlaceholderColor = i(0x781d59, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigInt invalidPlaceholderColor = i(0xFF6460, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
 
     public final ConfigGroup clipboardDisplaySourceGUI = group(1, "clipboardDisplaySourceGUI", "Clipboard Display Source GUI");
     public final ConfigBool deselectEmptyAttachedLabel = b(true, "deselectEmptyAttachedLabel", Comments.deselectEmptyAttachedLabel);

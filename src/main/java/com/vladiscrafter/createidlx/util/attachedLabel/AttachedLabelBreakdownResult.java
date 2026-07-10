@@ -2,7 +2,7 @@ package com.vladiscrafter.createidlx.util.attachedLabel;
 
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 
-public sealed interface AttachedLabelBreakdownResult permits Placeholder, PlainPart {
+public sealed interface AttachedLabelBreakdownResult permits Placeholder, PlainPart, ProcessedInfoPart {
     String getString();
     String asDebugString();
     int length();

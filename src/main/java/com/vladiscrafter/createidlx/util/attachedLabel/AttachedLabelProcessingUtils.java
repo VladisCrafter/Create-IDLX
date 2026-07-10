@@ -4,17 +4,24 @@ import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.CaptureGroupOperation.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.CaptureGroupRounding.*;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
+@SuppressWarnings({"UnusedAssignment", "UnnecessaryLocalVariable", "ExtractMethodRecommender"})
 public class AttachedLabelProcessingUtils {
+    private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
+    private static final Pattern FLOAT_PATTERN = Pattern.compile("^\\d?\\.\\d+$");
+
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
 
@@ -46,7 +53,7 @@ public class AttachedLabelProcessingUtils {
     }
 
     private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<String> addAction) {
-        ArrayList<AttachedLabelBreakdownResult> sections = trimRawInfo(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsWithPlaceholders(label, rawInfo);
 
         for (AttachedLabelBreakdownResult section : sections) {
             addAction.accept(section.getString());
@@ -55,11 +62,11 @@ public class AttachedLabelProcessingUtils {
 
     public static ArrayList<FlapDisplaySection> breakDownAndAssembleLabelAsSectionList(String label, String rawInfo,
                                                                                        String layoutKey, float maxValueWidth, float valueWidthMod) {
-        ArrayList<AttachedLabelBreakdownResult> sections = trimRawInfo(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsWithPlaceholders(label, rawInfo);
         ArrayList<FlapDisplaySection> result = new ArrayList<>();
 
         if (!sections.isEmpty()) for (AttachedLabelBreakdownResult section : sections)
-            result.add(section instanceof Placeholder
+            result.add(section instanceof ProcessedInfoPart
                     ? createValueSection(Math.min(section.length() * valueWidthMod, maxValueWidth), layoutKey, section.getString())
                     : createLabelSection(section.getString()));
 
@@ -71,7 +78,7 @@ public class AttachedLabelProcessingUtils {
 
         for (FlapDisplaySection section : sections) result.add(Component.literal("").append(section.getText()));
 
-        return result;
+        return result; // TODO: rename this one and others above accordingly
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -145,24 +152,21 @@ public class AttachedLabelProcessingUtils {
 
                 String part = brokenDownLabel.get(p).getString();
 
-                if (removeEscapeBackslash(PlaceholderType.DOLLAR)) part = part.replace("\\$", "$");
-                if (removeEscapeBackslash(PlaceholderType.BRACKETS)) part = part.replace("\\{}", "{}");
+                if (removeEscapeBackslash(DOLLAR)) part = part.replace("\\$", "$");
+                if (removeEscapeBackslash(BRACKETS)) part = part.replace("\\{}", "{}");
 
-                if (removeEscapeBackslash(PlaceholderType.TRIM))
-                    part = part.replaceAll("\\\\(?=[{}]\\d+\\$\\d+[}{])", "");
+                if (removeEscapeBackslash(TRIM)) part = part.replaceAll("\\\\(?=[{}]\\d+\\$\\d+[}{])", "");
 
-                if (removeEscapeBackslash(PlaceholderType.TRIM_SHORT))
-                    part = part.replaceAll("\\\\(?=[{}]\\d+\\$)", "")
+                if (removeEscapeBackslash(TRIM_SHORT)) part = part.replaceAll("\\\\(?=[{}]\\d+\\$)", "")
                             .replaceAll("\\\\(?=\\$\\d+[}{])", "");
 
-                if (removeEscapeBackslash(PlaceholderType.TRIM_ALT))
-                    part = part.replaceAll("\\\\(?=\\$\\{\\d+[+-]{3}\\d+})", "");
+                if (removeEscapeBackslash(TRIM_ALT)) part = part.replaceAll("\\\\(?=\\$\\{\\d+[+-]{3}\\d+})", "");
 
                 brokenDownLabel.set(p, new PlainPart(part));
             }
         }
 
-        log("\nProcessed label: \n- " + brokenDownLabel.stream()
+        log("\nProcessed label:\n\n- " + brokenDownLabel.stream()
                 .map(AttachedLabelBreakdownResult::asDebugString).collect(Collectors.joining("\n- ")));
 
         return brokenDownLabel;
@@ -191,6 +195,7 @@ public class AttachedLabelProcessingUtils {
         int inI = i;
         int length = invalid.length();
         PlaceholderType type = invalid.type();
+        PlaceholderProperties properties = invalidPr;
         boolean isEscaped = false;
 
         if (text.isEmpty()) return invalid;
@@ -202,10 +207,11 @@ public class AttachedLabelProcessingUtils {
         }
 
         if (text.length() > i + 7 && text.charAt(i) == '$' && text.charAt(i + 1) == '{' && text.charAt(i + 2) != '}') {
-            int altLength = getAlternativeTrimmingPlaceholderLength(text, i);
-            if (altLength > 0) {
-                length += altLength;
-                type = PlaceholderType.TRIM_ALT;
+            Placeholder alt = getAlternativeTrimmingPlaceholder(text, i);
+            if (alt.length() > 0) {
+                length += alt.length();
+                type = alt.type();
+                properties = alt.properties();
             }
         } else if (text.charAt(i) == '$' || text.charAt(i) == '}' || text.charAt(i) == '{') {
             Placeholder original = getOriginalTrimmingPlaceholder(text, i);
@@ -213,179 +219,178 @@ public class AttachedLabelProcessingUtils {
             if (origLength > 2) {
                 length += origLength;
                 type = original.type();
+                properties = original.properties();
             } else {
                 if (text.charAt(i) == '$') {
                     length += 1;
-                    type = PlaceholderType.DOLLAR;
+                    type = DOLLAR;
                 } else if (text.charAt(i) == '{' && (text.length() > i + 1 && text.charAt(i + 1) == '}')) {
                     length += 2;
-                    type = PlaceholderType.BRACKETS;
+                    type = BRACKETS;
                 }
             }
         }
 
-
-        if ((type == PlaceholderType.DOLLAR && !isDollarSignPlaceholderEnabled)
-                || (type == PlaceholderType.BRACKETS && !isBracketsPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM && !isOriginalTrimmingPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM_SHORT && !isShortenedOriginalTrimmingPlaceholderEnabled)
-                || (type == PlaceholderType.TRIM_ALT && !isAlternativeTrimmingPlaceholderEnabled))
-            type = PlaceholderType.DISABLED;
+        if ((type == DOLLAR && !isDollarSignPlaceholderEnabled)
+                || (type == BRACKETS && !isBracketsPlaceholderEnabled)
+                || (type == TRIM && !isOriginalTrimmingPlaceholderEnabled)
+                || (type == TRIM_SHORT && !isShortenedOriginalTrimmingPlaceholderEnabled)
+                || (type == TRIM_ALT && !isAlternativeTrimmingPlaceholderEnabled))
+            type = DISABLED;
 
         if (isEscaped) {
             if (length == 1) return invalid;
-            else type = type == PlaceholderType.DISABLED ? PlaceholderType.ESCAPED_DISABLED : PlaceholderType.ESCAPED;
+            else type = type == DISABLED ? ESCAPED_DISABLED : ESCAPED;
         }
 
-        return new Placeholder(text.substring(inI, inI + length), type);
+        return new Placeholder(text.substring(inI, inI + length), type, properties);
     }
 
     private static Placeholder getOriginalTrimmingPlaceholder(String text, int i) {
         int inI = i;
         int length = 0;
+        String raw = "";
         boolean hasLeftHalf = true, hasRightHalf = true;
+        boolean readLeftHalf = false, readRightHalf = false;
+        PlaceholderType type = TRIM;
+
+        Number leftCGvalue = 0, rightCGvalue = 0;
+        CaptureGroupOperation leftCGOperation = NONE, middleCGOperation = NONE, rightCGOperation = NONE;
+        CaptureGroupRounding leftCGRounding = AUTO, rightCGRounding = AUTO;
 
         if (text.charAt(i) != '$' && text.charAt(i) != '{' && text.charAt(i) != '}') return invalid;
         else if (text.charAt(i) == '$') hasLeftHalf = false;
+        else leftCGOperation = text.charAt(i) == '{' ? CUT : PRESERVE;
         length++;
         i++;
 
-        boolean readLeftHalf = false, readRightHalf = false;
-
-        int leftHalfDigits = 0;
+        String leftCGRaw = "";
         while (!readLeftHalf && hasLeftHalf) {
             if (i >= text.length()) return invalid;
             if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '$') return invalid;
-            else if (Character.isDigit(text.charAt(i))) leftHalfDigits++;
+            else if (Character.isDigit(text.charAt(i))) leftCGRaw = leftCGRaw.concat("" + text.charAt(i));
             else if (text.charAt(i) == '$') readLeftHalf = true;
             length++;
             i++;
         }
-        if (readLeftHalf && leftHalfDigits == 0) return invalid;
+        if (readLeftHalf && leftCGRaw.isEmpty()) return invalid;
+        else leftCGvalue = INT_PATTERN.matcher(leftCGRaw).matches()
+                ? Integer.parseInt(leftCGRaw) : FLOAT_PATTERN.matcher(leftCGRaw).matches() ? Float.parseFloat(leftCGRaw) : 0;
 
         int potentialLength = 0;
 
-        int rightHalfDigits = 0;
+        String rightCGRaw = "";
         while (!readRightHalf) {
             if (i >= text.length()) break;
             if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '}' && text.charAt(i) != '{') break;
-            else if (Character.isDigit(text.charAt(i))) rightHalfDigits++;
-            else if (text.charAt(i) == '}' || text.charAt(i) == '{') readRightHalf = true;
+            else if (Character.isDigit(text.charAt(i))) rightCGRaw = rightCGRaw.concat("" + text.charAt(i));
+            else if (text.charAt(i) == '}' || text.charAt(i) == '{') {
+                readRightHalf = true;
+                rightCGOperation = text.charAt(i) == '}' ? CUT : PRESERVE;
+            }
             potentialLength++;
             i++;
         }
-        if (!readRightHalf || rightHalfDigits == 0) hasRightHalf = false;
+        if (!readRightHalf || rightCGRaw.isEmpty()) hasRightHalf = false;
+        else rightCGvalue = INT_PATTERN.matcher(rightCGRaw).matches()
+                ? Integer.parseInt(rightCGRaw) : FLOAT_PATTERN.matcher(rightCGRaw).matches() ? Float.parseFloat(rightCGRaw) : 0;
 
         if (hasRightHalf) length += potentialLength;
 
-        return new Placeholder((length > 2 ? text.substring(inI, inI + length) : ""),
-                (hasLeftHalf && hasRightHalf) ? PlaceholderType.TRIM : PlaceholderType.TRIM_SHORT);
+        middleCGOperation = (leftCGOperation == PRESERVE || rightCGOperation == PRESERVE) ? CUT : PRESERVE;
+
+        if (length > 2) raw = text.substring(inI, inI + length);
+        if (!hasLeftHalf || !hasRightHalf) type = TRIM_SHORT;
+
+        CaptureGroup leftCG = new CaptureGroup(leftCGvalue, leftCGOperation), rightCG = new CaptureGroup(rightCGvalue, rightCGOperation);
+        PlaceholderProperties properties = new PlaceholderProperties(leftCG, middleCGOperation, rightCG);
+
+        return new Placeholder(raw, type, properties);
     }
 
-    private static int getAlternativeTrimmingPlaceholderLength(String text, int i) {
+    private static Placeholder getAlternativeTrimmingPlaceholder(String text, int i) {
         int lI = i + 2;
-        int leftGroupDigits = 0, operators = 0, rightGroupDigits = 0;
         boolean readLeftGroup = false, readRightGroup = false;
+        PlaceholderType type = TRIM_ALT;
 
+        Number leftCGvalue = 0, rightCGvalue = 0;
+        CaptureGroupOperation[] operations = new CaptureGroupOperation[3];
+        CaptureGroupRounding leftCGRounding = AUTO, rightCGRounding = AUTO;
+
+        String leftCGRaw = "";
         while (!readLeftGroup) {
             if (lI >= text.length()) break;
-            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '+' && text.charAt(lI) != '-') return 0;
+            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '+' && text.charAt(lI) != '-') return invalid;
             else if (Character.isDigit(text.charAt(lI))) {
-                leftGroupDigits++;
+                leftCGRaw = leftCGRaw.concat("" + text.charAt(lI));
                 lI++;
             }
             else if (text.charAt(lI) == '+' || text.charAt(lI) == '-') readLeftGroup = true;
         }
-        if (readLeftGroup && leftGroupDigits == 0) return 0;
+        if (readLeftGroup && leftCGRaw.isEmpty()) return invalid;
+        else leftCGvalue = INT_PATTERN.matcher(leftCGRaw).matches()
+                ? Integer.parseInt(leftCGRaw) : FLOAT_PATTERN.matcher(leftCGRaw).matches() ? Float.parseFloat(leftCGRaw) : 0;
 
-        while (operators < 3) {
-            if (text.charAt(lI) == '+' || text.charAt(lI) == '-') operators++;
-            else return 0;
+        for (int oI = 0; oI < 3; oI++) {
+            operations[oI] = text.charAt(lI) == '+' ? PRESERVE : text.charAt(lI) == '-' ? CUT : NONE;
+            if (operations[oI] == NONE) return invalid;
             lI++;
         }
+        CaptureGroupOperation leftCGOperation = operations[0], middleCGOperation = operations[1], rightCGOperation = operations[2];
 
+        String rightCGRaw = "";
         while (!readRightGroup) {
             if (lI >= text.length()) break;
-            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '}') return 0;
-            else if (Character.isDigit(text.charAt(lI))) rightGroupDigits++;
+            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '}') return invalid;
+            else if (Character.isDigit(text.charAt(lI))) rightCGRaw = rightCGRaw.concat("" + text.charAt(lI));
             else if (text.charAt(lI) == '}') readRightGroup = true;
             lI++;
         }
-        if (readRightGroup && rightGroupDigits == 0) return 0;
+        if (readRightGroup && rightCGRaw.isEmpty()) return invalid;
+        else rightCGvalue = INT_PATTERN.matcher(rightCGRaw).matches()
+                ? Integer.parseInt(rightCGRaw) : FLOAT_PATTERN.matcher(rightCGRaw).matches() ? Float.parseFloat(rightCGRaw) : 0;
 
-        return lI - i;
+        CaptureGroup leftCG = new CaptureGroup(leftCGvalue, leftCGOperation), rightCG = new CaptureGroup(rightCGvalue, rightCGOperation);
+        PlaceholderProperties properties = new PlaceholderProperties(leftCG, middleCGOperation, rightCG);
+
+        return new Placeholder(text.substring(i, lI), type, properties);
     }
 
-    public static ArrayList<AttachedLabelBreakdownResult> trimRawInfo(String label, String rawInfo) {
+    public static ArrayList<AttachedLabelBreakdownResult> moldInfoPartsWithPlaceholders(String label, String rawInfo) { // 'fillInInfoParts()' maybe?
         ArrayList<AttachedLabelBreakdownResult> parts = plainifyEscapedPlaceholders(label);
         ArrayList<AttachedLabelBreakdownResult> trimmedInfoParts = new ArrayList<>();
 
-        for (AttachedLabelBreakdownResult unspecifiedPart : parts) {
-            if (!(unspecifiedPart instanceof Placeholder part)) {
-                trimmedInfoParts.add(unspecifiedPart);
+        for (AttachedLabelBreakdownResult part : parts) {
+            if (!(part instanceof Placeholder placeholder)) {
+                trimmedInfoParts.add(part);
                 continue;
             }
 
-            String placeholder = part.getString();
-            String infoPart;
-
-            if (placeholder.equals("$") || placeholder.equals("{}")) infoPart = rawInfo;
-
-            else if (placeholder.charAt(0) == '$' && placeholder.charAt(1) == '{' && placeholder.charAt(placeholder.length() - 1) == '}') {
-                int i = 2;
-                String leftGroupUnparsed = "", rightGroupUnparsed = "";
-                int leftGroup, rightGroup;
-                boolean preserveLeftGroup, preserveMiddleGroup, preserveRightGroup;
-
-                while (Character.isDigit(placeholder.charAt(i))) {
-                    leftGroupUnparsed = leftGroupUnparsed.concat("" + placeholder.charAt(i));
-                    i++;
-                }
-                leftGroup = Integer.parseInt(leftGroupUnparsed);
-
-                preserveLeftGroup = placeholder.charAt(i) == '+';
-                preserveMiddleGroup = placeholder.charAt(i + 1) == '+';
-                preserveRightGroup = placeholder.charAt(i + 2) == '+';
-                i += 3;
-
-                while (Character.isDigit(placeholder.charAt(i))) {
-                    rightGroupUnparsed = rightGroupUnparsed.concat("" + placeholder.charAt(i));
-                    i++;
-                }
-                rightGroup = Integer.parseInt(rightGroupUnparsed);
-
-                String leftSub = rawInfo.substring(0, Math.min(leftGroup, rawInfo.length()));
-                String rightSub = rawInfo.substring(Math.max(0, rawInfo.length() - rightGroup));
-                String middleSub = rawInfo.length() > leftGroup + rightGroup ? rawInfo.substring(leftGroup, rawInfo.length() - rightGroup) : "";
-
-                infoPart = (preserveLeftGroup ? leftSub : "") + (preserveMiddleGroup ? middleSub : "") + (preserveRightGroup ? rightSub : "");
+            if (placeholder.isPrimitive()) {
+                trimmedInfoParts.add(new ProcessedInfoPart(rawInfo));
+                continue;
             }
 
-            else {
-                int rL = rawInfo.length();
-                int trimFromLeft = 0, trimFromRight = 0;
-                int cI = placeholder.indexOf('$'), l = placeholder.length();
-                char cF = placeholder.charAt(0), cL = placeholder.charAt(l - 1);
+            PlaceholderType type = placeholder.type();
+            PlaceholderProperties pr = placeholder.properties();
+            CaptureGroup leftCG = pr.leftGroup(), rightCG = pr.rightGroup();
+            /*Number*/int leftCGV = leftCG.value().intValue(), rightCGV = rightCG.value().intValue();
+            CaptureGroupOperation leftCGO = leftCG.operation(), middleCGO = pr.middleGroupOperation(), rightCGO = rightCG.operation();
 
-                if (cF == '{' || cF == '}')
-                    trimFromLeft = Mth.clamp(0, Integer.parseInt(placeholder.substring(1, cI)), rL) * (cF == '{' ? 1 : -1);
-                if (cL == '{' || cL == '}')
-                    trimFromRight = Mth.clamp(0, Integer.parseInt(placeholder.substring(cI + 1, l - 1)), rL) * (cL == '}' ? 1 : -1);
+            int rL = rawInfo.length();
 
-                int trimFromBoth = trimFromLeft + trimFromRight;
-                if (trimFromBoth > rL) trimFromRight -= (trimFromBoth - rL);
+            String leftSub = rawInfo.substring(0, Math.min(leftCGV, rL));
+            String middleSub = rL > leftCGV + rightCGV ? rawInfo.substring(leftCGV, rL - rightCGV) : "";
+            String rightSub = rawInfo.substring(Math.max(0, type == TRIM_ALT ? Math.max(rL - rightCGV, leftCGV) : rL - rightCGV));
+            // TODO 1: per-placeholder toggleable bifurcation (with some kind of ':' modifier, perhaps)
+            // TODO 2: one side's PRESERVE should respect the other's CUT (also toggleable?)
 
-                String leftSub = rawInfo.substring(0, Math.max(0, -trimFromLeft));
-                String rightSub = rawInfo.substring(rL - Math.max(0, -trimFromRight), rL);
+            String infoPart = ""
+                    .concat(leftCGO == PRESERVE ? leftSub : "")
+                    .concat(middleCGO == PRESERVE ? middleSub : "")
+                    .concat(rightCGO == PRESERVE ? rightSub : "");
 
-                if (trimFromLeft < 0 && trimFromRight < 0) infoPart = leftSub + rightSub;
-                else if (trimFromLeft < 0) infoPart = leftSub;
-                else if (trimFromRight < 0) infoPart = rightSub;
-                else if (trimFromLeft > 0 || trimFromRight > 0) infoPart = rawInfo.substring(trimFromLeft, rL - trimFromRight);
-                else infoPart = rawInfo;
-            }
-
-            trimmedInfoParts.add(new Placeholder(infoPart, part.type()));
+            trimmedInfoParts.add(new ProcessedInfoPart(infoPart));
         }
 
         return trimmedInfoParts;
