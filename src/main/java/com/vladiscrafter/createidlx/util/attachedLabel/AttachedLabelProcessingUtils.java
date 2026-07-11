@@ -19,8 +19,12 @@ import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtil
 
 @SuppressWarnings({"UnusedAssignment", "UnnecessaryLocalVariable", "ExtractMethodRecommender"})
 public class AttachedLabelProcessingUtils {
+    private static final Pattern CG_ALLOWED = Pattern.compile("\\d|\\.|/|%");
+
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
     private static final Pattern FLOAT_PATTERN = Pattern.compile("^\\d?\\.\\d+$");
+    private static final Pattern FRACTION_PATTERN = Pattern.compile("^\\d*/[1-9]+$");
+    private static final Pattern PERCENT_PATTERN = Pattern.compile("^\\d+%$");
 
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
@@ -53,7 +57,7 @@ public class AttachedLabelProcessingUtils {
     }
 
     private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<String> addAction) {
-        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsWithPlaceholders(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsViaPlaceholders(label, rawInfo);
 
         for (AttachedLabelBreakdownResult section : sections) {
             addAction.accept(section.getString());
@@ -62,7 +66,7 @@ public class AttachedLabelProcessingUtils {
 
     public static ArrayList<FlapDisplaySection> breakDownAndAssembleLabelAsSectionList(String label, String rawInfo,
                                                                                        String layoutKey, float maxValueWidth, float valueWidthMod) {
-        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsWithPlaceholders(label, rawInfo);
+        ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsViaPlaceholders(label, rawInfo);
         ArrayList<FlapDisplaySection> result = new ArrayList<>();
 
         if (!sections.isEmpty()) for (AttachedLabelBreakdownResult section : sections)
@@ -166,8 +170,8 @@ public class AttachedLabelProcessingUtils {
             }
         }
 
-        log("\nProcessed label:\n\n- " + brokenDownLabel.stream()
-                .map(AttachedLabelBreakdownResult::asDebugString).collect(Collectors.joining("\n- ")));
+        /*log("\nProcessed label:\n\n- " + brokenDownLabel.stream()
+                .map(AttachedLabelBreakdownResult::asDebugString).collect(Collectors.joining("\n- ")));*/
 
         return brokenDownLabel;
     }
@@ -254,56 +258,65 @@ public class AttachedLabelProcessingUtils {
         boolean readLeftHalf = false, readRightHalf = false;
         PlaceholderType type = TRIM;
 
-        Number leftCGvalue = 0, rightCGvalue = 0;
-        CaptureGroupOperation leftCGOperation = NONE, middleCGOperation = NONE, rightCGOperation = NONE;
-        CaptureGroupRounding leftCGRounding = AUTO, rightCGRounding = AUTO;
+        Number leftGroupValue = 0, rightGroupValue = 0;
+        CaptureGroupOperation leftGroupOperation = NONE, middleGroupOperation = NONE, rightGroupOperation = NONE;
+        CaptureGroupRounding leftGroupRounding = AUTO, rightGroupRounding = AUTO;
 
         if (text.charAt(i) != '$' && text.charAt(i) != '{' && text.charAt(i) != '}') return invalid;
         else if (text.charAt(i) == '$') hasLeftHalf = false;
-        else leftCGOperation = text.charAt(i) == '{' ? CUT : PRESERVE;
+        else leftGroupOperation = text.charAt(i) == '{' ? CUT : PRESERVE;
         length++;
         i++;
 
-        String leftCGRaw = "";
+        String leftGroupRaw = "";
         while (!readLeftHalf && hasLeftHalf) {
             if (i >= text.length()) return invalid;
-            if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '$') return invalid;
-            else if (Character.isDigit(text.charAt(i))) leftCGRaw = leftCGRaw.concat("" + text.charAt(i));
+            if (!CG_ALLOWED.matcher("" + text.charAt(i)).matches() && text.charAt(i) != '$') return invalid;
+            else if (CG_ALLOWED.matcher("" + text.charAt(i)).matches()) leftGroupRaw = leftGroupRaw.concat("" + text.charAt(i));
             else if (text.charAt(i) == '$') readLeftHalf = true;
             length++;
             i++;
         }
-        if (readLeftHalf && leftCGRaw.isEmpty()) return invalid;
-        else leftCGvalue = INT_PATTERN.matcher(leftCGRaw).matches()
-                ? Integer.parseInt(leftCGRaw) : FLOAT_PATTERN.matcher(leftCGRaw).matches() ? Float.parseFloat(leftCGRaw) : 0;
+        if (readLeftHalf && leftGroupRaw.isEmpty()) return invalid;
+        if (!leftGroupRaw.isEmpty()) {
+            leftGroupValue = resolveCaptureGroupValue(leftGroupRaw);
+            if (leftGroupValue.intValue() == -1) return invalid;
+            if (leftGroupValue instanceof Float && leftGroupValue.floatValue() > 1.0) return invalid;
+        }
+        /*log(String.format("\n[orig] left CG parsed: '%s' -> %s", leftGroupRaw, leftGroupValue));*/
 
         int potentialLength = 0;
 
-        String rightCGRaw = "";
+        String rightGroupRaw = "";
         while (!readRightHalf) {
             if (i >= text.length()) break;
-            if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '}' && text.charAt(i) != '{') break;
-            else if (Character.isDigit(text.charAt(i))) rightCGRaw = rightCGRaw.concat("" + text.charAt(i));
+            if (!CG_ALLOWED.matcher("" + text.charAt(i)).matches() && text.charAt(i) != '}' && text.charAt(i) != '{') break;
+            else if (CG_ALLOWED.matcher("" + text.charAt(i)).matches()) rightGroupRaw = rightGroupRaw.concat("" + text.charAt(i));
             else if (text.charAt(i) == '}' || text.charAt(i) == '{') {
                 readRightHalf = true;
-                rightCGOperation = text.charAt(i) == '}' ? CUT : PRESERVE;
+                rightGroupOperation = text.charAt(i) == '}' ? CUT : PRESERVE;
             }
             potentialLength++;
             i++;
         }
-        if (!readRightHalf || rightCGRaw.isEmpty()) hasRightHalf = false;
-        else rightCGvalue = INT_PATTERN.matcher(rightCGRaw).matches()
-                ? Integer.parseInt(rightCGRaw) : FLOAT_PATTERN.matcher(rightCGRaw).matches() ? Float.parseFloat(rightCGRaw) : 0;
+        if (!readRightHalf || rightGroupRaw.isEmpty()) hasRightHalf = false;
+        if (!rightGroupRaw.isEmpty()) {
+            rightGroupValue = resolveCaptureGroupValue(rightGroupRaw);
+            if (rightGroupValue.intValue() == -1) return invalid;
+            if (rightGroupValue instanceof Float && rightGroupValue.floatValue() > 1.0) return invalid;
+        }
+        /*log(String.format("[orig] right CG parsed: '%s' -> %s\n", rightGroupRaw, rightGroupValue));*/
 
         if (hasRightHalf) length += potentialLength;
 
-        middleCGOperation = (leftCGOperation == PRESERVE || rightCGOperation == PRESERVE) ? CUT : PRESERVE;
+        middleGroupOperation = (leftGroupOperation == PRESERVE || rightGroupOperation == PRESERVE) ? CUT : PRESERVE;
 
         if (length > 2) raw = text.substring(inI, inI + length);
         if (!hasLeftHalf || !hasRightHalf) type = TRIM_SHORT;
 
-        CaptureGroup leftCG = new CaptureGroup(leftCGvalue, leftCGOperation), rightCG = new CaptureGroup(rightCGvalue, rightCGOperation);
-        PlaceholderProperties properties = new PlaceholderProperties(leftCG, middleCGOperation, rightCG);
+        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation);
+        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation);
+        PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
         return new Placeholder(raw, type, properties);
     }
@@ -313,50 +326,70 @@ public class AttachedLabelProcessingUtils {
         boolean readLeftGroup = false, readRightGroup = false;
         PlaceholderType type = TRIM_ALT;
 
-        Number leftCGvalue = 0, rightCGvalue = 0;
+        Number leftGroupValue = 0, rightGroupValue = 0;
         CaptureGroupOperation[] operations = new CaptureGroupOperation[3];
-        CaptureGroupRounding leftCGRounding = AUTO, rightCGRounding = AUTO;
+        CaptureGroupRounding leftGroupRounding = AUTO, rightGroupRounding = AUTO;
 
-        String leftCGRaw = "";
+        String leftGroupRaw = "";
         while (!readLeftGroup) {
             if (lI >= text.length()) break;
-            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '+' && text.charAt(lI) != '-') return invalid;
-            else if (Character.isDigit(text.charAt(lI))) {
-                leftCGRaw = leftCGRaw.concat("" + text.charAt(lI));
+            if (!CG_ALLOWED.matcher("" + text.charAt(lI)).matches() && text.charAt(lI) != '+' && text.charAt(lI) != '-') return invalid;
+            else if (CG_ALLOWED.matcher("" + text.charAt(lI)).matches()) {
+                leftGroupRaw = leftGroupRaw.concat("" + text.charAt(lI));
                 lI++;
             }
             else if (text.charAt(lI) == '+' || text.charAt(lI) == '-') readLeftGroup = true;
         }
-        if (readLeftGroup && leftCGRaw.isEmpty()) return invalid;
-        else leftCGvalue = INT_PATTERN.matcher(leftCGRaw).matches()
-                ? Integer.parseInt(leftCGRaw) : FLOAT_PATTERN.matcher(leftCGRaw).matches() ? Float.parseFloat(leftCGRaw) : 0;
+        if (readLeftGroup && leftGroupRaw.isEmpty()) return invalid;
+        else {
+            leftGroupValue = resolveCaptureGroupValue(leftGroupRaw);
+            if (leftGroupValue.intValue() == -1) return invalid;
+            if (leftGroupValue instanceof Float && leftGroupValue.floatValue() > 1.0) return invalid;
+        }
+        /*log(String.format("\n[alt] left CG parsed: '%s' -> %s", leftGroupRaw, leftGroupValue));*/
 
         for (int oI = 0; oI < 3; oI++) {
             operations[oI] = text.charAt(lI) == '+' ? PRESERVE : text.charAt(lI) == '-' ? CUT : NONE;
             if (operations[oI] == NONE) return invalid;
             lI++;
         }
-        CaptureGroupOperation leftCGOperation = operations[0], middleCGOperation = operations[1], rightCGOperation = operations[2];
+        CaptureGroupOperation leftGroupOperation = operations[0], middleGroupOperation = operations[1], rightGroupOperation = operations[2];
 
-        String rightCGRaw = "";
+        String rightGroupRaw = "";
         while (!readRightGroup) {
             if (lI >= text.length()) break;
-            if (!Character.isDigit(text.charAt(lI)) && text.charAt(lI) != '}') return invalid;
-            else if (Character.isDigit(text.charAt(lI))) rightCGRaw = rightCGRaw.concat("" + text.charAt(lI));
+            if (!CG_ALLOWED.matcher("" + text.charAt(lI)).matches() && text.charAt(lI) != '}') return invalid;
+            else if (CG_ALLOWED.matcher("" + text.charAt(lI)).matches()) rightGroupRaw = rightGroupRaw.concat("" + text.charAt(lI));
             else if (text.charAt(lI) == '}') readRightGroup = true;
             lI++;
         }
-        if (readRightGroup && rightCGRaw.isEmpty()) return invalid;
-        else rightCGvalue = INT_PATTERN.matcher(rightCGRaw).matches()
-                ? Integer.parseInt(rightCGRaw) : FLOAT_PATTERN.matcher(rightCGRaw).matches() ? Float.parseFloat(rightCGRaw) : 0;
+        if (readRightGroup && rightGroupRaw.isEmpty()) return invalid;
+        else {
+            rightGroupValue = resolveCaptureGroupValue(rightGroupRaw);
+            if (rightGroupValue.intValue() == -1) return invalid;
+            if (rightGroupValue instanceof Float && rightGroupValue.floatValue() > 1.0) return invalid;
+        }
+        /*log(String.format("[alt] right CG parsed: '%s' -> %s\n", rightGroupRaw, rightGroupValue));*/
 
-        CaptureGroup leftCG = new CaptureGroup(leftCGvalue, leftCGOperation), rightCG = new CaptureGroup(rightCGvalue, rightCGOperation);
-        PlaceholderProperties properties = new PlaceholderProperties(leftCG, middleCGOperation, rightCG);
+        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation);
+        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation);
+        PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
         return new Placeholder(text.substring(i, lI), type, properties);
     }
 
-    public static ArrayList<AttachedLabelBreakdownResult> moldInfoPartsWithPlaceholders(String label, String rawInfo) { // 'fillInInfoParts()' maybe?
+    public static Number resolveCaptureGroupValue(String raw) {
+        if (INT_PATTERN.matcher(raw).matches()) return Integer.parseInt(raw);
+        else if (FLOAT_PATTERN.matcher(raw).matches()) return Float.parseFloat(raw);
+        else if (FRACTION_PATTERN.matcher(raw).matches())
+            return (float) ((!raw.substring(0, raw.indexOf('/')).isEmpty()) ? Integer.parseInt(raw.substring(0, raw.indexOf('/'))) : 1)
+                    / Integer.parseInt(raw.substring(raw.indexOf('/') + 1));
+        else if (PERCENT_PATTERN.matcher(raw).matches())
+            return (float) Integer.parseInt(raw.substring(0, raw.indexOf('%'))) / 100;
+        else return -1;
+    }
+
+    public static ArrayList<AttachedLabelBreakdownResult> moldInfoPartsViaPlaceholders(String label, String rawInfo) {
         ArrayList<AttachedLabelBreakdownResult> parts = plainifyEscapedPlaceholders(label);
         ArrayList<AttachedLabelBreakdownResult> trimmedInfoParts = new ArrayList<>();
 
@@ -373,27 +406,35 @@ public class AttachedLabelProcessingUtils {
 
             PlaceholderType type = placeholder.type();
             PlaceholderProperties pr = placeholder.properties();
-            CaptureGroup leftCG = pr.leftGroup(), rightCG = pr.rightGroup();
-            /*Number*/int leftCGV = leftCG.value().intValue(), rightCGV = rightCG.value().intValue();
-            CaptureGroupOperation leftCGO = leftCG.operation(), middleCGO = pr.middleGroupOperation(), rightCGO = rightCG.operation();
+            CaptureGroup leftGroup = pr.leftGroup(), rightGroup = pr.rightGroup();
+            int leftGroupValue = unpackCaptureGroupValue(leftGroup, rawInfo), rightGroupValue = unpackCaptureGroupValue(rightGroup, rawInfo);
+            CaptureGroupOperation leftGroupOperation = leftGroup.operation(),
+                    middleGroupOperation = pr.middleGroupOperation(),
+                    rightGroupOperation = rightGroup.operation();
 
             int rL = rawInfo.length();
 
-            String leftSub = rawInfo.substring(0, Math.min(leftCGV, rL));
-            String middleSub = rL > leftCGV + rightCGV ? rawInfo.substring(leftCGV, rL - rightCGV) : "";
-            String rightSub = rawInfo.substring(Math.max(0, type == TRIM_ALT ? Math.max(rL - rightCGV, leftCGV) : rL - rightCGV));
+            String leftSub = rawInfo.substring(0, Math.min(leftGroupValue, rL));
+            String middleSub = rL > leftGroupValue + rightGroupValue ? rawInfo.substring(leftGroupValue, rL - rightGroupValue) : "";
+            String rightSub = rawInfo.substring(Math.max(0, type == TRIM_ALT ? Math.max(rL - rightGroupValue, leftGroupValue) : rL - rightGroupValue));
             // TODO 1: per-placeholder toggleable bifurcation (with some kind of ':' modifier, perhaps)
             // TODO 2: one side's PRESERVE should respect the other's CUT (also toggleable?)
 
             String infoPart = ""
-                    .concat(leftCGO == PRESERVE ? leftSub : "")
-                    .concat(middleCGO == PRESERVE ? middleSub : "")
-                    .concat(rightCGO == PRESERVE ? rightSub : "");
+                    .concat(leftGroupOperation == PRESERVE ? leftSub : "")
+                    .concat(middleGroupOperation == PRESERVE ? middleSub : "")
+                    .concat(rightGroupOperation == PRESERVE ? rightSub : "");
 
             trimmedInfoParts.add(new ProcessedInfoPart(infoPart));
         }
 
         return trimmedInfoParts;
+    }
+
+    public static int unpackCaptureGroupValue(CaptureGroup captureGroup, String rawInfo) {
+        return captureGroup.value() instanceof Float
+                ? Math.round(captureGroup.value().floatValue() * rawInfo.length())
+                : captureGroup.value().intValue();
     }
 
     public static boolean removeEscapeBackslash(PlaceholderType type) {
