@@ -15,9 +15,6 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 public class CreateIDLXDisplaySources {
 
-    public static final DisplaySource TIME_OF_DAY = new TimeOfDayDisplaySource();
-    public static final DisplaySource STOPWATCH = new StopWatchDisplaySource();
-
     public static final DisplaySource CURRENT_FLOOR_EXTENDED = new CurrentFloorExtendedDisplaySource();
     public static final DisplaySource CURRENT_TARGET_FLOOR = new CurrentTargetFloorDisplaySource();
 
@@ -33,11 +30,6 @@ public class CreateIDLXDisplaySources {
 
     public static void register(RegisterEvent event) {
         if (!event.getRegistryKey().equals(CreateBuiltInRegistries.DISPLAY_SOURCE.key())) return;
-
-        registerSource(TIME_OF_DAY, Create.asResource("time_of_day"),
-                AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
-        registerSource(STOPWATCH, Create.asResource("stopwatch"),
-                AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
 
         registerSource(CURRENT_FLOOR_EXTENDED, "current_floor_extended",
                 AllBlocks.ELEVATOR_CONTACT);
@@ -60,14 +52,21 @@ public class CreateIDLXDisplaySources {
 
         registerSource(HELD_ITEM_DURABILITY, "held_item_durability",
                 AllBlocks.DEPLOYER);
+
+        addSourceToBlocks(getSourceFromCreate("time_of_day"), AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
+        addSourceToBlocks(getSourceFromCreate("stopwatch"), AllBlocks.MYSTERIOUS_CUCKOO_CLOCK);
+    }
+
+    private static DisplaySource getSourceFromCreate(String id) {
+        return CreateBuiltInRegistries.DISPLAY_SOURCE.get(Create.asResource(id));
     }
 
     private static void registerSource(DisplaySource displaySource, String displaySourceId, BlockEntry<?>... blocks) {
-        registerSource(displaySource, CreateIDLX.asResource(displaySourceId), blocks);
+        Registry.register(CreateBuiltInRegistries.DISPLAY_SOURCE, CreateIDLX.asResource(displaySourceId), displaySource);
+        addSourceToBlocks(displaySource, blocks);
     }
 
-    private static void registerSource(DisplaySource displaySource, ResourceLocation displaySourceIdRL, BlockEntry<?>... blocks) {
-        Registry.register(CreateBuiltInRegistries.DISPLAY_SOURCE, displaySourceIdRL, displaySource);
+    private static void addSourceToBlocks(DisplaySource displaySource, BlockEntry<?>... blocks) {
         for (BlockEntry<?> block : blocks) DisplaySource.BY_BLOCK.add(block.get(), displaySource);
     }
 }
