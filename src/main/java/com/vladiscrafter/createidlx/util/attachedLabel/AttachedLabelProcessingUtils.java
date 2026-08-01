@@ -17,13 +17,17 @@ import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.CaptureGroupRounding.*;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
 
-@SuppressWarnings({"UnusedAssignment", "UnnecessaryLocalVariable", "ExtractMethodRecommender"})
+@SuppressWarnings({"UnusedAssignment", "UnnecessaryLocalVariable", "BooleanMethodIsAlwaysInverted"})
 public class AttachedLabelProcessingUtils {
-    private static final Pattern CG_ALLOWED = Pattern.compile("\\d|\\.|/|%");
+    private static final Pattern CG_ALLOWED = Pattern.compile("[+\\-\\d./%CcFfUuDdAa]");
+    private static final Pattern CG_ALLOWED_ALT = Pattern.compile("[\\d./%CcFfUuDdAa]");
+
+    private static final Pattern ROUNDED_CG_PATTERN = Pattern.compile("^[+CcFfUuDdAa-]?[^+A-Za-z-]+[+CcFfUuDdAa-]?$");
+    private static final Pattern ROUNDED_CG_ALT_PATTERN = Pattern.compile("^[CcFfUuDdAa]?[^A-Za-z]+[CcFfUuDdAa]?$");
 
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
     private static final Pattern FLOAT_PATTERN = Pattern.compile("^\\d?\\.\\d+$");
-    private static final Pattern FRACTION_PATTERN = Pattern.compile("^\\d*/[1-9]+$");
+    private static final Pattern FRACTION_PATTERN = Pattern.compile("^\\d*/[1-9]\\d*$");
     private static final Pattern PERCENT_PATTERN = Pattern.compile("^\\d+%$");
 
     public static String setToPrimitivePlaceholder() {
@@ -86,7 +90,7 @@ public class AttachedLabelProcessingUtils {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean shouldBeProcessed(String label) {
+    public static boolean shouldBeProcessed(String label) { // TODO: doesn't get called for some reason?
         return getTotalPlaceholdersCountInLabel(label) > 0 || hasEscapedPlaceholders(label);
     }
 
@@ -111,7 +115,10 @@ public class AttachedLabelProcessingUtils {
         boolean hasEscapedPlaceholders = false;
 
         for (AttachedLabelBreakdownResult part : processLabel(label))
-            if (part instanceof Placeholder placeholder && placeholder.isEscaped()) hasEscapedPlaceholders = true;
+            if (part instanceof Placeholder placeholder && placeholder.isEscaped()) {
+                hasEscapedPlaceholders = true;
+                break;
+            }
 
         return hasEscapedPlaceholders;
     }
@@ -121,7 +128,6 @@ public class AttachedLabelProcessingUtils {
 
         StringBuilder breakableLabel = new StringBuilder(label);
         ArrayList<AttachedLabelBreakdownResult> brokenDownLabel = new ArrayList<>();
-        boolean hasEscapedPlaceholders = false;
 
         while (!breakableLabel.isEmpty()) {
             StringBuilder labelPart = new StringBuilder();
@@ -159,12 +165,12 @@ public class AttachedLabelProcessingUtils {
                 if (removeEscapeBackslash(DOLLAR)) part = part.replace("\\$", "$");
                 if (removeEscapeBackslash(BRACKETS)) part = part.replace("\\{}", "{}");
 
-                if (removeEscapeBackslash(TRIM)) part = part.replaceAll("\\\\(?=[{}]\\d+\\$\\d+[}{])", "");
+                if (removeEscapeBackslash(TRIM)) part = part.replaceAll("\\\\(?=[{}][\\d./%CcFfUuDdAa]+\\$[\\d./%CcFfUuDdAa]+[}{])", "");
 
-                if (removeEscapeBackslash(TRIM_SHORT)) part = part.replaceAll("\\\\(?=[{}]\\d+\\$)", "")
-                            .replaceAll("\\\\(?=\\$\\d+[}{])", "");
+                if (removeEscapeBackslash(TRIM_SHORT)) part = part.replaceAll("\\\\(?=[{}][\\d./%CcFfUuDdAa]+\\$)", "")
+                            .replaceAll("\\\\(?=\\$[\\d./%CcFfUuDdAa]+[}{])", "");
 
-                if (removeEscapeBackslash(TRIM_ALT)) part = part.replaceAll("\\\\(?=\\$\\{\\d+[+-]{3}\\d+})", "");
+                if (removeEscapeBackslash(TRIM_ALT)) part = part.replaceAll("\\\\(?=\\$\\{[\\d./%CcFfUuDdAa]+[+-]{3}\\d+})", "");
 
                 brokenDownLabel.set(p, new PlainPart(part));
             }
@@ -278,6 +284,9 @@ public class AttachedLabelProcessingUtils {
             i++;
         }
         if (readLeftHalf && leftGroupRaw.isEmpty()) return invalid;
+        if (hasLeftHalf && !hasValidRounding(leftGroupRaw, type)) return invalid;
+        leftGroupRounding = resolveCaptureGroupRounding(leftGroupRaw, TRIM);
+        leftGroupRaw = cleanUpCaptureGroupRounders(leftGroupRaw);
         if (!leftGroupRaw.isEmpty()) {
             leftGroupValue = resolveCaptureGroupValue(leftGroupRaw);
             if (leftGroupValue.intValue() == -1) return invalid;
@@ -300,6 +309,9 @@ public class AttachedLabelProcessingUtils {
             i++;
         }
         if (!readRightHalf || rightGroupRaw.isEmpty()) hasRightHalf = false;
+        if (hasRightHalf && !hasValidRounding(rightGroupRaw, type)) return invalid;
+        rightGroupRounding = resolveCaptureGroupRounding(rightGroupRaw, TRIM);
+        rightGroupRaw = cleanUpCaptureGroupRounders(rightGroupRaw);
         if (!rightGroupRaw.isEmpty()) {
             rightGroupValue = resolveCaptureGroupValue(rightGroupRaw);
             if (rightGroupValue.intValue() == -1) return invalid;
@@ -314,8 +326,8 @@ public class AttachedLabelProcessingUtils {
         if (length > 2) raw = text.substring(inI, inI + length);
         if (!hasLeftHalf || !hasRightHalf) type = TRIM_SHORT;
 
-        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation);
-        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation);
+        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation, leftGroupRounding);
+        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation, rightGroupRounding);
         PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
         return new Placeholder(raw, type, properties);
@@ -333,13 +345,16 @@ public class AttachedLabelProcessingUtils {
         String leftGroupRaw = "";
         while (!readLeftGroup) {
             if (lI >= text.length()) break;
-            if (!CG_ALLOWED.matcher("" + text.charAt(lI)).matches() && text.charAt(lI) != '+' && text.charAt(lI) != '-') return invalid;
-            else if (CG_ALLOWED.matcher("" + text.charAt(lI)).matches()) {
+            if (!CG_ALLOWED.matcher("" + text.charAt(lI)).matches()) return invalid;
+            else if (CG_ALLOWED_ALT.matcher("" + text.charAt(lI)).matches()) {
                 leftGroupRaw = leftGroupRaw.concat("" + text.charAt(lI));
                 lI++;
             }
             else if (text.charAt(lI) == '+' || text.charAt(lI) == '-') readLeftGroup = true;
         }
+        if (!hasValidRounding(leftGroupRaw, type)) return invalid;
+        leftGroupRounding = resolveCaptureGroupRounding(leftGroupRaw, TRIM_ALT);
+        leftGroupRaw = cleanUpCaptureGroupRounders(leftGroupRaw);
         if (readLeftGroup && leftGroupRaw.isEmpty()) return invalid;
         else {
             leftGroupValue = resolveCaptureGroupValue(leftGroupRaw);
@@ -349,6 +364,7 @@ public class AttachedLabelProcessingUtils {
         /*log(String.format("\n[alt] left CG parsed: '%s' -> %s", leftGroupRaw, leftGroupValue));*/
 
         for (int oI = 0; oI < 3; oI++) {
+            if (lI >= text.length()) return invalid;
             operations[oI] = text.charAt(lI) == '+' ? PRESERVE : text.charAt(lI) == '-' ? CUT : NONE;
             if (operations[oI] == NONE) return invalid;
             lI++;
@@ -359,10 +375,13 @@ public class AttachedLabelProcessingUtils {
         while (!readRightGroup) {
             if (lI >= text.length()) break;
             if (!CG_ALLOWED.matcher("" + text.charAt(lI)).matches() && text.charAt(lI) != '}') return invalid;
-            else if (CG_ALLOWED.matcher("" + text.charAt(lI)).matches()) rightGroupRaw = rightGroupRaw.concat("" + text.charAt(lI));
+            else if (CG_ALLOWED_ALT.matcher("" + text.charAt(lI)).matches()) rightGroupRaw = rightGroupRaw.concat("" + text.charAt(lI));
             else if (text.charAt(lI) == '}') readRightGroup = true;
             lI++;
         }
+        if (!hasValidRounding(rightGroupRaw, type)) return invalid;
+        rightGroupRounding = resolveCaptureGroupRounding(rightGroupRaw, TRIM_ALT);
+        rightGroupRaw = cleanUpCaptureGroupRounders(rightGroupRaw);
         if (readRightGroup && rightGroupRaw.isEmpty()) return invalid;
         else {
             rightGroupValue = resolveCaptureGroupValue(rightGroupRaw);
@@ -371,14 +390,52 @@ public class AttachedLabelProcessingUtils {
         }
         /*log(String.format("[alt] right CG parsed: '%s' -> %s\n", rightGroupRaw, rightGroupValue));*/
 
-        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation);
-        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation);
+        CaptureGroup leftGroup = new CaptureGroup(leftGroupValue, leftGroupOperation, leftGroupRounding);
+        CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation, rightGroupRounding);
         PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
         return new Placeholder(text.substring(i, lI), type, properties);
     }
 
-    public static Number resolveCaptureGroupValue(String raw) {
+    private static boolean hasValidRounding(String raw, PlaceholderType type) {
+        boolean result = type == TRIM
+                ? ROUNDED_CG_PATTERN.matcher(raw).matches()
+                : ROUNDED_CG_ALT_PATTERN.matcher(raw).matches();
+
+        /*log(String.format("\n[hasValidRounding] CG %s for type %s is %svalid", raw, type, result ? "" : "NOT "));*/
+        return result;
+    }
+
+    private static CaptureGroupRounding resolveCaptureGroupRounding(String raw, PlaceholderType type) {
+        CaptureGroupRounding rounding = AUTO;
+        for (char ch : raw.toCharArray()) {
+            if (type == TRIM) rounding = ch == '+' ? CEIL : ch == '-' ? FLOOR : matches(ch, 'A') ? AUTO : rounding;
+            rounding = (matches(ch, 'C') || matches(ch, 'U'))
+                    ? CEIL : (matches(ch, 'F') || matches(ch, 'D'))
+                    ? FLOOR : matches(ch, 'A') ? AUTO : rounding;
+            /*log(String.format("[resolveCaptureGroupRounding] Checked char %s, rounding is %s", ch, rounding));*/
+        }
+
+        /*log(String.format("[resolveCaptureGroupRounding] CGR of %s for type %s is %s", raw, type, rounding));*/
+        return rounding;
+    }
+    
+    private static boolean matches(char a, char b) {
+        return Character.toUpperCase(a) == b;
+    }
+
+    private static String cleanUpCaptureGroupRounders(String raw) {
+        String result =  raw.toUpperCase()
+                .replace("+", "").replace("-", "")
+                .replace("C", "").replace("F", "")
+                .replace("U", "").replace("D", "")
+                .replace("A", "");
+
+        /*log(String.format("[cleanUpCaptureGroupRounders] %s -> %s\n", raw, result));*/
+        return result;
+    }
+
+    private static Number resolveCaptureGroupValue(String raw) {
         if (INT_PATTERN.matcher(raw).matches()) return Integer.parseInt(raw);
         else if (FLOAT_PATTERN.matcher(raw).matches()) return Float.parseFloat(raw);
         else if (FRACTION_PATTERN.matcher(raw).matches())
@@ -416,7 +473,7 @@ public class AttachedLabelProcessingUtils {
 
             String leftSub = rawInfo.substring(0, Math.min(leftGroupValue, rL));
             String middleSub = rL > leftGroupValue + rightGroupValue ? rawInfo.substring(leftGroupValue, rL - rightGroupValue) : "";
-            String rightSub = rawInfo.substring(Math.max(0, type == TRIM_ALT ? Math.max(rL - rightGroupValue, leftGroupValue) : rL - rightGroupValue));
+            String rightSub = rawInfo.substring(Math.clamp(type == TRIM_ALT ? Math.max(rL - rightGroupValue, leftGroupValue) : rL - rightGroupValue, 0, rL));
             // TODO 1: per-placeholder toggleable bifurcation (with some kind of ':' modifier, perhaps)
             // TODO 2: one side's PRESERVE should respect the other's CUT (also toggleable?)
 
@@ -432,8 +489,11 @@ public class AttachedLabelProcessingUtils {
     }
 
     public static int unpackCaptureGroupValue(CaptureGroup captureGroup, String rawInfo) {
+        float fraction = captureGroup.value().floatValue() * rawInfo.length();
         return captureGroup.value() instanceof Float
-                ? Math.round(captureGroup.value().floatValue() * rawInfo.length())
+                ? (int) (captureGroup.rounding() == CEIL
+                    ? Math.ceil(fraction) : captureGroup.rounding() == FLOOR
+                        ? Math.floor(fraction) : Math.round(fraction))
                 : captureGroup.value().intValue();
     }
 
