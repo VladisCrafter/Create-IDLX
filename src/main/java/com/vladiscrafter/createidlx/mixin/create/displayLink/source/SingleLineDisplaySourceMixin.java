@@ -5,13 +5,18 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
+import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayTarget;
+import com.simibubi.create.content.redstone.displayLink.target.SignDisplayTarget;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
-import com.vladiscrafter.createidlx.util.bridge.FlapDisplayLayoutVisualizationConfigHolder;
+import com.vladiscrafter.createidlx.mixin.accessor.create.NixieTubeDisplayTargetAccessor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -65,7 +70,35 @@ public abstract class SingleLineDisplaySourceMixin {
         MutableComponent rawLine = this.createidlx$invokeProvideLine(context, stats);
         String information = (rawLine == SingleLineDisplaySource.EMPTY_LINE) ? "" : rawLine.getString();
 
-        return ImmutableList.of(Component.literal(breakDownAndAssembleLabel(label, information)));
+        String processedLine = breakDownAndAssembleLabel(label, information);
+
+        if (anyVisualizationConfigEnabled(context)) {
+            int length = processedLine.length(), maxLength = length;
+
+            Font font = Minecraft.getInstance().font;
+            int lengthP = font.width(processedLine);
+
+            if (stats.type() instanceof NixieTubeDisplayTarget ntdt)
+                maxLength = ((NixieTubeDisplayTargetAccessor) ntdt).createidlx$invokeGetWidth(context);
+            else if (stats.type() instanceof SignDisplayTarget)
+                maxLength = ((SignBlockEntity) context.getTargetBlockEntity()).getMaxTextLineWidth();
+
+            if (stats.type() instanceof NixieTubeDisplayTargetAccessor) {
+                if (centerText(context) && length < maxLength - 1) {
+                    int leftMargin = ((maxLength - length) / 2), rightMargin = (maxLength - length) - leftMargin;
+                    processedLine = " ".repeat(leftMargin) + processedLine + " ".repeat(rightMargin);
+                }
+
+                if (markTruncationWithEllipsis(context) && length > maxLength) {
+                    processedLine = processedLine.substring(0, maxLength - 1) + "…";
+                }
+            }
+            else if (stats.type() instanceof SignDisplayTarget & markTruncationWithEllipsis(context) && lengthP > maxLength) {
+                processedLine = font.plainSubstrByWidth(processedLine, maxLength - font.width("…")) + "…";
+            }
+        }
+
+        return ImmutableList.of(Component.literal(processedLine));
     }
 
     @ModifyReturnValue(method = "provideFlapDisplayText", at = @At("RETURN"))
@@ -108,7 +141,7 @@ public abstract class SingleLineDisplaySourceMixin {
                     maxValueWidth, valueWidthMod);
 
             Pair<ArrayList<FlapDisplaySection>, Float> sectionsClampResult
-                    = clampSections(unclampedSections, maxValueWidth, true, getMarkTruncationWithEllipsis(context));
+                    = clampSections(unclampedSections, maxValueWidth, true, markTruncationWithEllipsis(context));
             ArrayList<FlapDisplaySection> clampedSections = sectionsClampResult.getLeft();
 
             return List.of(assembleLabelFromSectionsAsComponentList(clampedSections));
@@ -152,21 +185,21 @@ public abstract class SingleLineDisplaySourceMixin {
         String layoutName = buildLayoutSignature(label, layoutKey, Math.max(1, Math.min(information.length(), maxLength)), context);
 
         Pair<ArrayList<FlapDisplaySection>, Float> sectionsClampResult
-                = clampSections(unclampedSections, maxValueWidth, true, getMarkTruncationWithEllipsis(context));
+                = clampSections(unclampedSections, maxValueWidth, true, markTruncationWithEllipsis(context));
         ArrayList<FlapDisplaySection> clampedSections = sectionsClampResult.getLeft();
 
         float totalWidth = sectionsClampResult.getRight();
         int sectionSpaces = clampedSections.size() - 1;
 
         float leftSpaceWidth = totalWidth - sectionSpaces;
-        if (leftSpaceWidth > 0f && !getCenterText(context)) {
+        if (leftSpaceWidth > 0f && !centerText(context)) {
             clampedSections.add(new FlapDisplaySection(leftSpaceWidth, "alphabet", false, false));
         }
 
         layout.configure(layoutName, ImmutableList.copyOf(clampedSections));
 
         /*if (layout instanceof FlapDisplayLayoutVisualizationConfigHolder holder)
-            holder.createidlx$setCutOutSectionGaps(getCutOutSectionGaps(context));*/
+            holder.createidlx$setCutOutSectionGaps(cutOutSectionGaps(context));*/
 
         ci.cancel();
     }

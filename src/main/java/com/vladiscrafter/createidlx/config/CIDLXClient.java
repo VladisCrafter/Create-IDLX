@@ -7,6 +7,7 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigGroup displayLinkGUI = group(1, "displayLinkGUI", "Display Link GUI");
     public final ConfigBool enableGuideButtons = b(true, "enableGuideButtons", Comments.enableGuideButtons);
     public final ConfigBool enableVisualizationSettingsButtons = b(true, "enableVisualizationSettingsButtons", Comments.enableVisualizationSettingsButtons);
+    public final ConfigBool alwaysShowVisualizationSettingsButtons = b(false, "alwaysShowVisualizationSettingsButtons", Comments.alwaysShowVisualizationSettingsButtons, Comments.onlyTakesEffectVisualizationButtons);
 
     public final ConfigGroup guideButtonsCustomization = group(2, "guideButtonsCustomization", "Guide Buttons Customization");
     public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideButtons);
@@ -72,6 +73,7 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String defaultZero = "Set to 0 to disable.";
         static String overrides = "Overrides 'Fixed Char Travel Time' and 'Maximal/Minimal String Travel Time'.";
         static String onlyTakesEffectGuideButtons = "Only takes effect if 'Enable Guide Buttons' is enabled.";
+        static String onlyTakesEffectVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
         static String onlyTakesEffectMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
         static String onlyTakesEffectOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
@@ -79,6 +81,7 @@ public class CIDLXClient extends CIDLXConfigBase {
 
         static String enableGuideButtons = "Show the 'Placeholders Usage Guide' & 'Duplicating Display Link Properties' buttons in Display Link interface.";
         static String enableVisualizationSettingsButtons = "Show the 'Show Visualization Settings' button in Display Link interface.";
+        static String alwaysShowVisualizationSettingsButtons = "Never hide the Visualization Settings buttons behind the 'Show Visualization Buttons' dropdown button.";
 
         static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
         static String enableAlternativeClipboardIcon = "Change the icon on the 'Duplicating Display Link Properties' button to a more item-like looking one.";

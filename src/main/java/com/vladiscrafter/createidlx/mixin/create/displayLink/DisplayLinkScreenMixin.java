@@ -8,6 +8,7 @@ import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
+import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -29,11 +30,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -80,6 +81,10 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
     @Unique private List<AbstractWidget> createidlx$visualizationSettingWidgets = new ArrayList<>();
 
+    @Unique private final List<Class<? extends BlockEntity>>
+            createidlx$visualizationSettingsSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class, SignBlockEntity.class),
+            createidlx$centerTextSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class);
+
     @Unique private final Component createidlx$optionEnabled = CreateLang.translateDirect("gui.schematicannon.optionEnabled");
     @Unique private final Component createidlx$optionDisabled = CreateLang.translateDirect("gui.schematicannon.optionDisabled");
 
@@ -89,20 +94,18 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
     @Unique boolean createidlx$areRedirectsToPonderScenesEnabled = CIDLXConfigs.client.enableRedirectsToPonderScenes.get();
 
     @Unique boolean isCreateidlx$areVisualizationSettingsButtonsEnabled = CIDLXConfigs.client.enableVisualizationSettingsButtons.get();
+    @Unique boolean createidlx$areVisualizationSettingsButtonsAlwaysShown = CIDLXConfigs.client.alwaysShowVisualizationSettingsButtons.get();
 
     @Unique boolean createidlx$isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
     @Unique boolean createidlx$isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
 
+    @Inject(method = "init", at = @At("TAIL"))
+    private void createidlx$pullVisualizationSettings(CallbackInfo ci) {
+        createidlx$pullVisualizationSettings();
+    }
+
     @Inject(method = "tick", at = @At("TAIL"))
     private void createidlx$tickTooltips(CallbackInfo ci) {
-        CompoundTag visualizationConfig = ((DisplayLinkVisualizationConfigHolder) blockEntity).createidlx$getVisualizationConfig();
-
-        if (!createidlx$visualizationSettingsInitialized)
-            createidlx$centerText = visualizationConfig.getBoolean("CenterText");
-        /*if (!createidlx$visualizationSettingsInitialized)
-            createidlx$cutOutSectionGaps = visualizationConfig.getBoolean("CutOutSectionGaps");*/
-        if (!createidlx$visualizationSettingsInitialized)
-            createidlx$markTruncationWithEllipsis = visualizationConfig.getBoolean("MarkTruncationWithEllipsis");
         createidlx$handleTooltips();
     }
 
@@ -190,14 +193,14 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         DisplaySource source = sources.get(i);
 
         createidlx$placeholdersGuideButton = new IconButton(guiLeft + 36, guiTop + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
-        createidlx$placeholdersGuideButton.visible = source instanceof SingleLineDisplaySource;
+        createidlx$placeholdersGuideButton.visible = createidlx$allowsLabeling(source);
         if (createidlx$areRedirectsToPonderScenesEnabled) createidlx$placeholdersGuideButton.withCallback((mX, mY) -> {
             onClose();
             PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
         });
         else createidlx$placeholdersGuideButton.active = false;
 
-        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (source instanceof SingleLineDisplaySource ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
+        createidlx$clipboardGuideButton = new IconButton(guiLeft + 36, guiTop + (createidlx$allowsLabeling(source) ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
         if (createidlx$isAlternativeClipboardIconEnabled) createidlx$clipboardGuideButton.setIcon(CreateIDLXIcons.I_CLIPBOARD_ITEM);
         if (createidlx$areRedirectsToPonderScenesEnabled) createidlx$clipboardGuideButton.withCallback((mX, mY) -> {
             onClose();
@@ -212,6 +215,7 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         this.addRenderableWidget(createidlx$clipboardGuideButton);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$initVisualizationSettingsButton(int i, CallbackInfo ci) {
 
@@ -224,11 +228,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         if (i < 0 || i >= sources.size()) return;
         DisplaySource source = sources.get(i);
 
-        assert minecraft != null;
-        ClientLevel level = minecraft.level;
-        BlockEntity target = level.getBlockEntity(blockEntity.getTargetPosition());
+        BlockEntity target = minecraft.level.getBlockEntity(blockEntity.getTargetPosition());
 
-        if (!(source instanceof SingleLineDisplaySource) || !(target instanceof FlapDisplayBlockEntity)) {
+        createidlx$pullVisualizationSettings();
+
+        if (!(createidlx$supportsVisualizationSettings(target))) {
             createidlx$visualizationSettingsVisible = false;
             createidlx$initVisualizationSettings();
             return;
@@ -240,11 +244,34 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
             createidlx$initVisualizationSettings();
         });
         createidlx$showVisualizationSettingsButton.setToolTip(createidlx$translateLocal("visualization_settings.show_visualization_settings"));
-        if (isCreateidlx$areVisualizationSettingsButtonsEnabled) addRenderableWidget(createidlx$showVisualizationSettingsButton);
+        if (isCreateidlx$areVisualizationSettingsButtonsEnabled) {
+            addRenderableWidget(createidlx$showVisualizationSettingsButton);
+
+            if (createidlx$areVisualizationSettingsButtonsAlwaysShown) {
+                createidlx$visualizationSettingsVisible = true;
+                createidlx$initVisualizationSettings();
+            }
+        }
 
         tick();
     }
 
+    @Unique
+    private boolean createidlx$allowsLabeling(DisplaySource source) {
+        return source instanceof SingleLineDisplaySource;
+    }
+
+    @Unique
+    private boolean createidlx$supportsVisualizationSettings(BlockEntity target) {
+        return createidlx$visualizationSettingsSupporters.stream().anyMatch(c -> c.isInstance(target));
+    }
+
+    @Unique
+    private boolean createidlx$supportsCenterText(BlockEntity target) {
+        return createidlx$centerTextSupporters.stream().anyMatch(c -> c.isInstance(target));
+    }
+
+    @SuppressWarnings("DataFlowIssue")
     @Unique
     private void createidlx$initVisualizationSettings() {
         removeWidgets(createidlx$visualizationSettingWidgets);
@@ -257,13 +284,14 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
         int y = guiTop + background.getHeight() - 24;
 
         createidlx$centerTextButton = new IconButton(x, y, CreateIDLXIcons.I_CENTER_TEXT);
+        createidlx$centerTextButton.visible = createidlx$supportsCenterText(minecraft.level.getBlockEntity(blockEntity.getTargetPosition()));
         createidlx$centerTextButton.green = createidlx$centerText;
-        createidlx$centerTextButton.withCallback(() -> {
-            createidlx$centerTextButton.green ^= true;
-        });
+        createidlx$centerTextButton.withCallback(() -> createidlx$centerTextButton.green ^= true);
         createidlx$centerTextButton.setToolTip(createidlx$translateLocal("visualization_settings.center_text"));
-        Collections.addAll(createidlx$visualizationSettingWidgets, createidlx$centerTextButton);
-        x += 26;
+        if (createidlx$supportsCenterText(minecraft.level.getBlockEntity(blockEntity.getTargetPosition()))) {
+            Collections.addAll(createidlx$visualizationSettingWidgets, createidlx$centerTextButton);
+            x += 26;
+        }
 
         /*createidlx$cutOutSectionGapsButton = new IconButton(x, y, CreateIDLXIcons.I_CUT_OUT_SECTION_GAPS);
         createidlx$cutOutSectionGapsButton.green = createidlx$cutOutSectionGaps;
@@ -276,13 +304,24 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen {
 
         createidlx$markTruncationWithEllipsisButton = new IconButton(x, y, CreateIDLXIcons.I_MARK_TRUNCATION_WITH_ELLIPSIS);
         createidlx$markTruncationWithEllipsisButton.green = createidlx$markTruncationWithEllipsis;
-        createidlx$markTruncationWithEllipsisButton.withCallback(() -> {
-            createidlx$markTruncationWithEllipsisButton.green ^= true;
-        });
+        createidlx$markTruncationWithEllipsisButton.withCallback(() -> createidlx$markTruncationWithEllipsisButton.green ^= true);
         createidlx$markTruncationWithEllipsisButton.setToolTip(createidlx$translateLocal("visualization_settings.mark_truncation_with_ellipsis"));
         Collections.addAll(createidlx$visualizationSettingWidgets, createidlx$markTruncationWithEllipsisButton);
 
         addRenderableWidgets(createidlx$visualizationSettingWidgets);
+        createidlx$visualizationSettingsInitialized = true;
+    }
+
+    @Unique
+    private void createidlx$pullVisualizationSettings() {
+        if (createidlx$visualizationSettingsInitialized) return;
+
+        CompoundTag visualizationConfig = ((DisplayLinkVisualizationConfigHolder) blockEntity).createidlx$getVisualizationConfig();
+
+        createidlx$centerText = visualizationConfig.getBoolean("CenterText");
+        /*createidlx$cutOutSectionGaps = visualizationConfig.getBoolean("CutOutSectionGaps");*/
+        createidlx$markTruncationWithEllipsis = visualizationConfig.getBoolean("MarkTruncationWithEllipsis");
+
         createidlx$visualizationSettingsInitialized = true;
     }
 

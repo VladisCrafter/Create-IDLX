@@ -8,6 +8,7 @@
     "accessor.create.FlapDisplaySectionAccessor",
     "accessor.create.HosePulleyBlockEntityAccessor",
     "accessor.create.MechanicalPistonBlockEntityAccessor",
+    "accessor.create.NixieTubeDisplayTargetAccessor",
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkConfigurationPacketMixin",
     "create.displayLink.source.CurrentFloorDisplaySourceMixin",

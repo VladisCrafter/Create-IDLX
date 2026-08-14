@@ -23,7 +23,7 @@ public class SingleLineDisplaySourceMixinUtils {
         return getCenterText(context) /*|| getCutOutSectionGaps(context)*/ || getMarkTruncationWithEllipsis(context);
     }
 
-    public static boolean getCenterText(DisplayLinkContext context) {
+    public static boolean centerText(DisplayLinkContext context) {
         return getVisualizationConfig(context).getBoolean("CenterText");
     }
 
@@ -31,7 +31,6 @@ public class SingleLineDisplaySourceMixinUtils {
         return getVisualizationConfig(context).getBoolean("CutOutSectionGaps");
     }*/
 
-    public static boolean getMarkTruncationWithEllipsis(DisplayLinkContext context) {
         return getVisualizationConfig(context).getBoolean("MarkTruncationWithEllipsis");
     }
 
