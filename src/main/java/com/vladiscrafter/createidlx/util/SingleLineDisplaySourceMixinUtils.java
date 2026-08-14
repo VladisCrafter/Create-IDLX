@@ -20,17 +20,18 @@ public class SingleLineDisplaySourceMixinUtils {
     private SingleLineDisplaySourceMixinUtils() {}
 
     public static boolean anyVisualizationConfigEnabled(DisplayLinkContext context) {
-        return getCenterText(context) /*|| getCutOutSectionGaps(context)*/ || getMarkTruncationWithEllipsis(context);
+        return centerText(context) /*|| cutOutSectionGaps(context)*/ || markTruncationWithEllipsis(context);
     }
 
     public static boolean centerText(DisplayLinkContext context) {
         return getVisualizationConfig(context).getBoolean("CenterText");
     }
 
-    /*public static boolean getCutOutSectionGaps(DisplayLinkContext context) {
+    /*public static boolean cutOutSectionGaps(DisplayLinkContext context) {
         return getVisualizationConfig(context).getBoolean("CutOutSectionGaps");
     }*/
 
+    public static boolean markTruncationWithEllipsis(DisplayLinkContext context) {
         return getVisualizationConfig(context).getBoolean("MarkTruncationWithEllipsis");
     }
 
