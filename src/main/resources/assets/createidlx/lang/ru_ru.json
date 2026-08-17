@@ -164,6 +164,8 @@
   "createidlx.display_source.held_item_durability.invalid_damage_template": "-",
   "createidlx.display_source.held_item_durability.ratio_template": "%1$s/%2$s",
 
+  "createidlx.display_source.nixie_tube.copy_color": "Скопировать цвет текста",
+
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",
   "createidlx.ponder.attached_label.text_2": "Откройте интерфейс, чтобы настроить добавочную надпись в соответствующем поле",

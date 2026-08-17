@@ -1,9 +1,14 @@
 package com.vladiscrafter.createidlx.mixin.create.displayLink.source;
 
 import com.google.common.collect.ImmutableList;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
+import com.simibubi.create.content.redstone.displayLink.source.NixieTubeDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
+import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.vladiscrafter.createidlx.CreateIDLX;
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
 import net.minecraft.ChatFormatting;
@@ -41,5 +46,20 @@ public abstract class SingleLineDisplaySourceClientMixin {
             t.withTooltip(createidlx$labelTooltip);
         }, "Label");
         ci.cancel();
+    }
+
+    @Inject(method = "initConfigurationWidgets", at = @At("TAIL"))
+    private void createidlx$addToggleForNixieTubeColor(DisplayLinkContext context, ModularGuiLineBuilder builder,
+                                                       boolean isFirstLine, CallbackInfo ci) {
+        if (!(CIDLXConfigs.server.addColorCopyingToNixieTubeDisplaySource.get())) return;
+
+        if (!((SingleLineDisplaySource) (Object) this instanceof NixieTubeDisplaySource)) return;
+        if (!(context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity)) return;
+        if (isFirstLine) return;
+
+        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(0, 17, (ssi, l) -> {
+            ssi.titled(CreateIDLX.translate("display_source.nixie_tube.copy_color"))
+                    .setState(1);
+        }, "CopyColor");
     }
 }

@@ -16,6 +16,7 @@
     "create.displayLink.source.PercentOrProgressBarDisplaySourceMixin",
     "create.displayLink.source.SingleLineDisplaySourceMixin",
     "create.displayLink.source.TrainStatusDisplaySourceMixin",
+    "create.displayLink.target.DisplayBoardTargetMixin",
     "create.elevator.ElevatorColumnMixin",
     "create.elevator.ElevatorContactBlockEntityMixin",
     "create.elevator.ElevatorContraptionMixin",

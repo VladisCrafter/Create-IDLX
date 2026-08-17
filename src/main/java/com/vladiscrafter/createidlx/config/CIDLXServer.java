@@ -23,6 +23,7 @@ public class CIDLXServer extends CIDLXConfigBase {
     public final ConfigBool enhanceCurrentFloorDisplaySource = b(true, "enhanceCurrentFloorDisplaySource", Comments.enhanceCurrentFloorDisplaySource);
     public final ConfigBool enhanceTrainStatusDisplaySource = b(true, "enhanceTrainStatusDisplaySource", Comments.enhanceTrainStatusDisplaySource);
     public final ConfigBool enhanceNixieTubeDisplaySource = b(true, "enhanceNixieTubeDisplaySource", Comments.enhanceNixieTubeDisplaySource);
+    public final ConfigBool addColorCopyingToNixieTubeDisplaySource = b(true, "addColorCopyingToNixieTubeDisplaySource", Comments.addColorCopyingToNixieTubeDisplaySource);
 
 //    public final ConfigGroup visualDisplaySettings
 
@@ -43,6 +44,7 @@ public class CIDLXServer extends CIDLXConfigBase {
 
         static String enhanceCurrentFloorDisplaySource = "Add Attached Label functionality to the Current Floor display source from Create.";
         static String enhanceTrainStatusDisplaySource = "Add Attached Label functionality to the Train Status display source from Create.";
-        static String enhanceNixieTubeDisplaySource = "Add Attached Label functionality irregardless of the Target Display type to the Nixie TUbe display source from Create.";
+        static String enhanceNixieTubeDisplaySource = "Add Attached Label functionality irregardless of the Target Display type to the Nixie Tube display source from Create.";
+        static String addColorCopyingToNixieTubeDisplaySource = "Add 'Copy Over the Text Color' option to the Nixie Tube display source from Create. Only supports Mechanical Board as the Display Target.";
     }
 }

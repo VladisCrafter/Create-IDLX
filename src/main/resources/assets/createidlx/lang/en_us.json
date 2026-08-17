@@ -164,6 +164,8 @@
   "createidlx.display_source.held_item_durability.invalid_damage_template": "-",
   "createidlx.display_source.held_item_durability.ratio_template": "%1$s/%2$s",
 
+  "createidlx.display_source.nixie_tube.copy_color": "Copy Over the Text Color",
+
   "createidlx.ponder.attached_label.header": "Using Display Links' Attached Label and Placeholders",
   "createidlx.ponder.attached_label.text_1": "By default, the information string provided to the Display Link gets passed to the target display as is",
   "createidlx.ponder.attached_label.text_2": "Open the Interface to set an Attached Label text in its respective field",
