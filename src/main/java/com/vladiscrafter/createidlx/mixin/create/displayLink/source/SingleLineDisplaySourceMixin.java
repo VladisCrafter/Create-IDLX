@@ -35,8 +35,8 @@ import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProce
 @Pseudo
 @Mixin(SingleLineDisplaySource.class)
 public abstract class SingleLineDisplaySourceMixin {
-    @Invoker("allowsLabeling")
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    @Invoker("allowsLabeling")
     protected abstract boolean createidlx$invokeAllowsLabeling(DisplayLinkContext context);
 
     @Invoker("provideLine")

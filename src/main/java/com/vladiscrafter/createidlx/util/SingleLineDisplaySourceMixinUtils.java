@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.simibubi.create.content.trains.display.FlapDisplaySection.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
@@ -74,7 +75,7 @@ public class SingleLineDisplaySourceMixinUtils {
         return section;
     }
 
-    public static Pair<ArrayList<FlapDisplaySection>, Float> clampSections(ArrayList<FlapDisplaySection> sections,
+    public static Pair<ArrayList<FlapDisplaySection>, Float> clampSections(List<FlapDisplaySection> sections,
                                                                            float maxWidth, boolean truncateLast, boolean ellipsis) {
         float totalWidth = 0f;
         ArrayList<FlapDisplaySection> clampedSections = new ArrayList<>();

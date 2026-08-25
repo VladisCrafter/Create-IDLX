@@ -57,7 +57,7 @@ public abstract class SingleLineDisplaySourceClientMixin {
         if (!(context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity)) return;
         if (isFirstLine) return;
 
-        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(0, 17, (ssi, l) -> {
+        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(0, 137, (ssi, l) -> {
             ssi.titled(CreateIDLX.translate("display_source.nixie_tube.copy_color"))
                     .setState(1);
         }, "CopyColor");
