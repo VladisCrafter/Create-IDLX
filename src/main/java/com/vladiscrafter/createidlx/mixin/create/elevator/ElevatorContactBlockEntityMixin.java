@@ -2,7 +2,7 @@ package com.vladiscrafter.createidlx.mixin.create.elevator;
 
 import com.simibubi.create.content.contraptions.elevator.ElevatorColumn;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
-import com.vladiscrafter.createidlx.util.elevator.ElevatorContactBlockEntityExt;
+import com.vladiscrafter.createidlx.util.bridge.ElevatorContactBlockEntityLongNameHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ElevatorContactBlockEntity.class)
-public abstract class ElevatorContactBlockEntityMixin implements ElevatorContactBlockEntityExt {
+public abstract class ElevatorContactBlockEntityMixin implements ElevatorContactBlockEntityLongNameHolder {
 
     @Shadow public String longName;
     @Unique private String createidlx$lastReportedCurrentFloorLongName = "";
@@ -28,7 +28,7 @@ public abstract class ElevatorContactBlockEntityMixin implements ElevatorContact
         }
 
         ElevatorColumn column = ElevatorColumn.get(self.getLevel(), self.columnCoords);
-        if (column instanceof ElevatorContactBlockEntityExt holder) {
+        if (column instanceof ElevatorContactBlockEntityLongNameHolder holder) {
             String name = holder.createidlx$getLastReportedCurrentFloorLongName();
             this.createidlx$lastReportedCurrentFloorLongName = name.isEmpty() ? "" : name;
         } else {

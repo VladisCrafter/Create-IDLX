@@ -6,7 +6,7 @@ import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplay
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.vladiscrafter.createidlx.CreateIDLX;
-import com.vladiscrafter.createidlx.util.elevator.ElevatorContactBlockEntityExt;
+import com.vladiscrafter.createidlx.util.bridge.ElevatorContactBlockEntityLongNameHolder;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,7 +22,7 @@ public class CurrentFloorExtendedDisplaySource extends SingleLineDisplaySource {
         ecbe = (ElevatorContactBlockEntity) context.getSourceBlockEntity();
 
         String shortName = ecbe.lastReportedCurrentFloor;
-        String longName = ((ElevatorContactBlockEntityExt) ecbe).createidlx$getLastReportedCurrentFloorLongName();
+        String longName = ((ElevatorContactBlockEntityLongNameHolder) ecbe).createidlx$getLastReportedCurrentFloorLongName();
 
         int floorDisplayMode = context.sourceConfig().getInt("FloorDisplayMode");
         boolean showEmptyFloorDescription = context.sourceConfig().getInt("ShowEmptyFloorDescription") == 1;

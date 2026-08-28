@@ -3,7 +3,7 @@ package com.vladiscrafter.createidlx.mixin.create.elevator;
 import com.simibubi.create.content.contraptions.elevator.ElevatorColumn;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContactBlockEntity;
 import com.simibubi.create.content.contraptions.elevator.ElevatorContraption;
-import com.vladiscrafter.createidlx.util.elevator.ElevatorContactBlockEntityExt;
+import com.vladiscrafter.createidlx.util.bridge.ElevatorContactBlockEntityLongNameHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,7 @@ public abstract class ElevatorContraptionMixin {
         if (column == null) return;
         if (!(level.getBlockEntity(contactPos) instanceof ElevatorContactBlockEntity ecbe)) return;
 
-        ((ElevatorContactBlockEntityExt) column).createidlx$setLastReportedCurrentFloorLongName(ecbe.longName);
+        ((ElevatorContactBlockEntityLongNameHolder) column).createidlx$setLastReportedCurrentFloorLongName(ecbe.longName);
     }
 
     @Inject(method = "broadcastFloorData", at = @At("RETURN"))
@@ -28,6 +28,6 @@ public abstract class ElevatorContraptionMixin {
         ElevatorColumn column = ElevatorColumn.get(level, ((ElevatorContraption) (Object) this).getGlobalColumn());
         if (column == null) return;
 
-        ((ElevatorContactBlockEntityExt) column).createidlx$clearLastReportedCurrentFloorLongName();
+        ((ElevatorContactBlockEntityLongNameHolder) column).createidlx$setLastReportedCurrentFloorLongName("");
     }
 }
