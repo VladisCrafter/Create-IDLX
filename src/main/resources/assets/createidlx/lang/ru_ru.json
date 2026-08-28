@@ -165,6 +165,7 @@
   "createidlx.display_source.held_item_durability.ratio_template": "%1$s/%2$s",
 
   "createidlx.display_source.nixie_tube.copy_color": "Скопировать цвет текста",
+  "createidlx.display_source.nixie_tube.convey_internal_text": "Отображать не изменённый визуализацией текст",
 
   "createidlx.ponder.attached_label.header": "Использованием спецификаторов в добавочной надписи передатчика информации",
   "createidlx.ponder.attached_label.text_1": "По умолчанию строка информации, полученная передатчиком от источника, отправляется визуализатору как есть",

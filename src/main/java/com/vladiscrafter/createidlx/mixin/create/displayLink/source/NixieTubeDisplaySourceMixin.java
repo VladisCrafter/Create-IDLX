@@ -9,15 +9,19 @@ import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayT
 import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlock;
 import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.util.bridge.NixieTubeBlockEntityInternalCustomTextHolder;
 import com.vladiscrafter.createidlx.util.bridge.NixieTubeDisplaySourceColorHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(NixieTubeDisplaySource.class)
 public class NixieTubeDisplaySourceMixin implements NixieTubeDisplaySourceColorHolder {
@@ -36,9 +40,20 @@ public class NixieTubeDisplaySourceMixin implements NixieTubeDisplaySourceColorH
         return nixie.getColor();
     }
 
+    @ModifyReturnValue(method = "provideLine", at = @At(value = "RETURN", ordinal = 1))
+    protected MutableComponent createidlx$conditionallyProvideInternalCustomTextAsLine(MutableComponent original, @Local(argsOnly = true) DisplayLinkContext context) {
+        boolean provideInternalCustomText = context.sourceConfig().contains("ConveyInternalText")
+                && context.sourceConfig().getBoolean("ConveyInternalText");
+        if (!provideInternalCustomText) return original;
+
+        String internalCustomText = ((NixieTubeBlockEntityInternalCustomTextHolder) context.getSourceBlockEntity()).createidlx$getInternalCustomText();
+        return Component.literal(internalCustomText);
+    }
+
+
     @SuppressWarnings("DataFlowIssue")
     @ModifyReturnValue(method = "allowsLabeling", at = @At("RETURN"))
-    protected boolean allowsLabeling(boolean original, @Local(argsOnly = true) DisplayLinkContext context) {
+    protected boolean createidlx$conditionallyAllowLabeling(boolean original, @Local(argsOnly = true) DisplayLinkContext context) {
         boolean allowLabeling;
 
         DisplayTarget activeTarget;

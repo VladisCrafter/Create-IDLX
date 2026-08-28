@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.NixieTubeDisplaySource;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
+import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -54,12 +55,24 @@ public abstract class SingleLineDisplaySourceClientMixin {
         if (!(CIDLXConfigs.server.addColorCopyingToNixieTubeDisplaySource.get())) return;
 
         if (!((SingleLineDisplaySource) (Object) this instanceof NixieTubeDisplaySource)) return;
-        if (!(context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity)) return;
         if (isFirstLine) return;
 
-        ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(0, 137, (ssi, l) -> {
-            ssi.titled(CreateIDLX.translate("display_source.nixie_tube.copy_color"))
-                    .setState(1);
-        }, "CopyColor");
+        boolean copyColorPresent = context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity;
+        boolean conveyInternalText = context.getSourceBlockEntity() instanceof NixieTubeBlockEntity;
+
+        int x1 = 0, x2 = copyColorPresent ? 71 : 0;
+        int w1 = conveyInternalText ? 67 : 137, w2 = copyColorPresent ? 66 : 137;
+
+        if (copyColorPresent)
+            ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(x1, w1, (ssi, l) -> {
+                ssi.titled(CreateIDLX.translate("display_source.nixie_tube.copy_color"))
+                        .setState(1);
+            }, "CopyColor");
+
+        if (conveyInternalText)
+            ((ModularGuiLineBuilderExt) builder).createidlx$addBinaryScrollInput(x2, w2, (ssi, l) -> {
+                ssi.titled(CreateIDLX.translate("display_source.nixie_tube.convey_internal_text"))
+                        .setState(1);
+            }, "ConveyInternalText");
     }
 }

@@ -20,7 +20,8 @@
     "create.elevator.ElevatorColumnMixin",
     "create.elevator.ElevatorContactBlockEntityMixin",
     "create.elevator.ElevatorContraptionMixin",
-    "create.fluid.HosePulleyFluidHandlerMixin"
+    "create.fluid.HosePulleyFluidHandlerMixin",
+    "create.nixie.NixieTubeBlockEntityMixin"
   ],
   "client": [
     "accessor.ponder.PonderUIAccessor",

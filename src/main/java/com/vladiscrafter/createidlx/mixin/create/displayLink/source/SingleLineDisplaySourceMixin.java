@@ -7,10 +7,13 @@ import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplay
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.content.redstone.displayLink.target.NixieTubeDisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.target.SignDisplayTarget;
+import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlock;
+import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.mixin.accessor.create.NixieTubeDisplayTargetAccessor;
+import com.vladiscrafter.createidlx.util.bridge.NixieTubeBlockEntityInternalCustomTextHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -73,17 +76,21 @@ public abstract class SingleLineDisplaySourceMixin {
         String processedLine = breakDownAndAssembleLabel(label, information);
 
         if (anyVisualizationConfigEnabled(context)) {
-            int length = processedLine.length(), maxLength = length;
+            int length = processedLine.length(), maxLength;
 
             Font font = Minecraft.getInstance().font;
             int lengthP = font.width(processedLine);
 
-            if (stats.type() instanceof NixieTubeDisplayTarget ntdt)
-                maxLength = ((NixieTubeDisplayTargetAccessor) ntdt).createidlx$invokeGetWidth(context);
-            else if (stats.type() instanceof SignDisplayTarget)
-                maxLength = ((SignBlockEntity) context.getTargetBlockEntity()).getMaxTextLineWidth();
+            if (stats.type() instanceof NixieTubeDisplayTarget ntdt) {
+                String line = processedLine;
+                NixieTubeBlock.walkNixies(context.level(), context.getTargetPos(), false, (currentPos, rowPosition) -> {
+                    BlockEntity blockEntity = context.level().getBlockEntity(currentPos);
+                    if (blockEntity instanceof NixieTubeBlockEntity nixie)
+                        ((NixieTubeBlockEntityInternalCustomTextHolder) nixie).createidlx$setInternalCustomText(line);
+                });
 
-            if (stats.type() instanceof NixieTubeDisplayTargetAccessor) {
+                maxLength = ((NixieTubeDisplayTargetAccessor) ntdt).createidlx$invokeGetWidth(context);
+
                 if (centerText(context) && length < maxLength - 1) {
                     int leftMargin = ((maxLength - length) / 2), rightMargin = (maxLength - length) - leftMargin;
                     processedLine = " ".repeat(leftMargin) + processedLine + " ".repeat(rightMargin);
@@ -92,9 +99,11 @@ public abstract class SingleLineDisplaySourceMixin {
                 if (markTruncationWithEllipsis(context) && length > maxLength) {
                     processedLine = processedLine.substring(0, maxLength - 1) + "…";
                 }
-            }
-            else if (stats.type() instanceof SignDisplayTarget & markTruncationWithEllipsis(context) && lengthP > maxLength) {
-                processedLine = font.plainSubstrByWidth(processedLine, maxLength - font.width("…")) + "…";
+            } else if (stats.type() instanceof SignDisplayTarget) {
+                maxLength = ((SignBlockEntity) context.getTargetBlockEntity()).getMaxTextLineWidth();
+
+                if (markTruncationWithEllipsis(context) && lengthP > maxLength)
+                    processedLine = font.plainSubstrByWidth(processedLine, maxLength - font.width("…")) + "…";
             }
         }
 
