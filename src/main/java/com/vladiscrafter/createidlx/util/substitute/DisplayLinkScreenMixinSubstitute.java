@@ -92,11 +92,11 @@ public class DisplayLinkScreenMixinSubstitute {
     public void handleTooltips() {
         if (!visualizationSettingsVisible) return;
 
-        for (AbstractWidget w : visualizationSettingWidgets)
-            if (w instanceof IconButton button) {
+        for (AbstractWidget widget : visualizationSettingWidgets)
+            if (widget instanceof IconButton button) {
                 if (!button.getToolTip().isEmpty()) {
                     button.setToolTip(button.getToolTip().getFirst());
-                    button.getToolTip().add(TooltipHelper.holdShift(FontHelper.Palette.BLUE, hasShiftDown()));
+                    button.getToolTip().add(holdShiftFixed());
                 }
             }
 
@@ -105,6 +105,12 @@ public class DisplayLinkScreenMixinSubstitute {
             /*fillVisualizationSettingTooltip(cutOutSectionGapsButton, "cut_out_section_gaps_tooltip");*/
             fillVisualizationSettingTooltip(markTruncationWithEllipsisButton, "mark_truncation_with_ellipsis_tooltip");
         }
+    }
+
+    private MutableComponent holdShiftFixed() {
+        return CreateLang.translateDirect("tooltip.holdForDescription", CreateLang.translateDirect("tooltip.keyShift")
+                        .withStyle(hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY))
+                .withStyle(ChatFormatting.DARK_GRAY);
     }
 
     @SuppressWarnings("DataFlowIssue")
