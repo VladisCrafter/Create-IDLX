@@ -1,6 +1,5 @@
 package com.vladiscrafter.createidlx.util.substitute;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
@@ -11,7 +10,6 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
-import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
@@ -22,7 +20,6 @@ import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -198,7 +195,7 @@ public class DisplayLinkScreenMixinSubstitute {
         placeholdersGuideButton.visible = allowsLabeling(source);
         if (areRedirectsToPonderScenesEnabled) placeholdersGuideButton.withCallback((mX, mY) -> {
             screen.createidlx$callOnClose();
-            PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 2);
+            PonderSceneOpener.open("attached_label");
         });
         else placeholdersGuideButton.active = false;
 
@@ -206,7 +203,7 @@ public class DisplayLinkScreenMixinSubstitute {
         if (isAlternativeClipboardIconEnabled) clipboardGuideButton.setIcon(CreateIDLXIcons.I_CLIPBOARD_ITEM);
         if (areRedirectsToPonderScenesEnabled) clipboardGuideButton.withCallback((mX, mY) -> {
             screen.createidlx$callOnClose();
-            PonderSceneOpener.openByIndex(AllBlocks.DISPLAY_LINK.asStack(), 3);
+            PonderSceneOpener.open("clipboard_copying");
         });
         else clipboardGuideButton.active = false;
 
