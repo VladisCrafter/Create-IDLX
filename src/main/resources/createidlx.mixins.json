@@ -9,6 +9,7 @@
     "accessor.create.HosePulleyBlockEntityAccessor",
     "accessor.create.MechanicalPistonBlockEntityAccessor",
     "accessor.create.NixieTubeDisplayTargetAccessor",
+    "accessor.create.SingleLineDisplaySourceAccessor",
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkConfigurationPacketMixin",
     "create.displayLink.source.CurrentFloorDisplaySourceMixin",
@@ -24,6 +25,7 @@
     "create.nixie.NixieTubeBlockEntityMixin"
   ],
   "client": [
+    "accessor.catnip.UIRenderHelperAccessor",
     "accessor.ponder.PonderUIAccessor",
     "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkScreenMixin",

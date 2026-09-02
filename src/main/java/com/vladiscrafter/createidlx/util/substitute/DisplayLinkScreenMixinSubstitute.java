@@ -1,8 +1,8 @@
 package com.vladiscrafter.createidlx.util.substitute;
 
-import com.simibubi.create.AllKeys;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
 import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
@@ -14,14 +14,20 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
+import com.vladiscrafter.createidlx.mixin.accessor.catnip.UIRenderHelperAccessor;
+import com.vladiscrafter.createidlx.mixin.accessor.create.SingleLineDisplaySourceAccessor;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkScreenMixinSubstitutionHolder;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkVisualizationConfigHolder;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
-import com.vladiscrafter.createidlx.util.ponder.PonderSceneOpener;
+import com.vladiscrafter.createidlx.util.widget.BackgroundlessIconButton;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
+import net.createmod.catnip.gui.TextureSheetSegment;
+import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -36,8 +42,8 @@ import java.util.List;
 import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
 
 public class DisplayLinkScreenMixinSubstitute {
-    private IconButton placeholdersGuideButton;
-    private IconButton clipboardGuideButton;
+    private IconButton richLabelEditorButton;
+    private BackgroundlessIconButton clipboardGuideButton;
     private boolean centerText;
     /*private boolean cutOutSectionGaps;*/
     private boolean markTruncationWithEllipsis;
@@ -59,19 +65,28 @@ public class DisplayLinkScreenMixinSubstitute {
     private final Component optionEnabled = CreateLang.translateDirect("gui.schematicannon.optionEnabled");
     private final Component optionDisabled = CreateLang.translateDirect("gui.schematicannon.optionDisabled");
 
-    final boolean areGuideButtonsEnabled = CIDLXConfigs.client.enableGuideButtons.get();
-    final boolean isActivePlaceholdersTooltipEnabled = CIDLXConfigs.client.enableActivePlaceholdersTooltip.get();
-    final boolean isAlternativeClipboardIconEnabled = CIDLXConfigs.client.enableAlternativeClipboardIcon.get();
+    final boolean areGuideWidgetsEnabled = CIDLXConfigs.client.enableGuideWidgets.get();
+    /*final boolean isActivePlaceholdersTooltipEnabled = CIDLXConfigs.client.enableActivePlaceholdersTooltip.get();*/
+    final boolean isClipboardIconHighlightingEnabled = CIDLXConfigs.client.enableClipboardIconHighlighting.get();
     final boolean areRedirectsToPonderScenesEnabled = CIDLXConfigs.client.enableRedirectsToPonderScenes.get();
     final boolean areVisualizationSettingsButtonsEnabled = CIDLXConfigs.client.enableVisualizationSettingsButtons.get();
     final boolean areVisualizationSettingsButtonsAlwaysShown = CIDLXConfigs.client.alwaysShowVisualizationSettingsButtons.get();
+
+    final boolean isRichLabelEditorEnabled = CIDLXConfigs.client.enableRichLabelEditor.get();
+    final float richLabelEditorButtonOutlineFadeInTime = CIDLXConfigs.client.richLabelEditorButtonOutlineFadeInTime.getF();
+    final float richLabelEditorButtonOutlineFadeOutTime = CIDLXConfigs.client.richLabelEditorButtonOutlineFadeOutTime.getF();
+    final float richLabelEditorButtonOutlineIdleStateAlpha = (float) CIDLXConfigs.client.richLabelEditorButtonOutlineIdleStateAlpha.get() / 255;
+
     final boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
     final boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
+
+    private float richLabelEditorButtonOutlineAlpha;
 
     private final DisplayLinkScreenMixinSubstitutionHolder screen;
 
     public DisplayLinkScreenMixinSubstitute(DisplayLinkScreenMixinSubstitutionHolder screen) {
         this.screen = screen;
+        this.richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineIdleStateAlpha;
     }
 
     public void pullVisualizationSettings() {
@@ -86,38 +101,9 @@ public class DisplayLinkScreenMixinSubstitute {
         visualizationSettingsInitialized = true;
     }
 
-    public void handleTooltips() {
-        if (!visualizationSettingsVisible) return;
-
-        for (AbstractWidget widget : visualizationSettingWidgets)
-            if (widget instanceof IconButton button) {
-                if (!button.getToolTip().isEmpty()) {
-                    button.setToolTip(button.getToolTip().getFirst());
-                    button.getToolTip().add(holdShiftFixed());
-                }
-            }
-
-        if (hasShiftDown()) {
-            fillVisualizationSettingTooltip(centerTextButton, "center_text_tooltip");
-            /*fillVisualizationSettingTooltip(cutOutSectionGapsButton, "cut_out_section_gaps_tooltip");*/
-            fillVisualizationSettingTooltip(markTruncationWithEllipsisButton, "mark_truncation_with_ellipsis_tooltip");
-        }
-    }
-
-    private MutableComponent holdShiftFixed() {
-        return CreateLang.translateDirect("tooltip.holdForDescription", CreateLang.translateDirect("tooltip.keyShift")
-                        .withStyle(hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY))
-                .withStyle(ChatFormatting.DARK_GRAY);
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    private void fillVisualizationSettingTooltip(IconButton button, String key) {
-        if (!button.isHovered()) return;
-
-        List<Component> tip = button.getToolTip();
-        tip.add((button.green ? optionEnabled : optionDisabled).plainCopy()
-                .withStyle(button.green ? ChatFormatting.DARK_GREEN : ChatFormatting.RED));
-        tip.addAll(CreateIDLX.translateMultiline("gui.display_link.visualization_settings." + key, ChatFormatting.GRAY.getColor()));
+    public void updateRichLabelEditorButtonOutlineAlpha() {
+        if (richLabelEditorButton != null && richLabelEditorButton.isHovered()) richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeInTime == 0 ? 1f : Math.clamp(richLabelEditorButtonOutlineAlpha += ((float) 1 / (richLabelEditorButtonOutlineFadeInTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
+        else richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeOutTime == 0 ? 0 : Math.clamp(richLabelEditorButtonOutlineAlpha -= ((float) 1 / (richLabelEditorButtonOutlineFadeOutTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
     }
 
     public void replaceSourceTypeSelector() {
@@ -181,36 +167,36 @@ public class DisplayLinkScreenMixinSubstitute {
         ));
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    public void initGuideButtons(int i) {
-        if (!areGuideButtonsEnabled) return;
+    public void initRichLabelEditorButton(int i) {
+        if (richLabelEditorButton != null) screen.createidlx$callRemoveWidget(richLabelEditorButton);
 
-        if (placeholdersGuideButton != null) screen.createidlx$callRemoveWidget(placeholdersGuideButton);
+        if (i < 0 || i >= screen.createidlx$getSources().size()) return;
+        DisplayLinkContext context = new DisplayLinkContext(screen.createidlx$getBlockEntity().getLevel(), screen.createidlx$getBlockEntity());
+        if (!isRichLabelEditorButtonVisible(context)) return;
+
+        richLabelEditorButton = new IconButton(screen.createidlx$getGuiLeft() + 36, screen.createidlx$getGuiTop() + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
+        richLabelEditorButton.visible = allowsLabeling(context);
+        richLabelEditorButton.withCallback((mX, mY) -> {});
+
+        screen.createidlx$callAddRenderableWidget(richLabelEditorButton);
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    public void initClipboardGuideButton(int i) {
+        if (!areGuideWidgetsEnabled) return;
+
         if (clipboardGuideButton != null) screen.createidlx$callRemoveWidget(clipboardGuideButton);
 
         if (i < 0 || i >= screen.createidlx$getSources().size()) return;
-        DisplaySource source = screen.createidlx$getSources().get(i);
+        DisplayLinkContext context = new DisplayLinkContext(screen.createidlx$getBlockEntity().getLevel(), screen.createidlx$getBlockEntity());
 
-        placeholdersGuideButton = new IconButton(screen.createidlx$getGuiLeft() + 36, screen.createidlx$getGuiTop() + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
-        placeholdersGuideButton.visible = allowsLabeling(source);
-        if (areRedirectsToPonderScenesEnabled) placeholdersGuideButton.withCallback((mX, mY) -> {
-            screen.createidlx$callOnClose();
-            PonderSceneOpener.open("attached_label");
-        });
-        else placeholdersGuideButton.active = false;
+        clipboardGuideButton = new BackgroundlessIconButton(screen.createidlx$getGuiLeft() + 36, screen.createidlx$getGuiTop() + (isRichLabelEditorButtonVisible(context) ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
+        if (isClipboardIconHighlightingEnabled) clipboardGuideButton.setHoveredIcon(CreateIDLXIcons.I_CLIPBOARD_HL);
+        clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, AbstractSimiWidget.HEADER_RGB.getRGB(), ChatFormatting.GRAY.getColor()));
 
-        clipboardGuideButton = new IconButton(screen.createidlx$getGuiLeft() + 36, screen.createidlx$getGuiTop() + (allowsLabeling(source) ? 67 : 46), 16, 16, CreateIDLXIcons.clipboardIcon);
-        if (isAlternativeClipboardIconEnabled) clipboardGuideButton.setIcon(CreateIDLXIcons.I_CLIPBOARD_ITEM);
-        if (areRedirectsToPonderScenesEnabled) clipboardGuideButton.withCallback((mX, mY) -> {
-            screen.createidlx$callOnClose();
-            PonderSceneOpener.open("clipboard_copying");
-        });
+        if (areRedirectsToPonderScenesEnabled) clipboardGuideButton.setPonderScene("clipboard_copying", screen::createidlx$callOnClose, true);
         else clipboardGuideButton.active = false;
 
-        clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, AbstractSimiWidget.HEADER_RGB.getRGB(), ChatFormatting.GRAY.getColor()));
-        if (areRedirectsToPonderScenesEnabled) clipboardGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-
-        screen.createidlx$callAddRenderableWidget(placeholdersGuideButton);
         screen.createidlx$callAddRenderableWidget(clipboardGuideButton);
     }
 
@@ -293,9 +279,8 @@ public class DisplayLinkScreenMixinSubstitute {
         visualizationSettingsInitialized = true;
     }
 
-    @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
-    public void injectPlaceholdersStatus() {
-        if (placeholdersGuideButton == null) return;
+    public void renderPlaceholdersStatusTooltips(GuiGraphics graphics) {
+        /*if (placeholdersGuideButton == null) return;
 
         if (!AllKeys.shiftDown()) {
             placeholdersGuideButton.setToolTip(translateLocal("placeholders_tooltip_header").withColor(AbstractSimiWidget.HEADER_RGB.getRGB()));
@@ -313,15 +298,91 @@ public class DisplayLinkScreenMixinSubstitute {
                                 : translateLocal("placeholders_tooltip_detailed_1_disabled").withColor(0xe05353)));
             }
 
-            /*if (isProgressBarSupportStateTooltipEnabled && (isDollarSignPlaceholderEnabled || isBracketsPlaceholderEnabled)) {
+            if (isProgressBarSupportStateTooltipEnabled && (isDollarSignPlaceholderEnabled || isBracketsPlaceholderEnabled)) {
                 placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_detailed_2", ChatFormatting.GRAY.getColor(),
                                 (isCrudeProgressBarSupportEnabled) ? translateLocal("progress_bar_support.enabled").withColor(0xe0b653)
                                         : translateLocal("progress_bar_support.disabled")));
-            }*/
+            }
 
         }
 
-        if (areRedirectsToPonderScenesEnabled) placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        if (areRedirectsToPonderScenesEnabled) placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));*/
+    }
+
+    public void renderRichEditorButtonOutline(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        int x = screen.createidlx$getGuiLeft(), y = screen.createidlx$getGuiTop(); // [122; 54]
+
+        DisplayLinkContext context = new DisplayLinkContext(screen.createidlx$getBlockEntity().getLevel(), screen.createidlx$getBlockEntity());
+        if (!isRichLabelEditorButtonVisible(context)) return;
+
+        /*graphics.drawString(Minecraft.getInstance().font, String.format("[%d; %d]", mouseX, mouseY), x + 58, y + 96, 0xFFFFFF, true);*/
+        AllGuiTextures.DATA_AREA_SPEECH.render(graphics, x + 57, y + 46);
+
+        Color c = Color.WHITE.scaleAlpha(richLabelEditorButtonOutlineAlpha);
+        int z = 1;
+
+        drawColored(graphics, x + 34, y + 44, z, c, AllGuiTextures.BRASS_FRAME_TL);
+        drawColored(graphics, x + 52, y + 44, z, c, AllGuiTextures.BRASS_FRAME_TR);
+        drawColored(graphics, x + 34, y + 62, z, c, AllGuiTextures.BRASS_FRAME_BL);
+        drawColored(graphics, x + 52, y + 62, z, c, AllGuiTextures.BRASS_FRAME_BR);
+
+        drawStretchedColored(graphics, x + 34, y + 48, z, 3, 14, c, AllGuiTextures.BRASS_FRAME_LEFT);
+        drawStretchedColored(graphics, x + 53, y + 48, z, 3, 14, c, AllGuiTextures.BRASS_FRAME_RIGHT);
+        drawCroppedColored(graphics, x + 38, y + 44, z, 14, 3, c, AllGuiTextures.BRASS_FRAME_TOP);
+        drawCroppedColored(graphics, x + 38, y + 63, z, 14, 3, c, AllGuiTextures.BRASS_FRAME_BOTTOM);
+}
+
+    private void drawColored(GuiGraphics graphics, int left, int top, int z, Color color, TextureSheetSegment tex) {
+        tex.bind();
+        UIRenderHelper.drawColoredTexture(graphics, color, left, top, z, tex.getStartX(), tex.getStartY(), tex.getWidth(), tex.getHeight(), 256, 256);
+    }
+
+    private void drawStretchedColored(GuiGraphics graphics, int left, int top, int z, int w, int h, Color color, TextureSheetSegment tex) {
+        tex.bind();
+        UIRenderHelperAccessor.createidlx$callDrawTexturedQuad(graphics.pose().last()
+                        .pose(), color, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + tex.getWidth()) / 256f,
+                tex.getStartY() / 256f, (tex.getStartY() + tex.getHeight()) / 256f);
+    }
+
+    private void drawCroppedColored(GuiGraphics graphics, int left, int top, int z, int w, int h, Color color, TextureSheetSegment tex) {
+        tex.bind();
+        UIRenderHelperAccessor.createidlx$callDrawTexturedQuad(graphics.pose().last()
+                        .pose(), color, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + w) / 256f,
+                tex.getStartY() / 256f, (tex.getStartY() + h) / 256f);
+    }
+
+    public void renderVisualizationSettingsTooltips() {
+        if (!visualizationSettingsVisible) return;
+
+        for (AbstractWidget widget : visualizationSettingWidgets)
+            if (widget instanceof IconButton button) {
+                if (!button.getToolTip().isEmpty()) {
+                    button.setToolTip(button.getToolTip().getFirst());
+                    button.getToolTip().add(holdShiftFixed());
+                }
+            }
+
+        if (hasShiftDown()) {
+            fillVisualizationSettingTooltip(centerTextButton, "center_text_tooltip");
+            /*fillVisualizationSettingTooltip(cutOutSectionGapsButton, "cut_out_section_gaps_tooltip");*/
+            fillVisualizationSettingTooltip(markTruncationWithEllipsisButton, "mark_truncation_with_ellipsis_tooltip");
+        }
+    }
+
+    private MutableComponent holdShiftFixed() {
+        return CreateLang.translateDirect("tooltip.holdForDescription", CreateLang.translateDirect("tooltip.keyShift")
+                        .withStyle(hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY))
+                .withStyle(ChatFormatting.DARK_GRAY);
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    private void fillVisualizationSettingTooltip(IconButton button, String key) {
+        if (!button.isHovered()) return;
+
+        List<Component> tip = button.getToolTip();
+        tip.add((button.green ? optionEnabled : optionDisabled).plainCopy()
+                .withStyle(button.green ? ChatFormatting.DARK_GREEN : ChatFormatting.RED));
+        tip.addAll(CreateIDLX.translateMultiline("gui.display_link.visualization_settings." + key, ChatFormatting.GRAY.getColor()));
     }
 
     public CompoundTag getVisualizationData(CompoundTag visualizationConfig) {
@@ -340,8 +401,13 @@ public class DisplayLinkScreenMixinSubstitute {
         return visualizationData;
     }
 
-    private boolean allowsLabeling(DisplaySource source) {
-        return source instanceof SingleLineDisplaySource;
+    private boolean isRichLabelEditorButtonVisible(DisplayLinkContext context) {
+        return isRichLabelEditorEnabled && allowsLabeling(context);
+    }
+
+    private boolean allowsLabeling(DisplayLinkContext context) {
+        DisplaySource source = context.blockEntity().activeSource;
+        return source instanceof SingleLineDisplaySource && ((SingleLineDisplaySourceAccessor) source).createidlx$callAllowsLabeling(context);
     }
 
     private boolean supportsVisualizationSettings(BlockEntity target) {

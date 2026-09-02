@@ -30,7 +30,7 @@ public class CreateIDLXIcons implements ScreenElement {
     public static final CreateIDLXIcons
             I_PLACEHOLDER = newRow(),
             I_CLIPBOARD = next(),
-            I_CLIPBOARD_ITEM = next(),
+            I_CLIPBOARD_HL = next(),
             I_VISUALIZATION_SETTINGS = next(),
             I_CENTER_TEXT = next(),
             I_CUT_OUT_SECTION_GAPS = next(),
@@ -38,7 +38,7 @@ public class CreateIDLXIcons implements ScreenElement {
 
     public static final ScreenElement
             placeholdersIcon = I_PLACEHOLDER,
-            clipboardIcon = /*!isAltClipboardIconSelected ?*/ I_CLIPBOARD /*: I_CLIPBOARD_ITEM*/,
+            clipboardIcon = I_CLIPBOARD,
             labelIcon = AllIcons.I_PASSIVE,
             configIcon = AllIcons.I_VIEW_SCHEDULE,
             targetIcon = AllIcons.I_TOOL_DEPLOY;

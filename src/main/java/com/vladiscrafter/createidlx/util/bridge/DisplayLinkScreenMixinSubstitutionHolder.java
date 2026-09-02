@@ -30,6 +30,7 @@ public interface DisplayLinkScreenMixinSubstitutionHolder {
 
     <T extends GuiEventListener & Renderable & NarratableEntry> void createidlx$callAddRenderableWidget(T widget);
     <W extends GuiEventListener & Renderable & NarratableEntry> void createidlx$callAddRenderableWidgets(Collection<W> widgets);
+    <T extends GuiEventListener & NarratableEntry> void createidlx$callAddWidget(T listener);
     void createidlx$callRemoveWidget(GuiEventListener listener);
     void createidlx$callRemoveWidgets(Collection<? extends GuiEventListener> widgets);
 }

@@ -1,18 +1,21 @@
 package com.vladiscrafter.createidlx.config;
 
 import net.createmod.catnip.config.ui.ConfigAnnotations;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class CIDLXClient extends CIDLXConfigBase {
 
     public final ConfigGroup displayLinkGUI = group(1, "displayLinkGUI", "Display Link GUI");
-    public final ConfigBool enableGuideButtons = b(true, "enableGuideButtons", Comments.enableGuideButtons);
+    public final ConfigBool enableGuideWidgets = b(true, "enableGuideWidgets", Comments.enableGuideWidgets);
+    public final ConfigBool enableRichLabelEditor = b(true, "enableRichLabelEditor", Comments.enableRichLabelEditor);
     public final ConfigBool enableVisualizationSettingsButtons = b(true, "enableVisualizationSettingsButtons", Comments.enableVisualizationSettingsButtons);
     public final ConfigBool alwaysShowVisualizationSettingsButtons = b(false, "alwaysShowVisualizationSettingsButtons", Comments.alwaysShowVisualizationSettingsButtons, Comments.onlyTakesEffectVisualizationButtons);
 
-    public final ConfigGroup guideButtonsCustomization = group(2, "guideButtonsCustomization", "Guide Buttons Customization");
-    public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideButtons);
-    public final ConfigBool enableAlternativeClipboardIcon = b(false, "enableAlternativeClipboardIcon", Comments.enableAlternativeClipboardIcon, Comments.onlyTakesEffectGuideButtons);
-    public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.onlyTakesEffectGuideButtons);
+    public final ConfigGroup guideWidgetsCustomization = group(2, "guideWidgetsCustomization", "Guide Widgets Customization");
+//  public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideWidgets);
+    public final ConfigBool enableClipboardIconHighlighting = b(true, "enableClipboardIconHighlighting", Comments.enableClipboardIconHighlighting, Comments.onlyTakesEffectGuideWidgets);
+    public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.onlyTakesEffectGuideWidgets);
 
     public final ConfigGroup attachedLabelVisuals = group(2, "attachedLabelVisuals", "Attached Label Visuals");
     public final ConfigBool colorPlaceholders = b(true, "colorPlaceholders", Comments.colorPlaceholders);
@@ -30,14 +33,25 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigInt shortenedTrimmingPlaceholderColor = i(0x75D78D, 0, 16777215, "shortenedTrimmingPlaceholderColor", Comments.rgb, Comments.shortenedTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorAlternativeTrimmingPlaceholders = b(true, "alternativeTrimmingPlaceholders", Comments.colorAlternativeTrimmingPlaceholders);
     public final ConfigInt alternativeTrimmingPlaceholderColor = i(0x69D3C6, 0, 16777215, "alternativeTrimmingPlaceholderColor", Comments.rgb, Comments.alternativeTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders);
+    public final ConfigInt invalidPlaceholderColor = i(0xFF6460, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorEscapedPlaceholders = b(true, "escapedPlaceholders", Comments.colorEscapedPlaceholders);
     public final ConfigInt escapedPlaceholderColor = i(0x743020, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorDisabledPlaceholders = b(true, "disabledPlaceholders", Comments.colorDisabledPlaceholders);
     public final ConfigInt disabledPlaceholderColor = i(0x000000, 0, 16777215, "disabledPlaceholderColor", Comments.rgb, Comments.disabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorEscapedDisabledPlaceholders = b(true, "escapedDisabledPlaceholders", Comments.colorEscapedDisabledPlaceholders);
     public final ConfigInt escapedDisabledPlaceholderColor = i(0x2F0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders);
-    public final ConfigInt invalidPlaceholderColor = i(0xFF6460, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorIncompletePlaceholders = b(true, "incompletePlaceholders", Comments.colorIncompletePlaceholders);
+    public final ConfigInt incompletePlaceholderColor = i(0x743020, 0, 16777215, "incompletePlaceholderColor", Comments.rgb, Comments.incompletePlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorUnoptimizedPlaceholders = b(true, "unoptimizedPlaceholders", Comments.colorUnoptimizedPlaceholders);
+    public final ConfigInt unoptimizedPlaceholderColor = i(0x743020, 0, 16777215, "unoptimizedPlaceholderColor", Comments.rgb, Comments.unoptimizedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorSyntacticallyErrorsomePlaceholders = b(true, "syntacticallyErrorsomePlaceholders", Comments.colorSyntacticallyErrorsomePlaceholders);
+    public final ConfigInt syntacticallyErrorsomePlaceholderColor = i(0x743020, 0, 16777215, "syntacticallyErrorsomePlaceholderColor", Comments.rgb, Comments.syntacticallyErrorsomePlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+
+    public final ConfigGroup richLabelEditorButtonOutlineSettings = group(2, "richLabelEditorButtonOutlineSettings", "Attached Label Box Outline Settings");
+    public final ConfigFloat richLabelEditorButtonOutlineFadeInTime = f(0.25F, 0F, 10F, "richLabelEditorButtonOutlineFadeInTime", Comments.seconds, Comments.richLabelEditorButtonOutlineFadeInTime, Comments.defaultZero);
+    public final ConfigFloat richLabelEditorButtonOutlineFadeOutTime = f(0.75F, 0F, 10F, "richLabelEditorButtonOutlineFadeOutTime", Comments.seconds, Comments.richLabelEditorButtonOutlineFadeOutTime, Comments.defaultZero);
+    public final ConfigInt richLabelEditorButtonOutlineIdleStateAlpha = i(0x69, 0, 255, "richLabelEditorButtonOutlineIdleStateAlpha", Comments.alpha, Comments.richLabelEditorButtonOutlineIdleStateAlpha, ConfigAnnotations.IntDisplay.HEX.asComment());
 
     public final ConfigGroup clipboardDisplaySourceGUI = group(1, "clipboardDisplaySourceGUI", "Clipboard Display Source GUI");
     public final ConfigBool deselectEmptyAttachedLabel = b(true, "deselectEmptyAttachedLabel", Comments.deselectEmptyAttachedLabel);
@@ -46,7 +60,7 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool enableCustomOutlineForDisplayLinks = b(true, "enableCustomOutlineForDisplayLinks", Comments.enableCustomOutlineForDisplayLinks);
     public final ConfigBool enableDifferentOutlineForInvalidDisplayLinks = b(true, "enableDifferentOutlineForInvalidDisplayLinks", Comments.enableDifferentOutlineForInvalidDisplayLinks, Comments.onlyTakesEffectOutline);
 
-//    public final ConfigGroup customOutlineSettings = group(2, "customOutlineSettings", "Custom Outline Settings");
+//  public final ConfigGroup customOutlineSettings = group(2, "customOutlineSettings", "Custom Outline Settings");
     public final ConfigFloat customOutlineAlpha = f(0.8F, 0F, 1F, "customOutlineAlpha", Comments.customOutlineAlpha, Comments.outlineReference, Comments.onlyTakesEffectOutline);
 
     public final ConfigGroup textFieldsEnhancements = group(1, "textFieldsEnhancements", "Text Fields Enhancements");
@@ -62,7 +76,7 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigFloat stringPauseTime = f(2F, 0F, 600F, "stringPauseTime", Comments.seconds, Comments.stringPauseTime);
 
 
-    @Override public String getName() { return "client"; }
+    @Override public @NotNull String getName() { return "client"; }
 
     private static class Comments {
         static String milliseconds = "[in Milliseconds]";
@@ -72,20 +86,21 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String pixels = "[in Pixels]";
         static String defaultZero = "Set to 0 to disable.";
         static String overrides = "Overrides 'Fixed Char Travel Time' and 'Maximal/Minimal String Travel Time'.";
-        static String onlyTakesEffectGuideButtons = "Only takes effect if 'Enable Guide Buttons' is enabled.";
+        static String onlyTakesEffectGuideWidgets = "Only takes effect if 'Enable Guide Widgets' is enabled.";
         static String onlyTakesEffectVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
         static String onlyTakesEffectMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
         static String onlyTakesEffectOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
         static String heightReference = "Set to -1 to make it fit within the text height; set to 3 to make it fill the whole text input field height.";
 
-        static String enableGuideButtons = "Show the 'Placeholders Usage Guide' & 'Duplicating Display Link Properties' buttons in Display Link interface.";
+        static String enableGuideWidgets = "Show the 'Duplicating Display Link Properties' widget in Display Link interface.";
+        static String enableRichLabelEditor = "Enable opening the Rich Label Editor in Display Link interface.";
         static String enableVisualizationSettingsButtons = "Show the 'Show Visualization Settings' button in Display Link interface.";
         static String alwaysShowVisualizationSettingsButtons = "Never hide the Visualization Settings buttons behind the 'Show Visualization Buttons' dropdown button.";
 
-        static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
-        static String enableAlternativeClipboardIcon = "Change the icon on the 'Duplicating Display Link Properties' button to a more item-like looking one.";
-        static String enableRedirectsToPonderScenes = "Allow the guide buttons to redirect to their respective Ponder scenes on clicked.";
+//      static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
+        static String enableClipboardIconHighlighting = "Highlight the 'Duplicating Display Link Properties' icon when hovered on.";
+        static String enableRedirectsToPonderScenes = "Allow the guide widgets to redirect to their respective Ponder scenes on clicked.";
 
         static String colorPlaceholders = "Apply background coloring to placeholders in the Attached Label field.";
         static String placeholdersColorsAlpha = "The alpha value of background colorings of placeholders.";
@@ -101,14 +116,25 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String shortenedTrimmingPlaceholderColor = "The background color to apply to all 'Ax$'/'$yB'-structured (shortened trimming) placeholders.";
         static String colorAlternativeTrimmingPlaceholders = "Apply background coloring to all '${xABCy}'-structured (alternative trimming) placeholders.";
         static String alternativeTrimmingPlaceholderColor = "The background color to apply to all '${xABCy}'-structured (alternative trimming) placeholders.";
+        static String colorInvalidPlaceholders = "Apply background coloring to all character sequences that have been recognized to be incorrectly structured placeholders.";
+        static String invalidPlaceholderColor = "The background color to apply to all character sequences that have been recognized to be incorrectly structured placeholders.";
+
         static String colorEscapedPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders.";
         static String escapedPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders.";
         static String colorDisabledPlaceholders = "Apply background coloring to all placeholders that are disabled by the server config.";
         static String disabledPlaceholderColor = "The background color to apply to all placeholders that are disabled by the server config.";
         static String colorEscapedDisabledPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
         static String escapedDisabledPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
-        static String colorInvalidPlaceholders = "Apply background coloring to all character sequences that have been recognized to be incorrectly structured placeholders.";
-        static String invalidPlaceholderColor = "The background color to apply to all character sequences that have been recognized to be incorrectly structured placeholders.";
+        static String colorIncompletePlaceholders = "Apply background coloring to all incomplete placeholders.";
+        static String incompletePlaceholderColor = "The background color to apply to all incomplete placeholders.";
+        static String colorUnoptimizedPlaceholders = "Apply background coloring to all unoptimized placeholders.";
+        static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
+        static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
+        static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
+
+        static String richLabelEditorButtonOutlineFadeInTime = "The fixed time for the Rich Label Editor button outline to fully fade in.";
+        static String richLabelEditorButtonOutlineFadeOutTime = "The fixed time for the Rich Label Editor button outline to fade out back to idle state opacity.";
+        static String richLabelEditorButtonOutlineIdleStateAlpha = "The default opacity of the Rich Label Editor button outline when it's not hovered on.";
 
         static String deselectEmptyAttachedLabel = "Prevent the 'Copy the Attached Label' from being automatically selected if the Attached Label is empty.";
 

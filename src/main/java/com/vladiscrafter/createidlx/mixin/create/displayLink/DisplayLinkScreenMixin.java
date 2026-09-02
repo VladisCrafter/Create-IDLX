@@ -50,8 +50,8 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    private void createidlx$handleTooltips(CallbackInfo ci) {
-        createidlx$substitute.handleTooltips();
+    private void createidlx$updateLabelingBoxOutlineAlpha(CallbackInfo ci) {
+        createidlx$substitute.updateRichLabelEditorButtonOutlineAlpha();
     }
 
     @Inject(method = "initGathererOptions", at = @At("TAIL"))
@@ -75,18 +75,17 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
     }
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
-    private void createidlx$initGuideButtons(int i, CallbackInfo ci) {
-        createidlx$substitute.initGuideButtons(i);
-    }
-
-    @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
-    private void createidlx$initVisualizationSettingsButton(int i, CallbackInfo ci) {
+    private void createidlx$initButtons(int i, CallbackInfo ci) {
+        createidlx$substitute.initRichLabelEditorButton(i);
+        createidlx$substitute.initClipboardGuideButton(i);
         createidlx$substitute.initVisualizationSettingsButton(i);
     }
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
-    private void createidlx$injectPlaceholdersStatus(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        createidlx$substitute.injectPlaceholdersStatus();
+    private void createidlx$renderRichEditorButtonOutline(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        createidlx$substitute.renderPlaceholdersStatusTooltips(graphics); // deprecated
+        createidlx$substitute.renderRichEditorButtonOutline(graphics, mouseX, mouseY, partialTicks);
+        createidlx$substitute.renderVisualizationSettingsTooltips();
     }
 
     @Inject(method = "onClose", at = @At(value = "INVOKE", target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V"))
@@ -161,6 +160,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
         for (W widget : widgets) {
             this.addRenderableWidget(widget);
         }
+    }
+
+    @Override
+    public <T extends GuiEventListener & NarratableEntry> void createidlx$callAddWidget(T widget) {
+        this.addWidget(widget);
     }
 
     @Override
