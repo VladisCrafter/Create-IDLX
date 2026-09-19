@@ -57,7 +57,7 @@ public class BackgroundlessIconButton extends IconButton {
     @Override
     public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
-            isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+            isHovered = isMouseOver(mouseX, mouseY);
             if (!isHoveredOrFocused() || hoveredIcon == null) icon.render(graphics, getX() + 1, getY() + 1);
             else hoveredIcon.render(graphics, getX() + 1, getY() + 1);
         }

@@ -7,20 +7,26 @@ import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplay
 import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
+import com.simibubi.create.foundation.gui.ModularGuiLine;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
 import com.vladiscrafter.createidlx.mixin.accessor.catnip.UIRenderHelperAccessor;
+import com.vladiscrafter.createidlx.mixin.accessor.create.ModularGuiLineAccessor;
 import com.vladiscrafter.createidlx.mixin.accessor.create.SingleLineDisplaySourceAccessor;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkScreenMixinSubstitutionHolder;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkVisualizationConfigHolder;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.BackgroundlessIconButton;
+import com.vladiscrafter.createidlx.util.widget.ExpandedEditBox;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
@@ -29,6 +35,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,14 +46,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.vladiscrafter.createidlx.util.gui.UIRenderHelperAdditions.*;
 import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
 
 public class DisplayLinkScreenMixinSubstitute {
-    private IconButton richLabelEditorButton;
-    private BackgroundlessIconButton clipboardGuideButton;
+    private ExpandedEditBox attachedLabelBox;
+    private String attachedLabelText = "";
+    private boolean attachedLabelTextInitialized;
+
     private boolean centerText;
     /*private boolean cutOutSectionGaps;*/
     private boolean markTruncationWithEllipsis;
+
+    private IconButton richLabelEditorButton;
+    private BackgroundlessIconButton clipboardGuideButton;
 
     private IconButton showVisualizationSettingsButton;
     private boolean visualizationSettingsInitialized = false;
@@ -57,7 +70,7 @@ public class DisplayLinkScreenMixinSubstitute {
     private IconButton markTruncationWithEllipsisButton;
 
     private final List<AbstractWidget> visualizationSettingWidgets = new ArrayList<>();
-    
+
     private final List<Class<? extends BlockEntity>>
             visualizationSettingsSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class, SignBlockEntity.class),
             centerTextSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class);
@@ -102,8 +115,10 @@ public class DisplayLinkScreenMixinSubstitute {
     }
 
     public void updateRichLabelEditorButtonOutlineAlpha() {
-        if (richLabelEditorButton != null && richLabelEditorButton.isHovered()) richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeInTime == 0 ? 1f : Math.clamp(richLabelEditorButtonOutlineAlpha += ((float) 1 / (richLabelEditorButtonOutlineFadeInTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
-        else richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeOutTime == 0 ? 0 : Math.clamp(richLabelEditorButtonOutlineAlpha -= ((float) 1 / (richLabelEditorButtonOutlineFadeOutTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
+        if (richLabelEditorButton != null && richLabelEditorButton.isHovered())
+            richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeInTime == 0 ? 1f : Math.clamp(richLabelEditorButtonOutlineAlpha += ((float) 1 / (richLabelEditorButtonOutlineFadeInTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
+        else
+            richLabelEditorButtonOutlineAlpha = richLabelEditorButtonOutlineFadeOutTime == 0 ? 0 : Math.clamp(richLabelEditorButtonOutlineAlpha -= ((float) 1 / (richLabelEditorButtonOutlineFadeOutTime * 20)), richLabelEditorButtonOutlineIdleStateAlpha, 1f);
     }
 
     public void replaceSourceTypeSelector() {
@@ -176,7 +191,12 @@ public class DisplayLinkScreenMixinSubstitute {
 
         richLabelEditorButton = new IconButton(screen.createidlx$getGuiLeft() + 36, screen.createidlx$getGuiTop() + 46, 16, 16, CreateIDLXIcons.placeholdersIcon);
         richLabelEditorButton.visible = allowsLabeling(context);
-        richLabelEditorButton.withCallback((mX, mY) -> {});
+        richLabelEditorButton.withCallback(() -> {
+            if (attachedLabelBox == null) return;
+            attachedLabelText = attachedLabelBox.getValue();
+            attachedLabelTextInitialized = true;
+            ScreenOpener.open(new DisplayLinkRichLabelEditorScreen(attachedLabelText, (Screen) screen, this::setAttachedLabelText));
+        });
 
         screen.createidlx$callAddRenderableWidget(richLabelEditorButton);
     }
@@ -194,7 +214,8 @@ public class DisplayLinkScreenMixinSubstitute {
         if (isClipboardIconHighlightingEnabled) clipboardGuideButton.setHoveredIcon(CreateIDLXIcons.I_CLIPBOARD_HL);
         clipboardGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.clipboard_tooltip", 3, AbstractSimiWidget.HEADER_RGB.getRGB(), ChatFormatting.GRAY.getColor()));
 
-        if (areRedirectsToPonderScenesEnabled) clipboardGuideButton.setPonderScene("clipboard_copying", screen::createidlx$callOnClose, true);
+        if (areRedirectsToPonderScenesEnabled)
+            clipboardGuideButton.setPonderScene("clipboard_copying", screen::createidlx$callOnClose, true);
         else clipboardGuideButton.active = false;
 
         screen.createidlx$callAddRenderableWidget(clipboardGuideButton);
@@ -202,7 +223,8 @@ public class DisplayLinkScreenMixinSubstitute {
 
     @SuppressWarnings("DataFlowIssue")
     public void initVisualizationSettingsButton(int i) {
-        if (showVisualizationSettingsButton != null) screen.createidlx$callRemoveWidget(showVisualizationSettingsButton);
+        if (showVisualizationSettingsButton != null)
+            screen.createidlx$callRemoveWidget(showVisualizationSettingsButton);
 
         AllGuiTextures background = AllGuiTextures.DATA_GATHERER;
         int x = screen.createidlx$getGuiLeft();
@@ -279,34 +301,31 @@ public class DisplayLinkScreenMixinSubstitute {
         visualizationSettingsInitialized = true;
     }
 
-    public void renderPlaceholdersStatusTooltips(GuiGraphics graphics) {
-        /*if (placeholdersGuideButton == null) return;
+    public void cacheLabelingTextBox() {
+        attachedLabelBox = null;
 
-        if (!AllKeys.shiftDown()) {
-            placeholdersGuideButton.setToolTip(translateLocal("placeholders_tooltip_header").withColor(AbstractSimiWidget.HEADER_RGB.getRGB()));
-            placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultilineTooltip("gui.display_link.placeholders_tooltip", 3, ChatFormatting.GRAY.getColor()));
-            placeholdersGuideButton.getToolTip().add(translateLocal("placeholders_tooltip_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-        } else {
-            placeholdersGuideButton.setToolTip(translateLocal("placeholders_tooltip_detailed_header").withColor(AbstractSimiWidget.HEADER_RGB.getRGB()));
-
-            if (isActivePlaceholdersTooltipEnabled) {
-                placeholdersGuideButton.getToolTip().add(
-                        ((isDollarSignPlaceholderEnabled || isBracketsPlaceholderEnabled) ? translateLocal("placeholders_tooltip_detailed_1",
-                                ((isDollarSignPlaceholderEnabled && isBracketsPlaceholderEnabled) ? translateLocal("active_placeholder.both").withColor(0x53e053)
-                                        : (!isDollarSignPlaceholderEnabled && isBracketsPlaceholderEnabled) ? translateLocal("active_placeholder.brackets_only").withColor(0xe0b653)
-                                        : translateLocal("active_placeholder.dollar_only").withColor(0xe0b653))).withStyle(ChatFormatting.GRAY)
-                                : translateLocal("placeholders_tooltip_detailed_1_disabled").withColor(0xe05353)));
+        for (ModularGuiLine line : screen.createidlx$getConfigWidgets()) {
+            for (Pair<AbstractWidget, String> widget : ((ModularGuiLineAccessor) line).createidlx$getWidgets()) {
+                if (widget.getFirst() instanceof ExpandedEditBox editBox) {
+                    attachedLabelBox = editBox;
+                    break;
+                }
             }
-
-            if (isProgressBarSupportStateTooltipEnabled && (isDollarSignPlaceholderEnabled || isBracketsPlaceholderEnabled)) {
-                placeholdersGuideButton.getToolTip().addAll(CreateIDLX.translateMultiline("gui.display_link.placeholders_tooltip_detailed_2", ChatFormatting.GRAY.getColor(),
-                                (isCrudeProgressBarSupportEnabled) ? translateLocal("progress_bar_support.enabled").withColor(0xe0b653)
-                                        : translateLocal("progress_bar_support.disabled")));
-            }
-
+            if (attachedLabelBox != null) break;
         }
+        if (attachedLabelBox == null) return;
 
-        if (areRedirectsToPonderScenesEnabled) placeholdersGuideButton.getToolTip().addLast(CreateIDLX.translate("gui.generic.click_to_ponder").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));*/
+        if (!attachedLabelTextInitialized) {
+            attachedLabelText = attachedLabelBox.getValue();
+            attachedLabelTextInitialized = true;
+        } else attachedLabelBox.setValue(attachedLabelText);
+    }
+
+    public void setAttachedLabelText(String text) {
+        attachedLabelText = text;
+        attachedLabelTextInitialized = true;
+
+        if (attachedLabelBox != null) attachedLabelBox.setValue(text);
     }
 
     public void renderRichEditorButtonOutline(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -330,25 +349,6 @@ public class DisplayLinkScreenMixinSubstitute {
         drawStretchedColored(graphics, x + 53, y + 48, z, 3, 14, c, AllGuiTextures.BRASS_FRAME_RIGHT);
         drawCroppedColored(graphics, x + 38, y + 44, z, 14, 3, c, AllGuiTextures.BRASS_FRAME_TOP);
         drawCroppedColored(graphics, x + 38, y + 63, z, 14, 3, c, AllGuiTextures.BRASS_FRAME_BOTTOM);
-}
-
-    private void drawColored(GuiGraphics graphics, int left, int top, int z, Color color, TextureSheetSegment tex) {
-        tex.bind();
-        UIRenderHelper.drawColoredTexture(graphics, color, left, top, z, tex.getStartX(), tex.getStartY(), tex.getWidth(), tex.getHeight(), 256, 256);
-    }
-
-    private void drawStretchedColored(GuiGraphics graphics, int left, int top, int z, int w, int h, Color color, TextureSheetSegment tex) {
-        tex.bind();
-        UIRenderHelperAccessor.createidlx$callDrawTexturedQuad(graphics.pose().last()
-                        .pose(), color, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + tex.getWidth()) / 256f,
-                tex.getStartY() / 256f, (tex.getStartY() + tex.getHeight()) / 256f);
-    }
-
-    private void drawCroppedColored(GuiGraphics graphics, int left, int top, int z, int w, int h, Color color, TextureSheetSegment tex) {
-        tex.bind();
-        UIRenderHelperAccessor.createidlx$callDrawTexturedQuad(graphics.pose().last()
-                        .pose(), color, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + w) / 256f,
-                tex.getStartY() / 256f, (tex.getStartY() + h) / 256f);
     }
 
     public void renderVisualizationSettingsTooltips() {
@@ -422,3 +422,4 @@ public class DisplayLinkScreenMixinSubstitute {
         return CreateIDLX.translate("gui.display_link." + key, args);
     }
 }
+

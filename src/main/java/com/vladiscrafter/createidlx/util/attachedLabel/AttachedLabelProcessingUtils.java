@@ -6,6 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderState.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.CaptureGroupOperation.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.CaptureGroupRounding.*;
 import static com.vladiscrafter.createidlx.util.SingleLineDisplaySourceMixinUtils.*;
@@ -40,6 +43,19 @@ public class AttachedLabelProcessingUtils {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
 
         return label + " " + (isDollarSignPlaceholderEnabled ? "$" : "{}");
+    }
+
+    public static LinkedHashMap<Integer, Placeholder> mapPlaceholders(String label) {
+        ArrayList<AttachedLabelBreakdownResult> breakdown = processLabel(label);
+        LinkedHashMap<Integer, Placeholder> result = new LinkedHashMap<>();
+        int index = 0;
+
+        for (AttachedLabelBreakdownResult part : breakdown) {
+            if (part instanceof Placeholder) result.put(index, (Placeholder) part);
+            index += part.length();
+        }
+
+        return result;
     }
 
     public static String breakDownAndAssembleLabel(String label, String rawInfo) {
@@ -81,8 +97,8 @@ public class AttachedLabelProcessingUtils {
         return result;
     }
 
-    public static List<MutableComponent> assembleLabelFromSectionsAsComponentList(ArrayList<FlapDisplaySection> sections) {
-        List<MutableComponent> result = new ArrayList<>();
+    public static List<MutableComponent> assembleLabelFromSectionsAsComponentList(List<FlapDisplaySection> sections) {
+        ArrayList<MutableComponent> result = new ArrayList<>();
 
         for (FlapDisplaySection section : sections) result.add(Component.literal("").append(section.getText()));
 
@@ -202,13 +218,14 @@ public class AttachedLabelProcessingUtils {
         boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
         boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
 
+        if (text.isEmpty()) return invalid;
+
         int inI = i;
-        int length = invalid.length();
-        PlaceholderType type = invalid.type();
+        int length = 0;
+        PlaceholderType type = INVALID;
+        PlaceholderState state = UNIDENTIFIED;
         PlaceholderProperties properties = invalidPr;
         boolean isEscaped = false;
-
-        if (text.isEmpty()) return invalid;
 
         if (text.length() > i + 1 && text.charAt(i) == '\\' && isEscapingOfPlaceholdersEnabled) {
             isEscaped = true;
@@ -241,19 +258,21 @@ public class AttachedLabelProcessingUtils {
             }
         }
 
+        if (type != INVALID) state = ACTIVE;
+
         if ((type == DOLLAR && !isDollarSignPlaceholderEnabled)
                 || (type == BRACKETS && !isBracketsPlaceholderEnabled)
                 || (type == TRIM && !isOriginalTrimmingPlaceholderEnabled)
                 || (type == TRIM_SHORT && !isShortenedOriginalTrimmingPlaceholderEnabled)
                 || (type == TRIM_ALT && !isAlternativeTrimmingPlaceholderEnabled))
-            type = DISABLED;
+            state = DISABLED;
 
         if (isEscaped) {
             if (length == 1) return invalid;
-            else type = type == DISABLED ? ESCAPED_DISABLED : ESCAPED;
+            else state = state == DISABLED ? ESCAPED_DISABLED : ESCAPED;
         }
 
-        return new Placeholder(text.substring(inI, inI + length), type, properties);
+        return new Placeholder(text.substring(inI, inI + length), type, state, properties);
     }
 
     private static Placeholder getOriginalTrimmingPlaceholder(String text, int i) {
@@ -330,7 +349,7 @@ public class AttachedLabelProcessingUtils {
         CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation, rightGroupRounding);
         PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
-        return new Placeholder(raw, type, properties);
+        return new Placeholder(raw, type, ACTIVE, properties);
     }
 
     private static Placeholder getAlternativeTrimmingPlaceholder(String text, int i) {
@@ -394,7 +413,7 @@ public class AttachedLabelProcessingUtils {
         CaptureGroup rightGroup = new CaptureGroup(rightGroupValue, rightGroupOperation, rightGroupRounding);
         PlaceholderProperties properties = new PlaceholderProperties(leftGroup, middleGroupOperation, rightGroup);
 
-        return new Placeholder(text.substring(i, lI), type, properties);
+        return new Placeholder(text.substring(i, lI), type, ACTIVE, properties);
     }
 
     private static boolean hasValidRounding(String raw, PlaceholderType type) {

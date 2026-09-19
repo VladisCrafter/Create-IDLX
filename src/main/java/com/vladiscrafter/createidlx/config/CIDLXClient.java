@@ -3,6 +3,8 @@ package com.vladiscrafter.createidlx.config;
 import net.createmod.catnip.config.ui.ConfigAnnotations;
 import org.jetbrains.annotations.NotNull;
 
+import static com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen.*;
+
 @SuppressWarnings("unused")
 public class CIDLXClient extends CIDLXConfigBase {
 
@@ -47,6 +49,12 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigInt unoptimizedPlaceholderColor = i(0x743020, 0, 16777215, "unoptimizedPlaceholderColor", Comments.rgb, Comments.unoptimizedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigBool colorSyntacticallyErrorsomePlaceholders = b(true, "syntacticallyErrorsomePlaceholders", Comments.colorSyntacticallyErrorsomePlaceholders);
     public final ConfigInt syntacticallyErrorsomePlaceholderColor = i(0x743020, 0, 16777215, "syntacticallyErrorsomePlaceholderColor", Comments.rgb, Comments.syntacticallyErrorsomePlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+
+    public final ConfigGroup richLabelEditorCustomization = group(2, "richLabelEditorCustomization", "Rich Label Editor Customization");
+    public final ConfigEnum<DefaultClosingMode> rleDefaultClosingMode = e(DefaultClosingMode.ASK, "defaultClosingMode", Comments.rleDefaultClosingMode);
+    public final ConfigEnum<CounterPosition> rleCounterPosition = e(CounterPosition.DYNAMIC, "counterPosition", Comments.rleCounterPosition);
+    public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
+    public final ConfigBool rleEnableScreenConfigButton = b(true, "enableScreenConfigButton", Comments.rleEnableScreenConfigButton);
 
     public final ConfigGroup richLabelEditorButtonOutlineSettings = group(2, "richLabelEditorButtonOutlineSettings", "Attached Label Box Outline Settings");
     public final ConfigFloat richLabelEditorButtonOutlineFadeInTime = f(0.25F, 0F, 10F, "richLabelEditorButtonOutlineFadeInTime", Comments.seconds, Comments.richLabelEditorButtonOutlineFadeInTime, Comments.defaultZero);
@@ -131,6 +139,11 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
         static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
         static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
+
+        static String rleDefaultClosingMode = "Which action to perform to the Label when the Editor is closed with a keybind instead of a button.";
+        static String rleCounterPosition = "How should the Character Counter appear: in the same field as the Label or in its own window.";
+        static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
+        static String rleEnableScreenConfigButton = "Enable the 'Configure' button, redirecting to the respective client config section, in Rich Label Editor interface.";
 
         static String richLabelEditorButtonOutlineFadeInTime = "The fixed time for the Rich Label Editor button outline to fully fade in.";
         static String richLabelEditorButtonOutlineFadeOutTime = "The fixed time for the Rich Label Editor button outline to fade out back to idle state opacity.";

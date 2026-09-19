@@ -35,27 +35,51 @@ public class ExpandedEditBoxUtils {
             int plW = font.width(pl);
 
             PlaceholderType placeholderType = placeholder.type();
+            PlaceholderState placeholderState = placeholder.state();
 
             if (placeholderLength > 0) {
                 int minX = Math.max(widgetX /*- 4*/, fX), maxX = Math.min(fX + plW, widgetX + font.width(visible) /*widgetWidth + 3*/);
 
-                if (placeholderType == PlaceholderType.ESCAPED_DISABLED && !isEscapingOfDisabledPlaceholdersHidden) {
+                if (placeholderState == PlaceholderState.ESCAPED_DISABLED && !isEscapingOfDisabledPlaceholdersHidden) {
                     if (maxX - minX >= plW) minX += font.width(String.valueOf('\\'));
-                    placeholderType = PlaceholderType.DISABLED;
+                    placeholderState = PlaceholderState.DISABLED;
                 }
 
-                if (minX < maxX) graphics.fill(minX, sY, maxX, eY, 0, getHighlightColor(placeholderType));
+                if (minX < maxX) graphics.fill(minX, sY, maxX, eY, 0, getHighlightColor(placeholderType, placeholderState));
                 i += placeholderLength - 1;
                 fX += plW;
             } else fX += font.width(String.valueOf(full.charAt(i)));
         }
     }
 
-    private static int getHighlightColor(PlaceholderType placeholderType) {
+    public static int getHighlightColor(Placeholder placeholder) {
+        return getHighlightColor(placeholder.type(), placeholder.state());
+    }
+
+    private static int getHighlightColor(PlaceholderType placeholderType,  PlaceholderState placeholderState) {
         CIDLXClient cfg = CIDLXConfigs.client;
 
         int alpha = cfg.placeholdersColorsAlpha.get() << 24;
         int invisible = 0x00000000;
+
+        if (placeholderState != PlaceholderState.ACTIVE) {
+            return cfg.colorPlaceholders.get() ? switch (placeholderState) {
+                case ESCAPED -> cfg.colorEscapedPlaceholders.get()
+                        ? cfg.escapedPlaceholderColor.get() | alpha : invisible;
+                case DISABLED -> cfg.colorDisabledPlaceholders.get()
+                        ? cfg.disabledPlaceholderColor.get() | alpha : invisible;
+                case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
+                        ? cfg.escapedDisabledPlaceholderColor.get() | alpha : invisible;
+                case INCOMPLETE -> cfg.colorIncompletePlaceholders.get()
+                        ? cfg.incompletePlaceholderColor.get() | alpha : invisible;
+                case UNOPTIMIZED -> cfg.colorUnoptimizedPlaceholders.get()
+                        ? cfg.unoptimizedPlaceholderColor.get() | alpha : invisible;
+                case SYNTACTICALLY_ERRORSOME -> cfg.colorSyntacticallyErrorsomePlaceholders.get()
+                        ? cfg.syntacticallyErrorsomePlaceholderColor.get() | alpha : invisible;
+                case null, default -> cfg.colorInvalidPlaceholders.get()
+                        ? cfg.invalidPlaceholderColor.get() | alpha : invisible;
+            } : invisible;
+        }
 
         return cfg.colorPlaceholders.get() ? switch (placeholderType) {
             case DOLLAR -> cfg.colorDollarPlaceholders.get()
@@ -68,12 +92,6 @@ public class ExpandedEditBoxUtils {
                     ? cfg.shortenedTrimmingPlaceholderColor.get() | alpha : invisible;
             case TRIM_ALT -> cfg.colorAlternativeTrimmingPlaceholders.get()
                     ? cfg.alternativeTrimmingPlaceholderColor.get() | alpha : invisible;
-            case ESCAPED -> cfg.colorEscapedPlaceholders.get()
-                    ? cfg.escapedPlaceholderColor.get() | alpha : invisible;
-            case DISABLED -> cfg.colorDisabledPlaceholders.get()
-                    ? cfg.disabledPlaceholderColor.get() | alpha : invisible;
-            case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
-                    ? cfg.escapedDisabledPlaceholderColor.get() | alpha : invisible;
             case null, default -> cfg.colorInvalidPlaceholders.get()
                     ? cfg.invalidPlaceholderColor.get() | alpha : invisible;
         } : invisible;

@@ -1,7 +1,8 @@
 package com.vladiscrafter.createidlx.util.attachedLabel;
 
 public class AttachedLabelPart {
-    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, ESCAPED, DISABLED, ESCAPED_DISABLED, INVALID }
+    public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, INVALID }
+    public enum PlaceholderState { ACTIVE, ESCAPED, DISABLED, ESCAPED_DISABLED, INCOMPLETE, UNOPTIMIZED, SYNTACTICALLY_ERRORSOME, UNIDENTIFIED}
 
     public enum CaptureGroupOperation { CUT, PRESERVE, NONE }
     public enum CaptureGroupRounding { CEIL, FLOOR, AUTO }
@@ -10,15 +11,15 @@ public class AttachedLabelPart {
 
     public static PlaceholderProperties invalidPr = new PlaceholderProperties(invalidCG, CaptureGroupOperation.NONE, invalidCG);
 
-    public static Placeholder invalid = new Placeholder("", PlaceholderType.INVALID, invalidPr);
+    public static Placeholder invalid = new Placeholder("", PlaceholderType.INVALID, PlaceholderState.UNIDENTIFIED, invalidPr);
 
-    public record Placeholder(String raw, PlaceholderType type, PlaceholderProperties properties) implements AttachedLabelBreakdownResult {
+    public record Placeholder(String raw, PlaceholderType type, PlaceholderState state, PlaceholderProperties properties) implements AttachedLabelBreakdownResult {
         public String getString() {
             return raw;
         }
 
         public String asDebugString() {
-            return debug(raw, type.name()) + "\n    - " + properties.asDebugString();
+            return debug(raw, type.name()) + " | " + state.name() + "\n    - " + properties.asDebugString();
         }
 
         public int length() {
@@ -29,11 +30,6 @@ public class AttachedLabelPart {
             return type == comparable;
         }
 
-        public boolean isActive() {
-            return type != PlaceholderType.ESCAPED && type != PlaceholderType.DISABLED
-                    && type != PlaceholderType.ESCAPED_DISABLED && type != PlaceholderType.INVALID;
-        }
-
         public boolean isPrimitive() {
             return type == PlaceholderType.DOLLAR || type == PlaceholderType.BRACKETS;
         }
@@ -42,20 +38,32 @@ public class AttachedLabelPart {
             return type == PlaceholderType.TRIM || type == PlaceholderType.TRIM_SHORT || type == PlaceholderType.TRIM_ALT;
         }
 
+        public boolean isStandard() {
+            return type == PlaceholderType.DOLLAR || type == PlaceholderType.TRIM || type == PlaceholderType.TRIM_SHORT;
+        }
+
+        public boolean isAlternative() {
+            return type == PlaceholderType.BRACKETS || type == PlaceholderType.TRIM_ALT;
+        }
+
+        public boolean isState(PlaceholderState comparable) {
+            return state == comparable;
+        }
+
+        public boolean isWorking() {
+            return state == PlaceholderState.ACTIVE || state == PlaceholderState.UNOPTIMIZED;
+        }
+
         public boolean isEscaped() {
-            return type == PlaceholderType.ESCAPED || type == PlaceholderType.ESCAPED_DISABLED;
+            return state == PlaceholderState.ESCAPED || state == PlaceholderState.ESCAPED_DISABLED;
         }
 
         public boolean isDisabled() {
-            return type == PlaceholderType.DISABLED || type == PlaceholderType.ESCAPED_DISABLED;
+            return state == PlaceholderState.DISABLED || state == PlaceholderState.ESCAPED_DISABLED;
         }
     }
 
     public record PlaceholderProperties(CaptureGroup leftGroup, CaptureGroupOperation middleGroupOperation, CaptureGroup rightGroup) {
-        public PlaceholderProperties(CaptureGroup leftGroup, CaptureGroup rightGroup) {
-            this(leftGroup, CaptureGroupOperation.NONE, rightGroup);
-        }
-
         public String asDebugString() {
             return String.format("{\n        LG = %s\n        MGO = %s\n        RG = %s\n      }",
                     leftGroup.asDebugString(), middleGroupOperation, rightGroup.asDebugString());
@@ -63,10 +71,6 @@ public class AttachedLabelPart {
     }
 
     public record CaptureGroup(Number value, CaptureGroupOperation operation, CaptureGroupRounding rounding) {
-        public CaptureGroup(Number value, CaptureGroupOperation operation) {
-            this(value, operation, CaptureGroupRounding.AUTO);
-        }
-
         public String asDebugString() {
             return String.format("{ V = %s | O = %s | R = %s }", value.toString(), operation, rounding);
         }

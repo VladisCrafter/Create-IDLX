@@ -7,8 +7,8 @@ import net.minecraft.network.chat.Component;
 import javax.annotation.Nullable;
 
 public class ExpandedEditBox extends EditBox {
-    public ExpandedEditBox(Font font, int x, int y, int width, int height, @Nullable EditBox editBox, Component message) {
-        this(font, x, y, width, height, editBox, message, Integer.MAX_VALUE);
+    public ExpandedEditBox(Font font, int x, int y, int width, int height, Component message) {
+        this(font, x, y, width, height, null, message, Integer.MAX_VALUE);
     }
 
     public ExpandedEditBox(Font font, int x, int y, int width, int height, @Nullable EditBox editBox, Component message, int maxLength) {

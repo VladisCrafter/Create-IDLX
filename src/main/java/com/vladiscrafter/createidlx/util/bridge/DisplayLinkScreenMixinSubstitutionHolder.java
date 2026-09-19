@@ -3,8 +3,10 @@ package com.vladiscrafter.createidlx.util.bridge;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
+import com.simibubi.create.foundation.gui.ModularGuiLine;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -21,8 +23,12 @@ public interface DisplayLinkScreenMixinSubstitutionHolder {
     DisplayLinkBlockEntity createidlx$getBlockEntity();
     BlockState createidlx$getTargetState();
     DisplayTarget createidlx$getTarget();
+    Couple<ModularGuiLine> createidlx$getConfigWidgets();
     int createidlx$getGuiLeft();
     int createidlx$getGuiTop();
+
+    String createidlx$getAttachedLabelText();
+    void createidlx$setAttachedLabelText(String text);
 
     void createidlx$callInitGathererSourceSubOptions(int i);
     void createidlx$callOnClose();

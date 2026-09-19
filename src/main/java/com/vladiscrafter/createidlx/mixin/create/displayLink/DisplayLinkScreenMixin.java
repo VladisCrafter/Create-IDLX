@@ -5,12 +5,14 @@ import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.behaviour.display.DisplayTarget;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkScreen;
+import com.simibubi.create.foundation.gui.ModularGuiLine;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkScreenMixinSubstitutionHolder;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkVisualizationConfigHolder;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiContext;
 import com.vladiscrafter.createidlx.util.substitute.DisplayLinkScreenMixinSubstitute;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -40,6 +42,8 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
     @Shadow protected abstract void initGathererSourceSubOptions(int i);
     @Shadow public abstract void onClose();
     @Shadow public abstract void tick();
+
+    @Shadow private Couple<ModularGuiLine> configWidgets;
 
     @Unique
     private final DisplayLinkScreenMixinSubstitute createidlx$substitute = new DisplayLinkScreenMixinSubstitute(this);
@@ -76,6 +80,8 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
 
     @Inject(method = "initGathererSourceSubOptions", at = @At("TAIL"))
     private void createidlx$initButtons(int i, CallbackInfo ci) {
+        createidlx$substitute.cacheLabelingTextBox();
+
         createidlx$substitute.initRichLabelEditorButton(i);
         createidlx$substitute.initClipboardGuideButton(i);
         createidlx$substitute.initVisualizationSettingsButton(i);
@@ -83,7 +89,6 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
 
     @Inject(method = "renderWindow", at = @At("TAIL"))
     private void createidlx$renderRichEditorButtonOutline(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        createidlx$substitute.renderPlaceholdersStatusTooltips(graphics); // deprecated
         createidlx$substitute.renderRichEditorButtonOutline(graphics, mouseX, mouseY, partialTicks);
         createidlx$substitute.renderVisualizationSettingsTooltips();
     }
@@ -123,6 +128,11 @@ public abstract class DisplayLinkScreenMixin extends AbstractSimiScreen implemen
     @Override
     public BlockState createidlx$getTargetState() {
         return targetState;
+    }
+
+    @Override
+    public Couple<ModularGuiLine> createidlx$getConfigWidgets() {
+        return configWidgets;
     }
 
     @Override

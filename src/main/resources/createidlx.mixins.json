@@ -26,6 +26,7 @@
   ],
   "client": [
     "accessor.catnip.UIRenderHelperAccessor",
+    "accessor.create.ModularGuiLineAccessor",
     "accessor.ponder.PonderUIAccessor",
     "create.clipboard.ClipboardValueSettingsHandlerMixin",
     "create.displayLink.DisplayLinkScreenMixin",

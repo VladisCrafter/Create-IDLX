@@ -58,7 +58,7 @@ public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilde
     @Unique
     public ModularGuiLineBuilder createidlx$addLengthUnrestrainedTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform,
                                                                            String dataKey) {
-        EditBox input = new ExpandedEditBox(font, x + this.x + 5, y, width - 9, 8, null, CommonComponents.EMPTY);
+        EditBox input = new ExpandedEditBox(font, x + this.x + 5, y, width - 9, 8, CommonComponents.EMPTY);
         input.setBordered(false);
         input.setTextColor(0xffffff);
         input.setFocused(false);
