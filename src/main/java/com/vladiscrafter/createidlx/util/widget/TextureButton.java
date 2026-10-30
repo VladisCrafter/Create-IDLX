@@ -1,14 +1,18 @@
 package com.vladiscrafter.createidlx.util.widget;
 
+import com.simibubi.create.AllKeys;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashMap;
+
 @SuppressWarnings({"UnusedReturnValue", "unused", "unchecked"})
 public class TextureButton extends AbstractSimiWidget {
     protected ScreenElement tex;
     protected ScreenElement hoverTex;
+    protected LinkedHashMap<AllKeys, ScreenElement> specialHoverTextures;
     protected boolean focusable = true;
 
     public TextureButton(int x, int y, ScreenElement tex) {
@@ -27,6 +31,7 @@ public class TextureButton extends AbstractSimiWidget {
         super(x, y, w, h);
         this.tex = tex;
         this.hoverTex = hoverTex;
+        this.specialHoverTextures = new LinkedHashMap<>();
     }
 
     public <T extends TextureButton> T withTexture(ScreenElement tex) {
@@ -39,12 +44,21 @@ public class TextureButton extends AbstractSimiWidget {
         return (T) this;
     }
 
+    public <T extends TextureButton> T withSpecialHoverTexture(AllKeys modifier, ScreenElement specialTex) {
+        specialHoverTextures.putLast(modifier, specialTex);
+        return (T) this;
+    }
+
     public void setTexture(ScreenElement tex) {
         this.tex = tex;
     }
     
     public void setHoverTexture(ScreenElement hoverTex) {
         this.hoverTex = hoverTex;
+    }
+
+    public void addSpecialHoverTexture(AllKeys modifier, ScreenElement specialTex) {
+        specialHoverTextures.putLast(modifier, specialTex);
     }
 
     public void setNonFocusable() {
@@ -60,8 +74,12 @@ public class TextureButton extends AbstractSimiWidget {
     public void doRender(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
             isHovered = isMouseOver(mouseX, mouseY);
-            if (!isHoveredOrFocused() || hoverTex == null) tex.render(graphics, getX(), getY());
-            else hoverTex.render(graphics, getX(), getY());
+            ScreenElement t = (!isHoveredOrFocused() || hoverTex == null) ? tex : hoverTex;
+
+            if (isHoveredOrFocused()) for (AllKeys modifier : specialHoverTextures.sequencedKeySet())
+                if (AllKeys.isKeyDown(modifier.getKeybind().getKey().getValue())) t = specialHoverTextures.getOrDefault(modifier, hoverTex);
+
+            t.render(graphics, getX(), getY());
         }
     }
 }

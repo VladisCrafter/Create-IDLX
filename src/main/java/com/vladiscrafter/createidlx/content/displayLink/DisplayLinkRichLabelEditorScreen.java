@@ -1,5 +1,6 @@
 package com.vladiscrafter.createidlx.content.displayLink;
 
+import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
@@ -58,6 +59,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     protected SelectionScrollInput leftGroupOperationSelector, middleGroupOperationSelector, rightGroupOperationSelector;
     protected Label leftGroupOperationSelectorLabel, middleGroupOperationSelectorLabel, rightGroupOperationSelectorLabel;
     protected Component leftGroupScrollInputLabelCache, rightGroupScrollInputLabelCache;
+    protected TextureButton resetCaptureGroupsButton;
 
     final CreateIDLXGuiTextures BACKGROUND = CreateIDLXGuiTextures.RICH_LABEL_EDITOR;
     final int PLACEHOLDER_TABS_SPACE = 336;
@@ -92,8 +94,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         this.leftGroupCache = new LinkedHashMap<>(3);
         this.rightGroupCache = new LinkedHashMap<>(3);
 
-        this.leftGroupScrollInputLabelCache = plValueNone;
-        this.rightGroupScrollInputLabelCache = plValueNone;
+        this.leftGroupScrollInputLabelCache = plValueNone.copy();
+        this.rightGroupScrollInputLabelCache = plValueNone.copy();
     }
 
     @Override
@@ -184,6 +186,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         if (rightGroupOperationSelector != null) removeWidget(rightGroupOperationSelector);
         if (rightGroupOperationSelectorLabel != null) removeWidget(rightGroupOperationSelectorLabel);
 
+        if (resetCaptureGroupsButton != null) removeWidget(resetCaptureGroupsButton);
+
         if (placeholders.isEmpty()) return;
 
         Placeholder placeholder = placeholderTabButtons.get(index).getPlaceholder();
@@ -238,7 +242,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             middleGroupOperationSelectorLabel = new Label(x + 154, y + 38, CommonComponents.EMPTY).withShadow();
             middleGroupOperationSelector = new SelectionScrollInput(x + 149, y + 32, !alt ? 63 : 40, 18);
             middleGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 1, s));
-            middleGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(middleGroupOperationSelectorLabel)
+            middleGroupOperationSelector.forOptions(plOperationsAlt).writingTo(middleGroupOperationSelectorLabel)
                     .setState(placeholder.properties().middleGroupOperation().ordinal()).onChanged();
         }
 
@@ -248,12 +252,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         rightGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(rightGroupOperationSelectorLabel)
                 .setState(placeholder.properties().rightGroup().operation().ordinal()).onChanged();
 
+        resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET_H);
+        resetCaptureGroupsButton.withCallback(() -> resetCaptureGroups(psi, placeholder, AllKeys.shiftDown()));
+        resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET_HR).setNonFocusable();
+
         addRenderableWidgets(standardPlaceholderCheckbox, alternativePlaceholderCheckbox,
                 leftGroupScrollInputLabel, leftGroupScrollInput,
                 rightGroupScrollInputLabel, rightGroupScrollInput,
                 leftGroupOperationSelectorLabel, leftGroupOperationSelector,
                 rightGroupOperationSelectorLabel, rightGroupOperationSelector);
         if (alt) addRenderableWidgets(middleGroupOperationSelectorLabel, middleGroupOperationSelector);
+        addRenderableWidgets(resetCaptureGroupsButton);
     }
 
     @Override
@@ -344,6 +353,24 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             if (alt) drawInputBox(graphics, x + 160, y + 77, 40);
             drawInputBox(graphics, x + (!alt ? 182 : 205), y + 77, !alt ? 63 : 40);
         }
+
+        if (resetCaptureGroupsButton.isHovered()) {
+            leftGroupScrollInputLabel.colored(leftGroupScrollInput.isActive() ? (AllKeys.shiftDown() ? 0xFFD4CC : 0xCCD4FF) : 0xA3A3A3);
+            rightGroupScrollInputLabel.colored(rightGroupScrollInput.isActive() ? (AllKeys.shiftDown() ? 0xFFD4CC : 0xCCD4FF) : 0xA3A3A3);
+        } else {
+            leftGroupScrollInputLabel.colored(leftGroupScrollInput.isActive() ? 0xFFFFFF : 0xA3A3A3);
+            rightGroupScrollInputLabel.colored(rightGroupScrollInput.isActive() ? 0xFFFFFF : 0xA3A3A3);
+        }
+
+        if (resetCaptureGroupsButton.isHovered() && AllKeys.shiftDown()) {
+                leftGroupOperationSelectorLabel.colored(leftGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
+                middleGroupOperationSelectorLabel.colored(middleGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
+                rightGroupOperationSelectorLabel.colored(rightGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
+        } else {
+            leftGroupOperationSelectorLabel.colored(0xFFFFFF);
+            middleGroupOperationSelectorLabel.colored(0xFFFFFF);
+            rightGroupOperationSelectorLabel.colored(0xFFFFFF);
+        }
     }
 
     private void drawInputBox(GuiGraphics graphics, int x, int y, int width) {
@@ -400,8 +427,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             selectedPlaceholderIndex = index;
             selectedPlaceholder = placeholder;
 
-            if (placeholder.properties().leftGroup().operation() == CaptureGroupOperation.NONE) leftGroupScrollInputLabelCache = plValueNone;
-            if (placeholder.properties().rightGroup().operation() == CaptureGroupOperation.NONE) rightGroupScrollInputLabelCache = plValueNone;
+            if (placeholder.properties().leftGroup().operation() == CaptureGroupOperation.NONE) leftGroupScrollInputLabelCache = plValueNone.copy();
+            if (placeholder.properties().rightGroup().operation() == CaptureGroupOperation.NONE) rightGroupScrollInputLabelCache = plValueNone.copy();
         }
 
         for (RLEPlaceholderTabButton button : placeholderTabButtons) button.setSelected(index == button.getIndex());
@@ -448,6 +475,21 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         return widths;
     }
 
+    public void resetCaptureGroups(int i, Placeholder oldPlaceholder, boolean resetOperations) {
+        Placeholder newPlaceholder = oldPlaceholder.copy();
+        CaptureGroupOperation lgo = oldPlaceholder.properties().leftGroup().copy().operation(), rgo = oldPlaceholder.properties().rightGroup().copy().operation();
+        newPlaceholder.properties().setLeftGroup(defaultCG.copy().withOperation(!resetOperations ? lgo : defaultCG.operation()));
+        newPlaceholder.properties().setRightGroup(defaultCG.copy().withOperation(!resetOperations ? rgo : defaultCG.operation()));
+        if (resetOperations) newPlaceholder.properties().setMiddleGroupOperation(defaultCG.operation());
+
+        clearGroupCaches();
+        leftGroupScrollInputLabelCache = plValueNone.copy();
+        rightGroupScrollInputLabelCache = plValueNone.copy();
+
+        newPlaceholder.reconstruct();
+        onPlaceholderUpdate(i, oldPlaceholder, newPlaceholder);
+    }
+
     public void togglePlaceholderType(int i, Placeholder oldPlaceholder) {
         PlaceholderType newType = oldPlaceholder.conditional(oldPlaceholder.isStandard());
         Placeholder newPlaceholder = oldPlaceholder.copy().withType(newType);
@@ -466,30 +508,23 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             LinkedHashMap<CaptureGroupValueType, Number> cache = left ? leftGroupCache : rightGroupCache;
             CaptureGroupOperation oldOperation = group.operation();
 
-            if (newOperation == CaptureGroupOperation.NONE && oldOperation != CaptureGroupOperation.NONE) {
-                cache.remove(group.valueType());
-                cache.put(group.valueType(), group.value());
-            }
-            else if (oldOperation == CaptureGroupOperation.NONE && newOperation != CaptureGroupOperation.NONE) {
-                CaptureGroupValueType cvt = !cache.isEmpty() ? cache.sequencedKeySet().getLast() : CaptureGroupValueType.CHARS;
-                Number cv = !cache.isEmpty() ? cache.sequencedValues().getLast() : RLECaptureGroupScrollInput.NEW_INTEGER;
-                group.withValueType(cvt).withValue(cv);
-            }
+            if (newOperation == CaptureGroupOperation.NONE && oldOperation != CaptureGroupOperation.NONE) cacheCaptureGroupValue(group, cache);
+            else if (oldOperation == CaptureGroupOperation.NONE && newOperation != CaptureGroupOperation.NONE) pullCachedCaptureGroupValue(group, cache);
 
             group.withOperation(newOperation);
         }
 
         if (oldPlaceholder.type() == TRIM_ALT && newOperation == CaptureGroupOperation.NONE) {
-            leftGroupCache.remove(properties.leftGroup().valueType());
-            rightGroupCache.remove(properties.rightGroup().valueType());
-            leftGroupCache.put(properties.leftGroup().valueType(), properties.leftGroup().value());
-            rightGroupCache.put(properties.rightGroup().valueType(), properties.rightGroup().value());
-            // TODO: finish and move to a separate method
+            cacheCaptureGroupValue(properties.leftGroup(), leftGroupCache);
+            cacheCaptureGroupValue(properties.rightGroup(), rightGroupCache);
 
             properties.leftGroup().setOperation(CaptureGroupOperation.NONE);
             properties.setMiddleGroupOperation(CaptureGroupOperation.NONE);
             properties.rightGroup().setOperation(CaptureGroupOperation.NONE);
         } else if (oldPlaceholder.type() == BRACKETS && newOperation != CaptureGroupOperation.NONE) {
+            pullCachedCaptureGroupValue(properties.leftGroup(), leftGroupCache);
+            pullCachedCaptureGroupValue(properties.rightGroup(), rightGroupCache);
+
             properties.leftGroup().setOperation(CaptureGroupOperation.PRESERVE);
             properties.setMiddleGroupOperation(CaptureGroupOperation.PRESERVE);
             properties.rightGroup().setOperation(CaptureGroupOperation.PRESERVE);
@@ -497,6 +532,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         newPlaceholder.reconstruct();
         onPlaceholderUpdate(i, oldPlaceholder, newPlaceholder);
+    }
+
+    private void cacheCaptureGroupValue(CaptureGroup group, LinkedHashMap<CaptureGroupValueType, Number> cache) {
+        cache.remove(group.valueType());
+        cache.put(group.valueType(), group.value());
+    }
+
+    private void pullCachedCaptureGroupValue(CaptureGroup group, LinkedHashMap<CaptureGroupValueType, Number> cache) {
+        CaptureGroupValueType cvt = !cache.isEmpty() ? cache.sequencedKeySet().getLast() : CaptureGroupValueType.CHARS;
+        Number cv = !cache.isEmpty() ? cache.sequencedValues().getLast() : RLECaptureGroupScrollInput.NEW_INTEGER;
+        group.withValueType(cvt).withValue(cv);
     }
 
     public void onPlaceholderUpdate(int i, Placeholder oldPlaceholder, Placeholder newPlaceholder) {

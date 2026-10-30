@@ -1,9 +1,7 @@
 package com.vladiscrafter.createidlx.util.attachedLabel;
 
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
-import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.math.Fraction;
@@ -227,7 +225,7 @@ public class AttachedLabelProcessingUtils {
         int length = 0;
         PlaceholderType type = INVALID;
         PlaceholderState state = UNIDENTIFIED;
-        PlaceholderProperties properties = invalidPr.copy();
+        PlaceholderProperties properties = defaultPr.copy();
         boolean isEscaped = false;
 
         if (text.length() > i + 1 && text.charAt(i) == '\\' && isEscapingOfPlaceholdersEnabled) {
@@ -286,7 +284,7 @@ public class AttachedLabelProcessingUtils {
         boolean readLeftHalf = false, readRightHalf = false;
         PlaceholderType type = TRIM;
 
-        CaptureGroup leftGroup = invalidCG.copy(), rightGroup = invalidCG.copy();
+        CaptureGroup leftGroup = defaultCG.copy(), rightGroup = defaultCG.copy();
         CaptureGroupOperation leftGroupOperation = NONE, middleGroupOperation = NONE, rightGroupOperation = NONE;
 
         if (text.charAt(i) != '$' && text.charAt(i) != '{' && text.charAt(i) != '}') return invalid.copy();
@@ -353,7 +351,7 @@ public class AttachedLabelProcessingUtils {
         boolean readLeftGroup = false, readRightGroup = false;
         PlaceholderType type = TRIM_ALT;
 
-        CaptureGroup leftGroup = invalidCG, rightGroup = invalidCG;
+        CaptureGroup leftGroup = defaultCG, rightGroup = defaultCG;
         CaptureGroupOperation[] operations = new CaptureGroupOperation[3];
 
         String leftGroupRaw = "";

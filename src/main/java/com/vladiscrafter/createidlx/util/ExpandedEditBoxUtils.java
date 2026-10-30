@@ -70,12 +70,12 @@ public class ExpandedEditBoxUtils {
                         ? cfg.disabledPlaceholderColor.get() | alpha : invisible;
                 case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
                         ? cfg.escapedDisabledPlaceholderColor.get() | alpha : invisible;
-                case INCOMPLETE -> cfg.colorIncompletePlaceholders.get()
+                /*case INCOMPLETE -> cfg.colorIncompletePlaceholders.get()
                         ? cfg.incompletePlaceholderColor.get() | alpha : invisible;
                 case UNOPTIMIZED -> cfg.colorUnoptimizedPlaceholders.get()
                         ? cfg.unoptimizedPlaceholderColor.get() | alpha : invisible;
                 case SYNTACTICALLY_ERRORSOME -> cfg.colorSyntacticallyErrorsomePlaceholders.get()
-                        ? cfg.syntacticallyErrorsomePlaceholderColor.get() | alpha : invisible;
+                        ? cfg.syntacticallyErrorsomePlaceholderColor.get() | alpha : invisible;*/
                 case null, default -> cfg.colorInvalidPlaceholders.get()
                         ? cfg.invalidPlaceholderColor.get() | alpha : invisible;
             } : invisible;

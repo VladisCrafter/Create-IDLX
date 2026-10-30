@@ -2,19 +2,19 @@ package com.vladiscrafter.createidlx.util.attachedLabel;
 
 public class AttachedLabelPart {
     public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, INVALID }
-    public enum PlaceholderState { ACTIVE, ESCAPED, DISABLED, ESCAPED_DISABLED, INCOMPLETE, UNOPTIMIZED, SYNTACTICALLY_ERRORSOME, UNIDENTIFIED}
+    public enum PlaceholderState { ACTIVE, ESCAPED, DISABLED, ESCAPED_DISABLED, /*INCOMPLETE, UNOPTIMIZED, SYNTACTICALLY_ERRORSOME,*/ UNIDENTIFIED}
 
     public enum CaptureGroupValueType { CHARS, FR_DECIMAL, FR_PERCENT, FR_PROPER }
     public enum CaptureGroupOperation { CUT, PRESERVE, NONE }
     public enum CaptureGroupRounding { CEIL, FLOOR, AUTO }
 
-    public static CaptureGroup invalidCG = new CaptureGroup(CaptureGroupValueType.CHARS, 0, CaptureGroupOperation.NONE, CaptureGroupRounding.AUTO);
+    public static CaptureGroup defaultCG = new CaptureGroup(CaptureGroupValueType.CHARS, 0, CaptureGroupOperation.NONE, CaptureGroupRounding.AUTO);
 
-    public static PlaceholderProperties invalidPr = new PlaceholderProperties(invalidCG, CaptureGroupOperation.NONE, invalidCG);
+    public static PlaceholderProperties defaultPr = new PlaceholderProperties(defaultCG, CaptureGroupOperation.NONE, defaultCG);
 
-    public static Placeholder dollar = new Placeholder("$", PlaceholderType.DOLLAR, PlaceholderState.ACTIVE, invalidPr);
-    public static Placeholder brackets = new Placeholder("{}", PlaceholderType.BRACKETS, PlaceholderState.ACTIVE, invalidPr);
-    public static Placeholder invalid = new Placeholder("", PlaceholderType.INVALID, PlaceholderState.UNIDENTIFIED, invalidPr);
+    public static Placeholder dollar = new Placeholder("$", PlaceholderType.DOLLAR, PlaceholderState.ACTIVE, defaultPr);
+    public static Placeholder brackets = new Placeholder("{}", PlaceholderType.BRACKETS, PlaceholderState.ACTIVE, defaultPr);
+    public static Placeholder invalid = new Placeholder("", PlaceholderType.INVALID, PlaceholderState.UNIDENTIFIED, defaultPr);
 
     public static non-sealed class Placeholder implements AttachedLabelBreakdownResult {
         private String raw;
@@ -115,9 +115,9 @@ public class AttachedLabelPart {
             return state == comparable;
         }
 
-        public boolean isWorking() {
+        /*public boolean isWorking() {
             return state == PlaceholderState.ACTIVE || state == PlaceholderState.UNOPTIMIZED;
-        }
+        }*/
 
         public boolean isEscaped() {
             return state == PlaceholderState.ESCAPED || state == PlaceholderState.ESCAPED_DISABLED;

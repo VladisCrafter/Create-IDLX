@@ -43,7 +43,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
     final Component scrollToModifyPropNum = Component.literal("Ctrl to Modify the Numerator");
     final Component typeTitle = Component.literal("Capture Group Type");
     final Component altToCycleType = Component.literal("Alt to Select the Capture Group Type");
-    final Component roundingTitle = Component.literal("Capture Group Type");
+    final Component roundingTitle = Component.literal("Capture Group Rounding");
     final Component middleToCycleRounding = Component.literal("Middle-Click to Cycle Between Rounding Options");
 
     public static final Integer NEW_INTEGER = 0; // TODO: make configurable

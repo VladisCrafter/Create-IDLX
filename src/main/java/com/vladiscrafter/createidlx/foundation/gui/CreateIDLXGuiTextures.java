@@ -41,11 +41,12 @@ public enum CreateIDLXGuiTextures implements ScreenElement, TextureSheetSegment 
     RLE_PL_PROPERTIES_FG_R("rich_label_editor", 394, 18, 2, 16, 512, 512),
     RLE_PL_CAPTURE_GROUPS_RESET("rich_label_editor", 398, 18, 11, 11, 512, 512),
     RLE_PL_CAPTURE_GROUPS_RESET_H("rich_label_editor", 411, 18, 11, 11, 512, 512),
-    RLE_PL_TYPE_RADIO_WIRE("rich_label_editor", 424, 18, 1, 8, 512, 512),
-    RLE_PL_PROPERTIES_CHECKBOX_OFF("rich_label_editor", 427, 18, 9, 9, 512, 512),
-    RLE_PL_PROPERTIES_CHECKBOX_OFF_H("rich_label_editor", 438, 18, 9, 9, 512, 512),
-    RLE_PL_PROPERTIES_CHECKBOX_ON("rich_label_editor", 449, 18, 9, 9, 512, 512),
-    RLE_PL_PROPERTIES_CHECKBOX_ON_H("rich_label_editor", 460, 18, 9, 9, 512, 512),
+    RLE_PL_CAPTURE_GROUPS_RESET_HR("rich_label_editor", 424, 18, 11, 11, 512, 512),
+    RLE_PL_TYPE_RADIO_WIRE("rich_label_editor", 437, 18, 1, 8, 512, 512),
+    RLE_PL_PROPERTIES_CHECKBOX_OFF("rich_label_editor", 440, 18, 9, 9, 512, 512),
+    RLE_PL_PROPERTIES_CHECKBOX_OFF_H("rich_label_editor", 451, 18, 9, 9, 512, 512),
+    RLE_PL_PROPERTIES_CHECKBOX_ON("rich_label_editor", 462, 18, 9, 9, 512, 512),
+    RLE_PL_PROPERTIES_CHECKBOX_ON_H("rich_label_editor", 473, 18, 9, 9, 512, 512),
     RLE_PL_CAPTURE_GROUPS_BRACKETS("rich_label_editor", 362, 86, 130, 39, 512, 512),
     ;
 
