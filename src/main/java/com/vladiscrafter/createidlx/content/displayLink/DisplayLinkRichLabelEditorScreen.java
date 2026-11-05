@@ -6,13 +6,13 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
-import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.mixin.accessor.minecraft.EditBoxAccessor;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils;
+import com.vladiscrafter.createidlx.util.gui.ScrollingTruncatedString;
 import com.vladiscrafter.createidlx.util.gui.UIRenderHelperAdditions;
-import com.vladiscrafter.createidlx.util.widget.ExpandedEditBox;
+import com.vladiscrafter.createidlx.util.widget.PlaceholderColoringEditBox;
 import com.vladiscrafter.createidlx.util.widget.TextureButton;
 import com.vladiscrafter.createidlx.util.widget.rle.RLECaptureGroupScrollInput;
 import com.vladiscrafter.createidlx.util.widget.rle.RLECheckbox;
@@ -22,11 +22,13 @@ import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,9 +36,11 @@ import java.util.stream.Collectors;
 
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
+import static com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures.*;
 
 public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
-    protected String text, oldText, cachedText;
+    protected String text, oldText, cachedText, previewInput;
+    MutableComponent previewOutput;
     protected Screen initiatorScreen;
     protected Consumer<String> onConfirm;
 
@@ -46,7 +50,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     Placeholder selectedPlaceholder;
 
     protected TextureButton configButton;
-    protected ExpandedEditBox label;
+    protected PlaceholderColoringEditBox labelBox;
     protected IconButton confirmButton, resetButton;
 
     protected TextureButton newPlaceholderTabButton;
@@ -60,8 +64,11 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     protected Label leftGroupOperationSelectorLabel, middleGroupOperationSelectorLabel, rightGroupOperationSelectorLabel;
     protected Component leftGroupScrollInputLabelCache, rightGroupScrollInputLabelCache;
     protected TextureButton resetCaptureGroupsButton;
+    protected EditBox previewInputBox;
 
-    final CreateIDLXGuiTextures BACKGROUND = CreateIDLXGuiTextures.RICH_LABEL_EDITOR;
+    private long previewOutputStringLastStateChangeMillis = Util.getMillis();
+
+    final CreateIDLXGuiTextures BACKGROUND = RICH_LABEL_EDITOR;
     final int PLACEHOLDER_TABS_SPACE = 336;
     final Component header = Component.literal("Rich Label Editor");
     final Component plType = Component.literal("Type");
@@ -70,17 +77,25 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     final Component plTypeS = Component.literal("Standard");
     final Component plTypeA = Component.literal("Alternative");
     final Component plValueNone = Component.literal("—");
+    final Component prInputExample = Component.literal("Input Information Example");
+    final Component prOutputExample = Component.literal("A Formatted Output Line Will be Displayed Here");
     final List<Component> plOperations = List.of(Component.literal("Cut"), Component.literal("Preserve"), Component.literal("None"));
     final List<Component> plOperationsAlt = List.of(Component.literal("Drop"), Component.literal("Keep"), Component.literal("None"));
     final DefaultClosingMode defaultClosingMode = CIDLXConfigs.client.rleDefaultClosingMode.get();
+
     final CounterPosition counterPosition = CIDLXConfigs.client.rleCounterPosition.get();
     final TabWidthDistributionMode tabWidthDistributionMode = CIDLXConfigs.client.rleTabWidthDistributionMode.get();
     final boolean enableScreenConfigButton = CIDLXConfigs.client.rleEnableScreenConfigButton.get();
+    final boolean enableOutputLinePreview = CIDLXConfigs.client.rleEnableOutputLinePreview.get();
+    final ProcessedInfoPartHighlightingMode processedInfoPartHighlightingMode = CIDLXConfigs.client.rleProcessedInfoPartHighlightingMode.get();
+    final boolean enableOutputLinePreviewFieldHints = CIDLXConfigs.client.rleEnableOutputLinePreviewFieldHints.get();
 
     public DisplayLinkRichLabelEditorScreen(String text, Screen initiator, Consumer<String> onConfirm) {
         this.text = text;
         this.oldText = text;
         this.cachedText = text;
+        this.previewInput = "";
+        this.previewOutput = CommonComponents.EMPTY.copy();
         this.initiatorScreen = initiator;
         this.onConfirm = onConfirm;
 
@@ -106,15 +121,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         int x = guiLeft, y = guiTop;
 
-        label = new ExpandedEditBox(font, x + 14, y + 120, 330, 18, CommonComponents.EMPTY);
-        label.setBordered(false);
-        label.setTextColor(0xffffff);
-        label.setFocused(false);
-        label.setValue(text);
-        label.setResponder(this::onLabelUpdate);
+        labelBox = new PlaceholderColoringEditBox(font, x + 14, y + 120, 330, 8, CommonComponents.EMPTY);
+        labelBox.setBordered(false);
+        labelBox.setTextColor(0xffffff);
+        labelBox.setFocused(false);
+        labelBox.setMaxLength(Integer.MAX_VALUE);
+        labelBox.setColoring(true);
+        labelBox.setValue(text);
+        labelBox.setResponder(this::onLabelUpdate);
 
         int hX = x + BACKGROUND.getWidth() / 2 - font.width(header) / 2;
-        configButton = new TextureButton(hX - 13, y + 3, 9, 9, CreateIDLXGuiTextures.RLE_CONFIG);
+        configButton = new TextureButton(hX - 13, y + 3, 9, 9, RLE_CONFIG);
         configButton.visible = enableScreenConfigButton;
         configButton.withCallback(() -> ScreenOpener.open(SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse(
                                     "createidlx:client." + CIDLXConfigs.client.displayLinkGUI.getName()
@@ -124,11 +141,12 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         confirmButton = new IconButton(x + BACKGROUND.getWidth() - 25, y + BACKGROUND.getHeight() - 24, AllIcons.I_CONFIRM).withCallback(this::onConfirm);
         resetButton = new IconButton(x + 7, y + BACKGROUND.getHeight() - 24, AllIcons.I_REFRESH).withCallback(this::onReset);
 
-        addRenderableWidgets(label, configButton, confirmButton, resetButton);
+        addRenderableWidgets(labelBox, configButton, confirmButton, resetButton);
 
         clearGroupCaches();
         onLabelUpdate(text, true);
         buildPlaceholderTabs(0);
+        buildPreviewStuff();
     }
 
     private void buildPlaceholderTabs(int index) {
@@ -156,17 +174,18 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             i++;
         }
 
-        newPlaceholderTabButton = new TextureButton(x + (!placeholders.isEmpty() ? 345 : 171), y + 2, 9, 9, CreateIDLXGuiTextures.RLE_TABS_NEW, CreateIDLXGuiTextures.RLE_TABS_NEW_H);
-        newPlaceholderTabButton.withCallback(() -> label.insertText(dollar.getString()));
+        newPlaceholderTabButton = new TextureButton(x + (!placeholders.isEmpty() ? 345 : 171), y + 2, 9, 9, RLE_TABS_NEW, RLE_TABS_NEW_H);
+        newPlaceholderTabButton.withCallback(() -> labelBox.insertText(dollar.getString()));
         newPlaceholderTabButton.setNonFocusable();
 
         addRenderableWidgets(placeholderTabButtons);
         addRenderableWidget(newPlaceholderTabButton);
 
         int ri = Math.min(index, placeholders.size() - 1);
-        if (!placeholders.isEmpty()) selectPlaceholder(ri, placeholderTabButtons.get(ri).getPlaceholder());
+        selectPlaceholder(placeholders.isEmpty() ? -1 : ri, placeholders.isEmpty() ? invalid.copy() : placeholderTabButtons.get(ri).getPlaceholder());
     }
 
+    @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     private void buildPlaceholderConfig(int index) {
         if (standardPlaceholderCheckbox != null) removeWidget(standardPlaceholderCheckbox);
         if (alternativePlaceholderCheckbox != null) removeWidget(alternativePlaceholderCheckbox);
@@ -188,7 +207,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         if (resetCaptureGroupsButton != null) removeWidget(resetCaptureGroupsButton);
 
-        if (placeholders.isEmpty()) return;
+        if (index == -1 || placeholders.isEmpty()) return;
 
         Placeholder placeholder = placeholderTabButtons.get(index).getPlaceholder();
         int psi = placeholders.keySet().toArray(new Integer[placeholders.size()])[index];
@@ -240,7 +259,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         if (alt) {
             middleGroupOperationSelectorLabel = new Label(x + 154, y + 38, CommonComponents.EMPTY).withShadow();
-            middleGroupOperationSelector = new SelectionScrollInput(x + 149, y + 32, !alt ? 63 : 40, 18);
+            middleGroupOperationSelector = new SelectionScrollInput(x + 149, y + 32, 40, 18);
             middleGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 1, s));
             middleGroupOperationSelector.forOptions(plOperationsAlt).writingTo(middleGroupOperationSelectorLabel)
                     .setState(placeholder.properties().middleGroupOperation().ordinal()).onChanged();
@@ -252,9 +271,9 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         rightGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(rightGroupOperationSelectorLabel)
                 .setState(placeholder.properties().rightGroup().operation().ordinal()).onChanged();
 
-        resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET_H);
+        resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, RLE_PL_CAPTURE_GROUPS_RESET, RLE_PL_CAPTURE_GROUPS_RESET_H);
         resetCaptureGroupsButton.withCallback(() -> resetCaptureGroups(psi, placeholder, AllKeys.shiftDown()));
-        resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_RESET_HR).setNonFocusable();
+        resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, RLE_PL_CAPTURE_GROUPS_RESET_HR).setNonFocusable();
 
         addRenderableWidgets(standardPlaceholderCheckbox, alternativePlaceholderCheckbox,
                 leftGroupScrollInputLabel, leftGroupScrollInput,
@@ -263,6 +282,26 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
                 rightGroupOperationSelectorLabel, rightGroupOperationSelector);
         if (alt) addRenderableWidgets(middleGroupOperationSelectorLabel, middleGroupOperationSelector);
         addRenderableWidgets(resetCaptureGroupsButton);
+    }
+
+    private void buildPreviewStuff() {
+        if (!enableOutputLinePreview) return;
+
+        int x = guiLeft, y = guiTop + 142;
+
+        if (previewInputBox != null) removeWidget(previewInputBox);
+
+        previewInputBox = new EditBox(font, x + 8, y + 11, 345, 8, CommonComponents.EMPTY);
+        previewInputBox.setBordered(false);
+        previewInputBox.setMaxLength(128);
+        previewInputBox.setTextColor(0x714A40);
+        previewInputBox.setTextShadow(false);
+        previewInputBox.setFocused(false);
+        previewInputBox.setValue(previewInput);
+        previewInputBox.setResponder(this::onPreviewInputUpdate);
+        previewInputBox.setFormatter((s, i) -> previewInputBox.isFocused() ? FormattedCharSequence.forward(s, Style.EMPTY) : FormattedCharSequence.EMPTY);
+
+        addRenderableWidget(previewInputBox);
     }
 
     @Override
@@ -292,25 +331,27 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     private void renderElements(GuiGraphics graphics, int x, int y) {
-        CreateIDLXGuiTextures.RLE_FIELD.render(graphics, x, y + 106);
+        RLE_FIELD.render(graphics, x, y + 106);
         renderPlaceholderTabStuff(graphics, x, y);
         renderCounter(graphics, x, y);
+        renderPreviewStuff(graphics, x, y + 142);
+        UIRenderHelperAdditions.drawStretched(graphics, x + 29, y + 210, 302, 24, RLE_BOTTOM_TABS_COVER, 512, 512);
     }
 
     private void renderPlaceholderTabStuff(GuiGraphics graphics, int x, int y) {
-        UIRenderHelperAdditions.drawStretched(graphics, x + 3, y + 15, 354, 16, CreateIDLXGuiTextures.RLE_TABS_BG_E, 512, 512);
-        UIRenderHelperAdditions.drawStretched(graphics, x + 4, y + 15, 352, 16, CreateIDLXGuiTextures.RLE_TABS_BG_M, 512, 512);
+        UIRenderHelperAdditions.drawStretched(graphics, x + 3, y + 15, 354, 16, RLE_TABS_BG_E, 512, 512);
+        UIRenderHelperAdditions.drawStretched(graphics, x + 4, y + 15, 352, 16, RLE_TABS_BG_M, 512, 512);
 
         if (placeholders == null || placeholders.isEmpty()) return;
 
-        CreateIDLXGuiTextures.RLE_TABS_SEPARATOR.render(graphics, x + 342, y + 17);
+        RLE_TABS_SEPARATOR.render(graphics, x + 342, y + 17);
 
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_BG_L.render(graphics, x + 5, y + 38);
-        UIRenderHelperAdditions.drawStretched(graphics, x + 11, y + 38, 338, 66, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_BG_M, 512, 512);
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_BG_R.render(graphics, x + 349, y + 38);
+        RLE_PL_PROPERTIES_BG_L.render(graphics, x + 5, y + 38);
+        UIRenderHelperAdditions.drawStretched(graphics, x + 11, y + 38, 338, 66, RLE_PL_PROPERTIES_BG_M, 512, 512);
+        RLE_PL_PROPERTIES_BG_R.render(graphics, x + 349, y + 38);
 
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 107, y + 46);
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 249, y + 46);
+        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 107, y + 46);
+        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 249, y + 46);
 
         int sideNameplateInnerWidth = Math.max(40, Math.clamp(Math.max(font.width(plType) + 2, font.width(plFlags) + 2), 20, 92));
         int middleNameplateInnerWidth = Math.max(90, Math.clamp(font.width(plCaptureGroups) + 2, 20, 134));
@@ -322,27 +363,27 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         int fY = y + 34;
 
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_L.render(graphics, lX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, lX, fY, sideNameplateInnerWidth, 16, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_M, 512, 512);
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_R.render(graphics, lX + sideNameplateInnerWidth, fY);
+        RLE_PL_PROPERTIES_FG_L.render(graphics, lX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, lX, fY, sideNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
+        RLE_PL_PROPERTIES_FG_R.render(graphics, lX + sideNameplateInnerWidth, fY);
 
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_L.render(graphics, mX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, mX, fY, middleNameplateInnerWidth, 16, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_M, 512, 512);
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_R.render(graphics, mX + middleNameplateInnerWidth, fY);
+        RLE_PL_PROPERTIES_FG_L.render(graphics, mX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, mX, fY, middleNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
+        RLE_PL_PROPERTIES_FG_R.render(graphics, mX + middleNameplateInnerWidth, fY);
 
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_L.render(graphics, rX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, rX, fY, sideNameplateInnerWidth, 16, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_M, 512, 512);
-        CreateIDLXGuiTextures.RLE_PL_PROPERTIES_FG_R.render(graphics, rX + sideNameplateInnerWidth, fY);
+        RLE_PL_PROPERTIES_FG_L.render(graphics, rX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, rX, fY, sideNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
+        RLE_PL_PROPERTIES_FG_R.render(graphics, rX + sideNameplateInnerWidth, fY);
 
         graphics.drawCenteredString(font, plType, x + 11 + 48, fY + 4, 0xffffff);
         graphics.drawCenteredString(font, plCaptureGroups, x + 11 + 100 + 69, fY + 4, 0xffffff);
         graphics.drawCenteredString(font, plFlags, x + 11 + 242 + 48, fY + 4, 0xffffff);
 
         graphics.drawString(font, plTypeS, x + 36, y + 64, 0xffffff);
-        CreateIDLXGuiTextures.RLE_PL_TYPE_RADIO_WIRE.render(graphics, x + 27, y + 72);
+        RLE_PL_TYPE_RADIO_WIRE.render(graphics, x + 27, y + 72);
         graphics.drawString(font, plTypeA, x + 36, y + 81, 0xffffff);
 
-        CreateIDLXGuiTextures.RLE_PL_CAPTURE_GROUPS_BRACKETS.render(graphics, x + 115, y + 56);
+        RLE_PL_CAPTURE_GROUPS_BRACKETS.render(graphics, x + 115, y + 56);
 
         boolean alt = selectedPlaceholder.isAlternative();
         if (selectedPlaceholder.type() != INVALID) {
@@ -364,11 +405,11 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         if (resetCaptureGroupsButton.isHovered() && AllKeys.shiftDown()) {
                 leftGroupOperationSelectorLabel.colored(leftGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
-                middleGroupOperationSelectorLabel.colored(middleGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
+                if (alt) middleGroupOperationSelectorLabel.colored(middleGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
                 rightGroupOperationSelectorLabel.colored(rightGroupOperationSelector.getState() != 2 ? 0xFFD4CC : 0xFFFFFF);
         } else {
             leftGroupOperationSelectorLabel.colored(0xFFFFFF);
-            middleGroupOperationSelectorLabel.colored(0xFFFFFF);
+            if (alt) middleGroupOperationSelectorLabel.colored(0xFFFFFF);
             rightGroupOperationSelectorLabel.colored(0xFFFFFF);
         }
     }
@@ -381,12 +422,12 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     private void renderCounter(GuiGraphics graphics, int x, int y) {
         if (counterPosition == CounterPosition.HIDDEN) return;
-        int selectedChars = label.getHighlighted().length();
+        int selectedChars = labelBox.getHighlighted().length();
         String counter = (selectedChars > 0 ? "/" : "") + text.length();
         String sCounter = "" + selectedChars;
         int cW = font.width(counter), sW = font.width(sCounter), tW = cW + (selectedChars > 0 ? sW : 0);
 
-        int visibleTextLength = font.width(font.substrByWidth(FormattedText.of(text), label.getInnerWidth()));
+        int visibleTextLength = font.width(font.substrByWidth(FormattedText.of(text), labelBox.getInnerWidth()));
         boolean labelOverflow = visibleTextLength >= 330 - tW;
         boolean lower = counterPosition == CounterPosition.SEPARATED || (counterPosition == CounterPosition.DYNAMIC && labelOverflow);
         int cX = x + 347 - cW + (!lower ? 2 : 0), cY = y + 120 + (lower ? 19 : 0);
@@ -394,9 +435,9 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         /*graphics.drawString(font, (visibleTextLength + counter.length()) + "; labelOverflow = " + labelOverflow, cX - 100, cY - 50, 0xb8b8b8, true);*/
 
         if (lower) {
-            CreateIDLXGuiTextures.RLE_COUNTER_R.render(graphics, x + 347, y + 136);
-            UIRenderHelperAdditions.drawStretched(graphics, x + 347 - tW, y + 136, tW, 16, CreateIDLXGuiTextures.RLE_COUNTER_M, 512, 512);
-            CreateIDLXGuiTextures.RLE_COUNTER_L.render(graphics, x + 347 - tW - 6, y + 136);
+            RLE_COUNTER_R.render(graphics, x + 347, y + 136);
+            UIRenderHelperAdditions.drawStretched(graphics, x + 347 - tW, y + 136, tW, 16, RLE_COUNTER_M, 512, 512);
+            RLE_COUNTER_L.render(graphics, x + 347 - tW - 6, y + 136);
         }
         if (counterPosition != CounterPosition.INLINE || !labelOverflow) {
             graphics.drawString(font, counter, cX, cY, 0xb8b8b8, true);
@@ -404,9 +445,39 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
     }
 
+    private void renderPreviewStuff(GuiGraphics graphics, int x, int y) {
+        int ix = x + 173;
+        int ibel = previewInputBox.isFocused() ? 166 : previewInputBox.getValue().isEmpty()
+                ? font.width(prInputExample) / 2 - 4 : Math.clamp(font.width(previewInput) / 2 - 4, 0, 166); // Input backplate extension length
+
+        RLE_PREVIEW_INPUT_FIELD_LE.render(graphics, ix - ibel - 3, y);
+        UIRenderHelperAdditions.drawStretched(graphics, ix - ibel, y, ibel, 30, RLE_PREVIEW_INPUT_FIELD_L, 512, 512);
+        RLE_PREVIEW_INPUT_FIELD_M.render(graphics, ix, y);
+        UIRenderHelperAdditions.drawStretched(graphics, ix + 14, y, ibel, 30, RLE_PREVIEW_INPUT_FIELD_R, 512, 512);
+        RLE_PREVIEW_INPUT_FIELD_RE.render(graphics, ix + 14 + ibel, y);
+
+        if (!previewInputBox.isFocused()) {
+            boolean hint = previewInputBox.getValue().isEmpty();
+            Component t = hint ? prInputExample : Component.literal(font.plainSubstrByWidth(previewInput, 348));
+            if (hint) t = t.copy().withStyle(ChatFormatting.ITALIC);
+            int c = hint ? 0xCDBCA8 : 0x714A40;
+            if (!hint || enableOutputLinePreviewFieldHints)
+                graphics.drawString(font, t, ix + 7 - (font.width(t) / 2), y + 11, c, false);
+        }
+
+        RLE_PREVIEW_OUTPUT_FIELD.render(graphics, x, y + 30);
+        if (!previewInput.isEmpty()) {
+            int w = font.width(previewOutput);
+            if (w > 330) ScrollingTruncatedString.draw(graphics, font, previewOutput,
+                    x + 13, y + 45, 342, false, previewOutputStringLastStateChangeMillis);
+            else graphics.drawString(font, previewOutput, x + 14, y + 44, 0xFFFFFF, true);
+        } else if (enableOutputLinePreviewFieldHints) graphics.drawString(font,
+                prOutputExample.copy().withStyle(ChatFormatting.ITALIC), x + 14, y + 44, 0xA3A3A3, false);
+    }
+
     private void autoselectNewestPlaceholder() {
         if (text.equals(cachedText) || placeholders.size() <= cachedPlaceholdersAmount || cachedPlaceholdersAmount == -1) return;
-        
+
         int i, tsi = 0;
         for (int c = 0; c < text.length(); c++) {
             if (c >= cachedText.length() || text.charAt(c) != cachedText.charAt(c)) {
@@ -422,15 +493,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     public void selectPlaceholder(int index, Placeholder placeholder) {
-        if (index != selectedPlaceholderIndex) {
+        if (index > -1 && index != selectedPlaceholderIndex) {
             clearGroupCaches();
             selectedPlaceholderIndex = index;
             selectedPlaceholder = placeholder;
 
-            if (placeholder.properties().leftGroup().operation() == CaptureGroupOperation.NONE) leftGroupScrollInputLabelCache = plValueNone.copy();
-            if (placeholder.properties().rightGroup().operation() == CaptureGroupOperation.NONE) rightGroupScrollInputLabelCache = plValueNone.copy();
-        }
+            if (placeholder.properties().leftGroup().operation() == CaptureGroupOperation.NONE)
+                leftGroupScrollInputLabelCache = plValueNone.copy();
+            if (placeholder.properties().rightGroup().operation() == CaptureGroupOperation.NONE)
+                rightGroupScrollInputLabelCache = plValueNone.copy();
 
+        }
         for (RLEPlaceholderTabButton button : placeholderTabButtons) button.setSelected(index == button.getIndex());
 
         buildPlaceholderConfig(index);
@@ -545,6 +618,16 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         group.withValueType(cvt).withValue(cv);
     }
 
+    private void refreshPreviewOutput() {
+        previewOutput = AttachedLabelProcessingUtils.breakDownAndAssembleLabelAsSingleComponent(text, previewInput, processedInfoPartHighlightingMode);
+        previewOutputStringLastStateChangeMillis = Util.getMillis();
+    }
+
+    private void onPreviewInputUpdate(String input) {
+        previewInput = input;
+        refreshPreviewOutput();
+    }
+
     public void onPlaceholderUpdate(int i, Placeholder oldPlaceholder, Placeholder newPlaceholder) {
         if (oldPlaceholder.equals(newPlaceholder)) return;
 
@@ -562,20 +645,21 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     public void onLabelUpdate(String newText, boolean forceUpdate) {
         if (!forceUpdate && Objects.equals(newText, text)) return;
         text = newText;
-        int cursorPos = label.getCursorPosition();
-        int highlightPos = ((EditBoxAccessor) label).createidlx$getHighlightPos();
-        label.setValue(text);
-        label.setCursorPosition(cursorPos);
-        label.setHighlightPos(highlightPos);
+        int cursorPos = labelBox.getCursorPosition();
+        int highlightPos = ((EditBoxAccessor) labelBox).createidlx$getHighlightPos();
+        labelBox.setValue(text);
+        labelBox.setCursorPosition(cursorPos);
+        labelBox.setHighlightPos(highlightPos);
         refreshPlaceholders();
         buildPlaceholderTabs(selectedPlaceholderIndex);
         autoselectNewestPlaceholder();
         cachedPlaceholdersAmount = placeholders.size();
         cachedText = text;
+        refreshPreviewOutput();
     }
 
     public void onConfirm() {
-        text = label.getValue();
+        text = labelBox.getValue();
         close(text);
     }
 
@@ -598,7 +682,22 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
     }
 
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        List<? extends EditBox> boxes = List.of(labelBox, previewInputBox); // TODO: somehow fix y offsets some time soon
+
+        for (EditBox box : boxes) if (box.isFocused()) {
+            boolean result = box.mouseClicked(mouseX, mouseY, button);
+            if (box.isHovered() || result) return result;
+            box.setHighlightPos(box.getCursorPosition());
+            box.setFocused(false);
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
     public enum DefaultClosingMode { APPLY, RESET, ASK }
     public enum CounterPosition { INLINE, SEPARATED, DYNAMIC, HIDDEN }
     public enum TabWidthDistributionMode { EVEN, UNEVEN }
+    public enum ProcessedInfoPartHighlightingMode {COLOR_UNDERLINE, COLOR, UNDERLINE, NOTHING }
 }

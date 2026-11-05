@@ -56,12 +56,14 @@ public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilde
     }
 
     @Unique
-    public ModularGuiLineBuilder createidlx$addLengthUnrestrainedTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform,
-                                                                           String dataKey) {
-        EditBox input = new ExpandedEditBox(font, x + this.x + 5, y, width - 9, 8, CommonComponents.EMPTY);
+    public ModularGuiLineBuilder createidlx$addPlaceholderColoringTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform,
+                                                                            String dataKey) {
+        PlaceholderColoringEditBox input = new PlaceholderColoringEditBox(font, x + this.x + 5, y, width - 9, 8, CommonComponents.EMPTY);
         input.setBordered(false);
         input.setTextColor(0xffffff);
+        input.setMaxLength(Integer.MAX_VALUE);
         input.setFocused(false);
+        input.setColoring(true /* TODO: configurable */);
         input.mouseClicked(0, 0, 0);
         TooltipArea tooltipArea = new TooltipArea(this.x + x, y - 4, width, 18);
         inputTransform.accept(input, tooltipArea);

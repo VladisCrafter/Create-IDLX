@@ -16,19 +16,16 @@ import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXIcons;
-import com.vladiscrafter.createidlx.mixin.accessor.catnip.UIRenderHelperAccessor;
 import com.vladiscrafter.createidlx.mixin.accessor.create.ModularGuiLineAccessor;
 import com.vladiscrafter.createidlx.mixin.accessor.create.SingleLineDisplaySourceAccessor;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkScreenMixinSubstitutionHolder;
 import com.vladiscrafter.createidlx.util.bridge.DisplayLinkVisualizationConfigHolder;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.BackgroundlessIconButton;
-import com.vladiscrafter.createidlx.util.widget.ExpandedEditBox;
+import com.vladiscrafter.createidlx.util.widget.PlaceholderColoringEditBox;
 import com.vladiscrafter.createidlx.util.widget.InBoundsSelectionScrollInput;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.gui.TextureSheetSegment;
-import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
@@ -50,7 +47,7 @@ import static com.vladiscrafter.createidlx.util.gui.UIRenderHelperAdditions.*;
 import static net.minecraft.client.gui.screens.Screen.hasShiftDown;
 
 public class DisplayLinkScreenMixinSubstitute {
-    private ExpandedEditBox attachedLabelBox;
+    private PlaceholderColoringEditBox attachedLabelBox;
     private String attachedLabelText = "";
     private boolean attachedLabelTextInitialized;
 
@@ -306,7 +303,7 @@ public class DisplayLinkScreenMixinSubstitute {
 
         for (ModularGuiLine line : screen.createidlx$getConfigWidgets()) {
             for (Pair<AbstractWidget, String> widget : ((ModularGuiLineAccessor) line).createidlx$getWidgets()) {
-                if (widget.getFirst() instanceof ExpandedEditBox editBox) {
+                if (widget.getFirst() instanceof PlaceholderColoringEditBox editBox) {
                     attachedLabelBox = editBox;
                     break;
                 }

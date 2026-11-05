@@ -5,7 +5,7 @@ import java.util.List;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import com.vladiscrafter.createidlx.util.gui.MarqueeEffectTruncatedLabel;
+import com.vladiscrafter.createidlx.util.gui.ScrollingTruncatedString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -60,7 +60,7 @@ public class InBoundsSelectionScrollInput extends SelectionScrollInput {
         String text = createidlx$options.get(state).getString();
         if (text.isEmpty()) return;
 
-        MarqueeEffectTruncatedLabel.render(graphics, Minecraft.getInstance().font, text, getX() + 4,
+        ScrollingTruncatedString.draw(graphics, Minecraft.getInstance().font, text, getX() + 4,
                 getY() + (height - 8) / 2, width, createidlx$isSourceTypeSelector, createidlx$lastStateChangeMillis);
     }
 

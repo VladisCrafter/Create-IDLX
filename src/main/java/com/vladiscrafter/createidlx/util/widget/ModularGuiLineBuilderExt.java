@@ -13,5 +13,5 @@ import java.util.function.BiConsumer;
 public interface ModularGuiLineBuilderExt {
     ModularGuiLineBuilder createidlx$addTimerScrollInput(int x, int width, BiConsumer<ScrollInput, Label> inputTransform, String dataKey);
     ModularGuiLineBuilder createidlx$addBinaryScrollInput(int x, int width, BiConsumer<SelectionScrollInput, Label> inputTransform, String dataKey);
-    ModularGuiLineBuilder createidlx$addLengthUnrestrainedTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform, String dataKey);
+    ModularGuiLineBuilder createidlx$addPlaceholderColoringTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform, String dataKey);
 }

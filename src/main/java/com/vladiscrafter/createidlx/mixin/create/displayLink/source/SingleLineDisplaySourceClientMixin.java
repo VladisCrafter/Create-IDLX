@@ -42,7 +42,7 @@ public abstract class SingleLineDisplaySourceClientMixin {
 
     @Inject(method = "addLabelingTextBox", at = @At("HEAD"), cancellable = true)
     private void createidlx$replaceLabelingTextBox(ModularGuiLineBuilder builder, CallbackInfo ci) {
-        ((ModularGuiLineBuilderExt) builder).createidlx$addLengthUnrestrainedTextInput(0, 137, (e, t) -> {
+        ((ModularGuiLineBuilderExt) builder).createidlx$addPlaceholderColoringTextInput(0, 137, (e, t) -> {
             e.setValue("");
             t.withTooltip(createidlx$labelTooltip);
         }, "Label");

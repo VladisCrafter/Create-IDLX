@@ -2,6 +2,10 @@ package com.vladiscrafter.createidlx.util.attachedLabel;
 
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen;
+import com.vladiscrafter.createidlx.util.widget.PlaceholderColoringEditBox;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.math.Fraction;
@@ -14,6 +18,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen.ProcessedInfoPartHighlightingMode.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderState.*;
@@ -63,25 +68,40 @@ public class AttachedLabelProcessingUtils {
         if (label.isEmpty()) return rawInfo;
 
         StringBuilder result = new StringBuilder();
-        breakDownAndAssembleLabel(label, rawInfo, result::append);
+        breakDownAndAssembleLabel(label, rawInfo, part -> result.append(part.getString()));
 
         return result.toString();
+    }
+
+    public static MutableComponent breakDownAndAssembleLabelAsSingleComponent(String label, String rawInfo, DisplayLinkRichLabelEditorScreen.ProcessedInfoPartHighlightingMode highlightingMode) {
+        if (label.isEmpty()) return Component.literal(rawInfo).withStyle(ChatFormatting.UNDERLINE);
+        else if (getTotalPlaceholdersCountInLabel(label) == 0) label = appendPrimitivePlaceholder(label);
+
+        MutableComponent result = CommonComponents.EMPTY.copy();
+        breakDownAndAssembleLabel(label, rawInfo, part -> {
+            boolean underline = part instanceof ProcessedInfoPart && (highlightingMode == COLOR_UNDERLINE || highlightingMode == UNDERLINE);
+            int color = part instanceof ProcessedInfoPart ? ((ProcessedInfoPart) part).getColor() : 0xFFFFFF;
+
+            result.append(Component.literal(part.getString()).withStyle(underline ? ChatFormatting.UNDERLINE : ChatFormatting.RESET).withColor(color));
+        });
+
+        return result;
     }
 
     public static List<MutableComponent> breakDownAndAssembleLabelAsComponentList(String label, String rawInfo) {
         if (label.isEmpty()) return List.of(Component.literal(rawInfo));
 
         List<MutableComponent> result = new ArrayList<>();
-        breakDownAndAssembleLabel(label, rawInfo, part -> result.add(Component.literal(part)));
+        breakDownAndAssembleLabel(label, rawInfo, part -> result.add(Component.literal(part.getString())));
 
         return result;
     }
 
-    private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<String> addAction) {
+    private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<AttachedLabelBreakdownResult> addAction) {
         ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsViaPlaceholders(label, rawInfo);
 
         for (AttachedLabelBreakdownResult section : sections) {
-            addAction.accept(section.getString());
+            addAction.accept(section);
         }
     }
 
@@ -473,7 +493,7 @@ public class AttachedLabelProcessingUtils {
             }
 
             if (placeholder.isPrimitive()) {
-                trimmedInfoParts.add(new ProcessedInfoPart(rawInfo));
+                trimmedInfoParts.add(new ProcessedInfoPart(rawInfo, PlaceholderColoringEditBox.getHighlightColor(placeholder)));
                 continue;
             }
 
@@ -498,7 +518,7 @@ public class AttachedLabelProcessingUtils {
                     .concat(middleGroupOperation == PRESERVE ? middleSub : "")
                     .concat(rightGroupOperation == PRESERVE ? rightSub : "");
 
-            trimmedInfoParts.add(new ProcessedInfoPart(infoPart));
+            trimmedInfoParts.add(new ProcessedInfoPart(infoPart, PlaceholderColoringEditBox.getHighlightColor(placeholder)));
         }
 
         return trimmedInfoParts;
@@ -564,7 +584,7 @@ public class AttachedLabelProcessingUtils {
                     ? String.format("%s%s$", leftGroup.operation() == CUT ? "{" : "}",
                     constructRawCaptureGroup(leftGroup, false, true))
                     : String.format("$%s%s", constructRawCaptureGroup(rightGroup, false, false),
-                    leftGroup.operation() == CUT ? "{" : "}");
+                    rightGroup.operation() == CUT ? "}" : "{");
             case TRIM_ALT -> String.format("${%s%s%s%s%s}",
                     constructRawCaptureGroup(leftGroup, true, true),
                     leftGroup.operation() == CUT ? "-" : "+",

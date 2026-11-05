@@ -48,7 +48,13 @@ public enum CreateIDLXGuiTextures implements ScreenElement, TextureSheetSegment 
     RLE_PL_PROPERTIES_CHECKBOX_ON("rich_label_editor", 462, 18, 9, 9, 512, 512),
     RLE_PL_PROPERTIES_CHECKBOX_ON_H("rich_label_editor", 473, 18, 9, 9, 512, 512),
     RLE_PL_CAPTURE_GROUPS_BRACKETS("rich_label_editor", 362, 86, 130, 39, 512, 512),
-    ;
+    RLE_PREVIEW_INPUT_FIELD_LE("rich_label_editor", 362, 127, 3, 30, 512, 512),
+    RLE_PREVIEW_INPUT_FIELD_L("rich_label_editor", 367, 127, 1, 30, 512, 512),
+    RLE_PREVIEW_INPUT_FIELD_M("rich_label_editor", 370, 127, 14, 30, 512, 512),
+    RLE_PREVIEW_INPUT_FIELD_R("rich_label_editor", 386, 127, 1, 30, 512, 512),
+    RLE_PREVIEW_INPUT_FIELD_RE("rich_label_editor", 389, 127, 3, 30, 512, 512),
+    RLE_PREVIEW_OUTPUT_FIELD("rich_label_editor", 0, 298, 360, 36, 512, 512),
+    RLE_BOTTOM_TABS_COVER("rich_label_editor", 394, 127, 1, 24, 512, 512);
 
     public final ResourceLocation location;
     private final int width;

@@ -300,9 +300,13 @@ public class AttachedLabelPart {
         }
     }
 
-    public record ProcessedInfoPart(String raw) implements AttachedLabelBreakdownResult {
+    public record ProcessedInfoPart(String raw, int color) implements AttachedLabelBreakdownResult {
         public String getString() {
             return raw;
+        }
+
+        public int getColor() {
+            return color;
         }
 
         public String asDebugString() {

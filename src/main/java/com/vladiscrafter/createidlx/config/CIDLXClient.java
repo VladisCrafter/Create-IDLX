@@ -55,6 +55,11 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigEnum<CounterPosition> rleCounterPosition = e(CounterPosition.DYNAMIC, "counterPosition", Comments.rleCounterPosition);
     public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
     public final ConfigBool rleEnableScreenConfigButton = b(true, "enableScreenConfigButton", Comments.rleEnableScreenConfigButton);
+    public final ConfigBool rleEnableOutputLinePreview = b(true, "enableOutputLinePreview", Comments.rleEnableOutputLinePreview);
+
+    public final ConfigGroup rleOutputLinePreviewCustomization = group(3, "outputLinePreviewCustomization", "Output Line Preview Customization");
+    public final ConfigEnum<ProcessedInfoPartHighlightingMode> rleProcessedInfoPartHighlightingMode = e(ProcessedInfoPartHighlightingMode.COLOR, "processedInfoPartHighlightingMode", Comments.rleProcessedInfoPartHighlightingMode);
+    public final ConfigBool rleEnableOutputLinePreviewFieldHints = b(true, "enableOutputLinePreviewFieldHints", Comments.rleEnableOutputLinePreviewFieldHints);
 
     public final ConfigGroup richLabelEditorButtonOutlineSettings = group(2, "richLabelEditorButtonOutlineSettings", "Attached Label Box Outline Settings");
     public final ConfigFloat richLabelEditorButtonOutlineFadeInTime = f(0.25F, 0F, 10F, "richLabelEditorButtonOutlineFadeInTime", Comments.seconds, Comments.richLabelEditorButtonOutlineFadeInTime, Comments.defaultZero);
@@ -144,10 +149,14 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String rleCounterPosition = "How should the Character Counter appear: in the same field as the Label or in its own window.";
         static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
         static String rleEnableScreenConfigButton = "Enable the 'Configure' button, redirecting to the respective client config section, in Rich Label Editor interface.";
+        static String rleEnableOutputLinePreview = "Enable the Output Line Preview section of the Editor.";
 
         static String richLabelEditorButtonOutlineFadeInTime = "The fixed time for the Rich Label Editor button outline to fully fade in.";
         static String richLabelEditorButtonOutlineFadeOutTime = "The fixed time for the Rich Label Editor button outline to fade out back to idle state opacity.";
         static String richLabelEditorButtonOutlineIdleStateAlpha = "The default opacity of the Rich Label Editor button outline when it's not hovered on.";
+
+        static String rleProcessedInfoPartHighlightingMode = "Which way should the processed (undergone the placeholder trimming modifications) information part should be highlighted in the Formatted Output String field.";
+        static String rleEnableOutputLinePreviewFieldHints = "Enable the hints inside the Input Information Example and the Formatted Output String fields.";
 
         static String deselectEmptyAttachedLabel = "Prevent the 'Copy the Attached Label' from being automatically selected if the Attached Label is empty.";
 

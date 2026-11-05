@@ -1,16 +1,37 @@
-package com.vladiscrafter.createidlx.util;
+package com.vladiscrafter.createidlx.util.widget;
 
 import com.vladiscrafter.createidlx.config.CIDLXClient;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.mixin.accessor.minecraft.EditBoxAccessor;
+import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 
-import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
-import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.*;
+import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils.getPlaceholder;
 
-public class ExpandedEditBoxUtils {
-    public static void highlightSpecialCharacters(GuiGraphics graphics, Font font, int displayPos, String full,
-                                           int widgetX, int widgetY, int innerWidth, int widgetHeight, boolean isBordered) {
+public class PlaceholderColoringEditBox extends EditBox {
+    boolean coloring;
+
+    public PlaceholderColoringEditBox(Font font, int x, int y, int width, int height, Component message) {
+        super(font, x, y, width, height, null, message);
+        this.coloring = true;
+    }
+
+    public void setColoring(boolean coloring) {
+        this.coloring = coloring;
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        highlightPlaceholders(guiGraphics, ((EditBoxAccessor) this).createidlx$getFont(), ((EditBoxAccessor) this).createidlx$getDisplayPos(),
+                getValue(), this.getX(), this.getY(), this.getWidth(), getInnerWidth(), isBordered());
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    public static void highlightPlaceholders(GuiGraphics graphics, Font font, int displayPos, String full,
+                                             int widgetX, int widgetY, int innerWidth, int widgetHeight, boolean isBordered) {
         boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
 
         if (full.isEmpty() || displayPos >= full.length()) return;
@@ -28,21 +49,21 @@ public class ExpandedEditBoxUtils {
         int eY = sY + 10 + heightExpansion * 2;
 
         for (int i = 0; i < full.length(); i++) {
-            Placeholder placeholder = getPlaceholder(full, i);
+            AttachedLabelPart.Placeholder placeholder = getPlaceholder(full, i);
 
             int placeholderLength = placeholder.length();
             String pl = full.substring(i, i + placeholderLength);
             int plW = font.width(pl);
 
-            PlaceholderType placeholderType = placeholder.type();
-            PlaceholderState placeholderState = placeholder.state();
+            AttachedLabelPart.PlaceholderType placeholderType = placeholder.type();
+            AttachedLabelPart.PlaceholderState placeholderState = placeholder.state();
 
             if (placeholderLength > 0) {
                 int minX = Math.max(widgetX /*- 4*/, fX), maxX = Math.min(fX + plW, widgetX + font.width(visible) /*widgetWidth + 3*/);
 
-                if (placeholderState == PlaceholderState.ESCAPED_DISABLED && !isEscapingOfDisabledPlaceholdersHidden) {
+                if (placeholderState == AttachedLabelPart.PlaceholderState.ESCAPED_DISABLED && !isEscapingOfDisabledPlaceholdersHidden) {
                     if (maxX - minX >= plW) minX += font.width(String.valueOf('\\'));
-                    placeholderState = PlaceholderState.DISABLED;
+                    placeholderState = AttachedLabelPart.PlaceholderState.DISABLED;
                 }
 
                 if (minX < maxX) graphics.fill(minX, sY, maxX, eY, 0, getHighlightColor(placeholderType, placeholderState));
@@ -52,17 +73,17 @@ public class ExpandedEditBoxUtils {
         }
     }
 
-    public static int getHighlightColor(Placeholder placeholder) {
+    public static int getHighlightColor(AttachedLabelPart.Placeholder placeholder) {
         return getHighlightColor(placeholder.type(), placeholder.state());
     }
 
-    private static int getHighlightColor(PlaceholderType placeholderType,  PlaceholderState placeholderState) {
+    private static int getHighlightColor(AttachedLabelPart.PlaceholderType placeholderType, AttachedLabelPart.PlaceholderState placeholderState) {
         CIDLXClient cfg = CIDLXConfigs.client;
 
         int alpha = cfg.placeholdersColorsAlpha.get() << 24;
         int invisible = 0x00000000;
 
-        if (placeholderState != PlaceholderState.ACTIVE) {
+        if (placeholderState != AttachedLabelPart.PlaceholderState.ACTIVE) {
             return cfg.colorPlaceholders.get() ? switch (placeholderState) {
                 case ESCAPED -> cfg.colorEscapedPlaceholders.get()
                         ? cfg.escapedPlaceholderColor.get() | alpha : invisible;

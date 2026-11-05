@@ -4,13 +4,20 @@ import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
-public final class MarqueeEffectTruncatedLabel {
+public final class ScrollingTruncatedString {
 
-    private MarqueeEffectTruncatedLabel() {}
+    private ScrollingTruncatedString() {}
 
-    public static void render(GuiGraphics graphics, Font font, String text, int textX, int textY, int width, boolean isSourceTypeSelector, long lastStateChangeMillis) {
-        if (text == null || text.isEmpty()) return;
+    public static void draw(GuiGraphics graphics, Font font, String textS, int textX, int textY, int width, boolean isSourceTypeSelector, long lastStateChangeMillis) {
+        draw(graphics, font, Component.literal(textS), textX, textY, width, isSourceTypeSelector, lastStateChangeMillis);
+    }
+
+    public static void draw(GuiGraphics graphics, Font font, Component textC, int textX, int textY, int width, boolean isSourceTypeSelector, long lastStateChangeMillis) {
+        if (textC == null) return;
+        String text = textC.getString();
+        if (text.isEmpty()) return;
 
         final boolean addMarqueeEffectToTruncatedStrings = CIDLXConfigs.client.addMarqueeEffectToTruncatedStrings.get();
         final long fixedCharTravelTime = (long) CIDLXConfigs.client.fixedCharTravelTime.get();
@@ -41,7 +48,7 @@ public final class MarqueeEffectTruncatedLabel {
         long pauseMillis = Math.max(0L, stringPauseTime);
         long travelMillis = Math.max(0L,
                 isStringTravelTimeFixed ? fixedStringTravelTime :
-                        isMinimalStringTravelTimeSpecified && isMaximalStringTravelTimeSpecified ? Math.min(Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow), maximalStringTravelTime) :
+                        isMinimalStringTravelTimeSpecified && isMaximalStringTravelTimeSpecified ? Math.clamp(fixedCharTravelTime * overflow, minimalStringTravelTime, maximalStringTravelTime) :
                                 isMinimalStringTravelTimeSpecified ? Math.max(minimalStringTravelTime, fixedCharTravelTime * overflow) :
                                         isMaximalStringTravelTimeSpecified ? Math.min(fixedCharTravelTime * overflow, maximalStringTravelTime) :
                                                 fixedCharTravelTime * overflow);
@@ -68,7 +75,7 @@ public final class MarqueeEffectTruncatedLabel {
 
         graphics.enableScissor(minX, stringY, maxX, stringY + font.lineHeight);
         try {
-            graphics.drawString(font, text, stringX, stringY, 0xFFFFFF, true);
+            graphics.drawString(font, textC, stringX, stringY, 0xFFFFFF, true);
         } finally {
             graphics.disableScissor();
         }
