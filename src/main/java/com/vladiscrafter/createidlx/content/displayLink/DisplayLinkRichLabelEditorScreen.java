@@ -25,6 +25,7 @@ import net.createmod.catnip.gui.UIRenderHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
@@ -59,6 +60,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     protected RLECheckbox standardPlaceholderCheckbox, alternativePlaceholderCheckbox;
     protected RLECaptureGroupScrollInput leftGroupScrollInput, rightGroupScrollInput;
     protected Label leftGroupScrollInputLabel, rightGroupScrollInputLabel;
+    protected SelectionScrollInput leftGroupRoundingScrollInput, rightGroupRoundingScrollInput;
+    protected Label leftGroupRoundingScrollInputLabel, rightGroupRoundingScrollInputLabel;
     protected LinkedHashMap<CaptureGroupValueType, Number> leftGroupCache, rightGroupCache;
     protected SelectionScrollInput leftGroupOperationSelector, middleGroupOperationSelector, rightGroupOperationSelector;
     protected Label leftGroupOperationSelectorLabel, middleGroupOperationSelectorLabel, rightGroupOperationSelectorLabel;
@@ -81,13 +84,16 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     final Component prOutputExample = Component.literal("A Formatted Output Line Will be Displayed Here");
     final List<Component> plOperations = List.of(Component.literal("Cut"), Component.literal("Preserve"), Component.literal("None"));
     final List<Component> plOperationsAlt = List.of(Component.literal("Drop"), Component.literal("Keep"), Component.literal("None"));
-    final DefaultClosingMode defaultClosingMode = CIDLXConfigs.client.rleDefaultClosingMode.get();
+    final List<Component> plRoundingsD = List.of(Component.literal("Ceil"), Component.literal("Floor"), Component.literal("Auto"));
+    final List<Component> plRoundingsS = List.of(Component.literal("↑"), Component.literal("↓"), Component.literal("⇵"));
 
+    final DefaultClosingMode defaultClosingMode = CIDLXConfigs.client.rleDefaultClosingMode.get();
     final CounterPosition counterPosition = CIDLXConfigs.client.rleCounterPosition.get();
-    final TabWidthDistributionMode tabWidthDistributionMode = CIDLXConfigs.client.rleTabWidthDistributionMode.get();
     final boolean enableScreenConfigButton = CIDLXConfigs.client.rleEnableScreenConfigButton.get();
     final boolean enableOutputLinePreview = CIDLXConfigs.client.rleEnableOutputLinePreview.get();
-    final ProcessedInfoPartHighlightingMode processedInfoPartHighlightingMode = CIDLXConfigs.client.rleProcessedInfoPartHighlightingMode.get();
+    final TabWidthDistributionMode tabWidthDistributionMode = CIDLXConfigs.client.rleTabWidthDistributionMode.get();
+    final boolean highlightProcessedInfoPartsInPreview = CIDLXConfigs.client.rleHighlightProcessedInfoPartsInPreview.get();
+    final boolean underlineSelectedPlaceholderInPreview = CIDLXConfigs.client.rleUnderlineSelectedPlaceholderInPreview.get();
     final boolean enableOutputLinePreviewFieldHints = CIDLXConfigs.client.rleEnableOutputLinePreviewFieldHints.get();
 
     public DisplayLinkRichLabelEditorScreen(String text, Screen initiator, Consumer<String> onConfirm) {
@@ -187,25 +193,18 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     private void buildPlaceholderConfig(int index) {
-        if (standardPlaceholderCheckbox != null) removeWidget(standardPlaceholderCheckbox);
-        if (alternativePlaceholderCheckbox != null) removeWidget(alternativePlaceholderCheckbox);
+        List<? extends AbstractWidget> placeholderConfigWidgets = Arrays.asList(
+                standardPlaceholderCheckbox, alternativePlaceholderCheckbox,
+                leftGroupScrollInput, leftGroupScrollInputLabel,
+                rightGroupScrollInput, rightGroupScrollInputLabel,
+                leftGroupRoundingScrollInput, leftGroupRoundingScrollInputLabel,
+                rightGroupRoundingScrollInput, rightGroupRoundingScrollInputLabel,
+                leftGroupOperationSelector, leftGroupOperationSelectorLabel,
+                middleGroupOperationSelector, middleGroupOperationSelectorLabel,
+                rightGroupOperationSelector, rightGroupOperationSelectorLabel,
+                resetCaptureGroupsButton);
 
-        if (leftGroupScrollInput != null) removeWidget(leftGroupScrollInput);
-        if (leftGroupScrollInputLabel != null) removeWidget(leftGroupScrollInputLabel);
-
-        if (rightGroupScrollInput != null) removeWidget(rightGroupScrollInput);
-        if (rightGroupScrollInputLabel != null) removeWidget(rightGroupScrollInputLabel);
-
-        if (leftGroupOperationSelector != null) removeWidget(leftGroupOperationSelector);
-        if (leftGroupOperationSelectorLabel != null) removeWidget(leftGroupOperationSelectorLabel);
-
-        if (middleGroupOperationSelector != null) removeWidget(middleGroupOperationSelector);
-        if (middleGroupOperationSelectorLabel != null) removeWidget(middleGroupOperationSelectorLabel);
-
-        if (rightGroupOperationSelector != null) removeWidget(rightGroupOperationSelector);
-        if (rightGroupOperationSelectorLabel != null) removeWidget(rightGroupOperationSelectorLabel);
-
-        if (resetCaptureGroupsButton != null) removeWidget(resetCaptureGroupsButton);
+        placeholderConfigWidgets.stream().filter(Objects::nonNull).forEach(this::removeWidget);
 
         if (index == -1 || placeholders.isEmpty()) return;
 
@@ -229,8 +228,25 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
         boolean alt = placeholder.isAlternative();
 
-        leftGroupScrollInputLabel = new Label(x + 109, y + 17, CommonComponents.EMPTY).withShadow();
-        leftGroupScrollInput = new RLECaptureGroupScrollInput(x + 104, y + 11, 56, 18, placeholder.properties().leftGroup(), leftGroupCache);
+        leftGroupRoundingScrollInputLabel = new Label(x + 103, y + 17, CommonComponents.EMPTY).withShadow();
+        leftGroupRoundingScrollInput = new SelectionScrollInput(x + 98, y + 11, 16, 18);
+        leftGroupRoundingScrollInput.forOptions(plRoundingsD).format(plRoundingsS::get).writingTo(leftGroupRoundingScrollInputLabel);
+        leftGroupRoundingScrollInput.setState(placeholder.properties().leftGroup().rounding().ordinal());
+        leftGroupRoundingScrollInput.calling(i -> onPlaceholderUpdate(psi, placeholder.copy(),
+                placeholder.copy().withProperties(placeholder.properties().copy().withLeftGroup(placeholder.properties().leftGroup().copy()
+                        .withRounding(CaptureGroupRounding.values()[i]))))).onChanged();
+
+        rightGroupRoundingScrollInputLabel = new Label(x + 229, y + 17, CommonComponents.EMPTY).withShadow();
+        rightGroupRoundingScrollInput = new SelectionScrollInput(x + 224, y + 11, 16, 18);
+        rightGroupRoundingScrollInput.forOptions(plRoundingsD).format(plRoundingsS::get).writingTo(rightGroupRoundingScrollInputLabel);
+        rightGroupRoundingScrollInput.setState(placeholder.properties().rightGroup().rounding().ordinal());
+        rightGroupRoundingScrollInput.calling(i -> onPlaceholderUpdate(psi, placeholder.copy(),
+                placeholder.copy().withProperties(placeholder.properties().copy().withRightGroup(placeholder.properties().rightGroup().copy()
+                        .withRounding(CaptureGroupRounding.values()[i]))))).onChanged();
+
+        leftGroupScrollInputLabel = new Label(x + 118, y + 17, CommonComponents.EMPTY).withShadow();
+        leftGroupScrollInput = new RLECaptureGroupScrollInput(x + 114, y + 11, 46, 18,
+                placeholder.properties().leftGroup(), leftGroupCache);
         leftGroupScrollInput.withScrollCallback((pcg, cg) -> onPlaceholderUpdate(psi,
                     placeholder.copy().withProperties(placeholder.properties().copy().withLeftGroup(pcg.copy())),
                     placeholder.withProperties(placeholder.properties().copy().withLeftGroup(cg.copy())))).onChanged();
@@ -241,7 +257,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         } else leftGroupScrollInputLabel.text = leftGroupScrollInputLabelCache;
 
         rightGroupScrollInputLabel = new Label(x + 183, y + 17, CommonComponents.EMPTY).withShadow();
-        rightGroupScrollInput = new RLECaptureGroupScrollInput(x + 178, y + 11, 56, 18, placeholder.properties().rightGroup(), rightGroupCache);
+        rightGroupScrollInput = new RLECaptureGroupScrollInput(x + 178, y + 11, 46, 18,
+                placeholder.properties().rightGroup(), rightGroupCache);
         rightGroupScrollInput.withScrollCallback((pcg, cg) -> onPlaceholderUpdate(psi,
                 placeholder.copy().withProperties(placeholder.properties().copy().withRightGroup(pcg.copy())),
                 placeholder.withProperties(placeholder.properties().copy().withRightGroup(cg.copy())))).onChanged();
@@ -251,22 +268,24 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             rightGroupScrollInputLabelCache = rightGroupScrollInputLabel.text;
         } else rightGroupScrollInputLabel.text = rightGroupScrollInputLabelCache;
 
-        leftGroupOperationSelectorLabel = new Label(x + 109, y + 38, CommonComponents.EMPTY).withShadow();
-        leftGroupOperationSelector = new SelectionScrollInput(x + 104, y + 32, !alt ? 63 : 40, 18);
+        readjustPlaceholderConfigLabelPositions(x, y);
+
+        leftGroupOperationSelectorLabel = new Label(x + 103, y + 38, CommonComponents.EMPTY).withShadow();
+        leftGroupOperationSelector = new SelectionScrollInput(x + 98, y + 32, !alt ? 69 : 44, 18);
         leftGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 0, s));
         leftGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(leftGroupOperationSelectorLabel)
                 .setState(placeholder.properties().leftGroup().operation().ordinal()).onChanged();
 
         if (alt) {
-            middleGroupOperationSelectorLabel = new Label(x + 154, y + 38, CommonComponents.EMPTY).withShadow();
-            middleGroupOperationSelector = new SelectionScrollInput(x + 149, y + 32, 40, 18);
+            middleGroupOperationSelectorLabel = new Label(x + 152, y + 38, CommonComponents.EMPTY).withShadow();
+            middleGroupOperationSelector = new SelectionScrollInput(x + 147, y + 32, 44, 18);
             middleGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 1, s));
             middleGroupOperationSelector.forOptions(plOperationsAlt).writingTo(middleGroupOperationSelectorLabel)
                     .setState(placeholder.properties().middleGroupOperation().ordinal()).onChanged();
         }
 
-        rightGroupOperationSelectorLabel = new Label(x + (!alt ? 176 : 199), y + 38, CommonComponents.EMPTY).withShadow();
-        rightGroupOperationSelector = new SelectionScrollInput(x + (!alt ? 171 : 194), y + 32, !alt ? 63 : 40, 18);
+        rightGroupOperationSelectorLabel = new Label(x + (!alt ? 176 : 201), y + 38, CommonComponents.EMPTY).withShadow();
+        rightGroupOperationSelector = new SelectionScrollInput(x + (!alt ? 171 : 196), y + 32, !alt ? 69 : 44, 18);
         rightGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 2, s));
         rightGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(rightGroupOperationSelectorLabel)
                 .setState(placeholder.properties().rightGroup().operation().ordinal()).onChanged();
@@ -276,12 +295,33 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, RLE_PL_CAPTURE_GROUPS_RESET_HR).setNonFocusable();
 
         addRenderableWidgets(standardPlaceholderCheckbox, alternativePlaceholderCheckbox,
+                leftGroupRoundingScrollInputLabel, leftGroupRoundingScrollInput,
+                rightGroupRoundingScrollInputLabel, rightGroupRoundingScrollInput,
                 leftGroupScrollInputLabel, leftGroupScrollInput,
                 rightGroupScrollInputLabel, rightGroupScrollInput,
                 leftGroupOperationSelectorLabel, leftGroupOperationSelector,
-                rightGroupOperationSelectorLabel, rightGroupOperationSelector);
+                rightGroupOperationSelectorLabel, rightGroupOperationSelector,
+                resetCaptureGroupsButton);
         if (alt) addRenderableWidgets(middleGroupOperationSelectorLabel, middleGroupOperationSelector);
-        addRenderableWidgets(resetCaptureGroupsButton);
+    }
+
+    private void readjustPlaceholderConfigLabelPositions(int x, int y) {
+        if (leftGroupScrollInputLabel == null || rightGroupScrollInputLabel == null) return;
+
+        int leftValueOverflow = font.width(leftGroupScrollInputLabel.text) - 40, rightValueOverflow = font.width(rightGroupScrollInputLabel.text) - 40;
+        int maxLVO = 9 - font.width(leftGroupRoundingScrollInputLabel.text), maxRVO = 9 - font.width(rightGroupRoundingScrollInputLabel.text);
+
+        if (leftValueOverflow < -4) leftGroupScrollInputLabel.setX(x + 118 + (font.width(leftGroupRoundingScrollInputLabel.text) - 6));
+
+        if (leftValueOverflow > 0) leftGroupScrollInputLabel.setX(x + 118 - Math.min(leftValueOverflow, maxLVO));
+        if (leftValueOverflow > maxLVO) leftGroupScrollInputLabel.text = Component.literal("..." + font
+                .plainSubstrByWidth(leftGroupScrollInputLabel.text.getString(), 45 - font.width("..."), true));
+
+        if (rightValueOverflow > 0) rightGroupScrollInputLabel.setX(x + 183 - Math.min(rightValueOverflow, maxRVO) - (rightValueOverflow == maxRVO ? 1 : 0));
+        if (rightValueOverflow > maxRVO) rightGroupScrollInputLabel.text = Component.literal("..." + font
+                .plainSubstrByWidth(rightGroupScrollInputLabel.text.getString(), 45 - font.width("..."), true));
+
+        rightGroupRoundingScrollInputLabel.setX(x + 229 - (font.width(rightGroupRoundingScrollInputLabel.text) - 6));
     }
 
     private void buildPreviewStuff() {
@@ -299,7 +339,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         previewInputBox.setFocused(false);
         previewInputBox.setValue(previewInput);
         previewInputBox.setResponder(this::onPreviewInputUpdate);
-        previewInputBox.setFormatter((s, i) -> previewInputBox.isFocused() ? FormattedCharSequence.forward(s, Style.EMPTY) : FormattedCharSequence.EMPTY);
+        previewInputBox.setFormatter((s, i) -> previewInputBox.isFocused()
+                ? FormattedCharSequence.forward(s, Style.EMPTY) : FormattedCharSequence.EMPTY);
 
         addRenderableWidget(previewInputBox);
     }
@@ -350,16 +391,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         UIRenderHelperAdditions.drawStretched(graphics, x + 11, y + 38, 338, 66, RLE_PL_PROPERTIES_BG_M, 512, 512);
         RLE_PL_PROPERTIES_BG_R.render(graphics, x + 349, y + 38);
 
-        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 107, y + 46);
-        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 249, y + 46);
+        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 107 - 6, y + 46);
+        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 249 + 6, y + 46);
 
         int sideNameplateInnerWidth = Math.max(40, Math.clamp(Math.max(font.width(plType) + 2, font.width(plFlags) + 2), 20, 92));
-        int middleNameplateInnerWidth = Math.max(90, Math.clamp(font.width(plCaptureGroups) + 2, 20, 134));
+        int middleNameplateInnerWidth = Math.max(90, Math.clamp(font.width(plCaptureGroups) + 2 + 18, 20, 134));
         if (middleNameplateInnerWidth % 2 == 1 && middleNameplateInnerWidth < 134) middleNameplateInnerWidth++;
 
-        int lX = x + 11 + 48 - ((int) Math.ceil((double) sideNameplateInnerWidth / 2));
+        int lX = x - 3 + 11 + 48 - ((int) Math.ceil((double) sideNameplateInnerWidth / 2));
         int mX = x + 11 + 100 + 69 - ((int) Math.ceil((double) middleNameplateInnerWidth / 2));
-        int rX = x + 11 + 242 + 48 - ((int) Math.ceil((double) sideNameplateInnerWidth / 2)) + ((sideNameplateInnerWidth % 2 == 1 && sideNameplateInnerWidth < 92) ? 1 : 0);
+        int rX = x + 3 + 11 + 242 + 48 - ((int) Math.ceil((double) sideNameplateInnerWidth / 2))
+                + ((sideNameplateInnerWidth % 2 == 1 && sideNameplateInnerWidth < 92) ? 1 : 0);
 
         int fY = y + 34;
 
@@ -375,24 +417,28 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         UIRenderHelperAdditions.drawStretched(graphics, rX, fY, sideNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
         RLE_PL_PROPERTIES_FG_R.render(graphics, rX + sideNameplateInnerWidth, fY);
 
-        graphics.drawCenteredString(font, plType, x + 11 + 48, fY + 4, 0xffffff);
+        graphics.drawCenteredString(font, plType, x - 3 + 11 + 48, fY + 4, 0xffffff);
         graphics.drawCenteredString(font, plCaptureGroups, x + 11 + 100 + 69, fY + 4, 0xffffff);
-        graphics.drawCenteredString(font, plFlags, x + 11 + 242 + 48, fY + 4, 0xffffff);
+        graphics.drawCenteredString(font, plFlags, x + 3 + 11 + 242 + 48, fY + 4, 0xffffff);
 
         graphics.drawString(font, plTypeS, x + 36, y + 64, 0xffffff);
         RLE_PL_TYPE_RADIO_WIRE.render(graphics, x + 27, y + 72);
         graphics.drawString(font, plTypeA, x + 36, y + 81, 0xffffff);
 
-        RLE_PL_CAPTURE_GROUPS_BRACKETS.render(graphics, x + 115, y + 56);
+        /*RLE_PL_CAPTURE_GROUPS_BRACKETS.render(graphics, x + 115, y + 56);*/
 
         boolean alt = selectedPlaceholder.isAlternative();
+        int leftRoundingBoxExt = (leftGroupRoundingScrollInput != null && leftGroupRoundingScrollInput.getState() == 2) ? 1 : 0;
+        int rightRoundingBoxExt = (rightGroupRoundingScrollInput != null && rightGroupRoundingScrollInput.getState() == 2) ? 1 : 0;
         if (selectedPlaceholder.type() != INVALID) {
-            drawInputBox(graphics, x + 115, y + 56, 56);
-            drawInputBox(graphics, x + 189, y + 56, 56);
+            drawInputBox(graphics, x + 124, y + 56, 47);
+            drawInputBox(graphics, x + 109, y + 56, 16 + leftRoundingBoxExt);
+            drawInputBox(graphics, x + 234, y + 56, 17);
+            drawInputBox(graphics, x + 189, y + 56, 47 - rightRoundingBoxExt);
 
-            drawInputBox(graphics, x + 115, y + 77, !alt ? 63 : 40);
-            if (alt) drawInputBox(graphics, x + 160, y + 77, 40);
-            drawInputBox(graphics, x + (!alt ? 182 : 205), y + 77, !alt ? 63 : 40);
+            drawInputBox(graphics, x + 109, y + 77, !alt ? 69 : 44);
+            if (alt) drawInputBox(graphics, x + 158, y + 77, 44);
+            drawInputBox(graphics, x + (!alt ? 182 : 207), y + 77, !alt ? 69 : 44);
         }
 
         if (resetCaptureGroupsButton.isHovered()) {
@@ -446,6 +492,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     private void renderPreviewStuff(GuiGraphics graphics, int x, int y) {
+        if (!enableOutputLinePreview) return;
+
         int ix = x + 173;
         int ibel = previewInputBox.isFocused() ? 166 : previewInputBox.getValue().isEmpty()
                 ? font.width(prInputExample) / 2 - 4 : Math.clamp(font.width(previewInput) / 2 - 4, 0, 166); // Input backplate extension length
@@ -456,7 +504,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         UIRenderHelperAdditions.drawStretched(graphics, ix + 14, y, ibel, 30, RLE_PREVIEW_INPUT_FIELD_R, 512, 512);
         RLE_PREVIEW_INPUT_FIELD_RE.render(graphics, ix + 14 + ibel, y);
 
-        if (!previewInputBox.isFocused()) {
+        if (previewInputBox != null && !previewInputBox.isFocused()) {
             boolean hint = previewInputBox.getValue().isEmpty();
             Component t = hint ? prInputExample : Component.literal(font.plainSubstrByWidth(previewInput, 348));
             if (hint) t = t.copy().withStyle(ChatFormatting.ITALIC);
@@ -466,7 +514,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
 
         RLE_PREVIEW_OUTPUT_FIELD.render(graphics, x, y + 30);
-        if (!previewInput.isEmpty()) {
+        if (previewOutput != null && !previewInput.isEmpty()) {
             int w = font.width(previewOutput);
             if (w > 330) ScrollingTruncatedString.draw(graphics, font, previewOutput,
                     x + 13, y + 45, 342, false, previewOutputStringLastStateChangeMillis);
@@ -507,6 +555,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         for (RLEPlaceholderTabButton button : placeholderTabButtons) button.setSelected(index == button.getIndex());
 
         buildPlaceholderConfig(index);
+        refreshPreviewOutput();
     }
 
     private void clearGroupCaches() {
@@ -619,7 +668,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     private void refreshPreviewOutput() {
-        previewOutput = AttachedLabelProcessingUtils.breakDownAndAssembleLabelAsSingleComponent(text, previewInput, processedInfoPartHighlightingMode);
+        previewOutput = AttachedLabelProcessingUtils.breakDownAndAssembleLabelAsSingleComponent(text, previewInput,
+                highlightProcessedInfoPartsInPreview, underlineSelectedPlaceholderInPreview, selectedPlaceholderIndex);
         previewOutputStringLastStateChangeMillis = Util.getMillis();
     }
 
@@ -684,9 +734,9 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        List<? extends EditBox> boxes = List.of(labelBox, previewInputBox); // TODO: somehow fix y offsets some time soon
+        List<? extends EditBox> boxes = Arrays.asList(labelBox, previewInputBox); // TODO: somehow fix y offsets some time soon
 
-        for (EditBox box : boxes) if (box.isFocused()) {
+        for (EditBox box : boxes.stream().filter(Objects::nonNull).filter(EditBox::isFocused).toList()) {
             boolean result = box.mouseClicked(mouseX, mouseY, button);
             if (box.isHovered() || result) return result;
             box.setHighlightPos(box.getCursorPosition());
@@ -699,5 +749,4 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     public enum DefaultClosingMode { APPLY, RESET, ASK }
     public enum CounterPosition { INLINE, SEPARATED, DYNAMIC, HIDDEN }
     public enum TabWidthDistributionMode { EVEN, UNEVEN }
-    public enum ProcessedInfoPartHighlightingMode {COLOR_UNDERLINE, COLOR, UNDERLINE, NOTHING }
 }

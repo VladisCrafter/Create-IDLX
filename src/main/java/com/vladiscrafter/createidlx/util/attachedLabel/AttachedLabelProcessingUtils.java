@@ -14,11 +14,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen.ProcessedInfoPartHighlightingMode.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderState.*;
@@ -34,10 +35,10 @@ public class AttachedLabelProcessingUtils {
     private static final Pattern ROUNDED_CG_PATTERN = Pattern.compile("^[+CcFfUuDdAa-]?[^+A-Za-z-]+[+CcFfUuDdAa-]?$");
     private static final Pattern ROUNDED_CG_ALT_PATTERN = Pattern.compile("^[CcFfUuDdAa]?[^A-Za-z]+[CcFfUuDdAa]?$");
 
-    private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
-    private static final Pattern FR_DECIMAL_PATTERN = Pattern.compile("^\\d?\\.\\d+$");
-    private static final Pattern FR_PERCENT_PATTERN = Pattern.compile("^\\d+%$");
-    private static final Pattern FR_PROPER_PATTERN = Pattern.compile("^\\d*/[1-9]\\d*$");
+    private static final Pattern INT_PATTERN = Pattern.compile("^\\d{1,9}$");
+    private static final Pattern FR_DECIMAL_PATTERN = Pattern.compile("^\\d?\\.\\d{1,9}$");
+    private static final Pattern FR_PERCENT_PATTERN = Pattern.compile("^\\d{1,9}%$");
+    private static final Pattern FR_PROPER_PATTERN = Pattern.compile("^\\d{0,9}/[1-9]\\d{1,9}$");
 
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
@@ -68,21 +69,25 @@ public class AttachedLabelProcessingUtils {
         if (label.isEmpty()) return rawInfo;
 
         StringBuilder result = new StringBuilder();
-        breakDownAndAssembleLabel(label, rawInfo, part -> result.append(part.getString()));
+        breakDownAndAssembleLabel(label, rawInfo, (part, i) -> {
+            result.append(part.getString());
+            return false;
+        });
 
         return result.toString();
     }
 
-    public static MutableComponent breakDownAndAssembleLabelAsSingleComponent(String label, String rawInfo, DisplayLinkRichLabelEditorScreen.ProcessedInfoPartHighlightingMode highlightingMode) {
-        if (label.isEmpty()) return Component.literal(rawInfo).withStyle(ChatFormatting.UNDERLINE);
+    public static MutableComponent breakDownAndAssembleLabelAsSingleComponent(String label, String rawInfo, boolean highlight, boolean everUnderline, int spi) {
+        if (label.isEmpty()) return Component.literal(rawInfo);
         else if (getTotalPlaceholdersCountInLabel(label) == 0) label = appendPrimitivePlaceholder(label);
 
         MutableComponent result = CommonComponents.EMPTY.copy();
-        breakDownAndAssembleLabel(label, rawInfo, part -> {
-            boolean underline = part instanceof ProcessedInfoPart && (highlightingMode == COLOR_UNDERLINE || highlightingMode == UNDERLINE);
-            int color = part instanceof ProcessedInfoPart ? ((ProcessedInfoPart) part).getColor() : 0xFFFFFF;
+        breakDownAndAssembleLabel(label, rawInfo, (part, i) -> {
+            int color = highlight && part instanceof ProcessedInfoPart ? ((ProcessedInfoPart) part).getColor() : 0xFFFFFF;
+            boolean underline = everUnderline && part instanceof ProcessedInfoPart && i == spi;
 
             result.append(Component.literal(part.getString()).withStyle(underline ? ChatFormatting.UNDERLINE : ChatFormatting.RESET).withColor(color));
+            return part instanceof ProcessedInfoPart;
         });
 
         return result;
@@ -92,16 +97,17 @@ public class AttachedLabelProcessingUtils {
         if (label.isEmpty()) return List.of(Component.literal(rawInfo));
 
         List<MutableComponent> result = new ArrayList<>();
-        breakDownAndAssembleLabel(label, rawInfo, part -> result.add(Component.literal(part.getString())));
+        breakDownAndAssembleLabel(label, rawInfo, (part, i) -> result.add(Component.literal(part.getString())));
 
         return result;
     }
 
-    private static void breakDownAndAssembleLabel(String label, String rawInfo, Consumer<AttachedLabelBreakdownResult> addAction) {
+    private static void breakDownAndAssembleLabel(String label, String rawInfo, BiFunction<AttachedLabelBreakdownResult, Integer, Boolean> addAction) {
         ArrayList<AttachedLabelBreakdownResult> sections = moldInfoPartsViaPlaceholders(label, rawInfo);
 
+        int i = 0;
         for (AttachedLabelBreakdownResult section : sections) {
-            addAction.accept(section);
+             if (addAction.apply(section, i)) i++;
         }
     }
 
@@ -474,7 +480,7 @@ public class AttachedLabelProcessingUtils {
             valueType = CaptureGroupValueType.FR_PERCENT;
         }
         else if (FR_PROPER_PATTERN.matcher(raw).matches()) {
-            value = Fraction.getFraction(((!raw.substring(0, raw.indexOf('/')).isEmpty()) ? Integer.parseInt(raw.substring(0, raw.indexOf('/'))) : 1), (int) (Integer.parseInt(raw.substring(raw.indexOf('/') + 1))));
+            value = Fraction.getFraction((!raw.substring(0, raw.indexOf('/')).isEmpty()) ? Integer.parseInt(raw.substring(0, raw.indexOf('/'))) : 1, Integer.parseInt(raw.substring(raw.indexOf('/') + 1)));
             valueType = CaptureGroupValueType.FR_PROPER;
         }
         else value = -1;

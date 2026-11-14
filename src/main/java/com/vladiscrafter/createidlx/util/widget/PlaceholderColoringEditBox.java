@@ -81,7 +81,7 @@ public class PlaceholderColoringEditBox extends EditBox {
         CIDLXClient cfg = CIDLXConfigs.client;
 
         int alpha = cfg.placeholdersColorsAlpha.get() << 24;
-        int invisible = 0x00000000;
+        int invisible = 0x00FFFFFF;
 
         if (placeholderState != AttachedLabelPart.PlaceholderState.ACTIVE) {
             return cfg.colorPlaceholders.get() ? switch (placeholderState) {

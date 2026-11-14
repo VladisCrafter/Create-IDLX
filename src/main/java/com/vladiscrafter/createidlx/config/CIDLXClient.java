@@ -12,54 +12,58 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool enableGuideWidgets = b(true, "enableGuideWidgets", Comments.enableGuideWidgets);
     public final ConfigBool enableRichLabelEditor = b(true, "enableRichLabelEditor", Comments.enableRichLabelEditor);
     public final ConfigBool enableVisualizationSettingsButtons = b(true, "enableVisualizationSettingsButtons", Comments.enableVisualizationSettingsButtons);
-    public final ConfigBool alwaysShowVisualizationSettingsButtons = b(false, "alwaysShowVisualizationSettingsButtons", Comments.alwaysShowVisualizationSettingsButtons, Comments.onlyTakesEffectVisualizationButtons);
+    public final ConfigBool alwaysShowVisualizationSettingsButtons = b(false, "alwaysShowVisualizationSettingsButtons", Comments.alwaysShowVisualizationSettingsButtons, Comments.oteVisualizationButtons);
 
     public final ConfigGroup guideWidgetsCustomization = group(2, "guideWidgetsCustomization", "Guide Widgets Customization");
-//  public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.onlyTakesEffectGuideWidgets);
-    public final ConfigBool enableClipboardIconHighlighting = b(true, "enableClipboardIconHighlighting", Comments.enableClipboardIconHighlighting, Comments.onlyTakesEffectGuideWidgets);
-    public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.onlyTakesEffectGuideWidgets);
+//  public final ConfigBool enableActivePlaceholdersTooltip = b(true, "enableActivePlaceholdersTooltip", Comments.enableActivePlaceholdersTooltip, Comments.oteGuideWidgets);
+    public final ConfigBool enableClipboardIconHighlighting = b(true, "enableClipboardIconHighlighting", Comments.enableClipboardIconHighlighting, Comments.oteGuideWidgets);
+    public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.oteGuideWidgets);
 
     public final ConfigGroup attachedLabelVisuals = group(2, "attachedLabelVisuals", "Attached Label Visuals");
     public final ConfigBool colorPlaceholders = b(true, "colorPlaceholders", Comments.colorPlaceholders);
-    public final ConfigInt placeholdersColorsAlpha = i(0xAA, 0, 255, "placeholdersColorsAlpha", Comments.alpha, Comments.placeholdersColorsAlpha, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigInt coloringBackgroundHeightIncrease = i(0, -1, Integer.MAX_VALUE, "coloringBackgroundHeightIncrease", Comments.pixels, Comments.coloringBackgroundHeightIncrease, Comments.heightReference);
+    public final ConfigInt placeholdersColorsAlpha = i(0xAA, 0, 255, "placeholdersColorsAlpha", Comments.alpha, Comments.placeholdersColorsAlpha, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigInt coloringBackgroundHeightIncrease = i(0, -1, 3, "coloringBackgroundHeightIncrease", Comments.pixels, Comments.coloringBackgroundHeightIncrease, Comments.heightReference, Comments.oteColoring);
 
     public final ConfigGroup placeholderColoringCustomization = group(3, "placeholderColoringCustomization", "Placeholder Coloring Customization");
-    public final ConfigBool colorDollarPlaceholders = b(true, "dollarPlaceholders", Comments.colorDollarPlaceholders);
-    public final ConfigInt dollarPlaceholderColor = i(0xEAB444, 0, 16777215, "dollarPlaceholderColor", Comments.rgb, Comments.dollarPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorBracketsPlaceholders = b(true, "bracketsPlaceholders", Comments.colorBracketsPlaceholders);
-    public final ConfigInt bracketsPlaceholderColor = i(0xC3C54F, 0, 16777215, "bracketsPlaceholderColor", Comments.rgb, Comments.bracketsPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorOriginalTrimmingPlaceholders = b(true, "originalTrimmingPlaceholders", Comments.colorOriginalTrimmingPlaceholders);
-    public final ConfigInt originalTrimmingPlaceholderColor = i(0xA0D06B, 0, 16777215, "originalTrimmingPlaceholderColor", Comments.rgb, Comments.originalTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorShortenedTrimmingPlaceholders = b(true, "shortenedTrimmingPlaceholders", Comments.colorShortenedTrimmingPlaceholders);
-    public final ConfigInt shortenedTrimmingPlaceholderColor = i(0x75D78D, 0, 16777215, "shortenedTrimmingPlaceholderColor", Comments.rgb, Comments.shortenedTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorAlternativeTrimmingPlaceholders = b(true, "alternativeTrimmingPlaceholders", Comments.colorAlternativeTrimmingPlaceholders);
-    public final ConfigInt alternativeTrimmingPlaceholderColor = i(0x69D3C6, 0, 16777215, "alternativeTrimmingPlaceholderColor", Comments.rgb, Comments.alternativeTrimmingPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders);
-    public final ConfigInt invalidPlaceholderColor = i(0xFF6460, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorEscapedPlaceholders = b(true, "escapedPlaceholders", Comments.colorEscapedPlaceholders);
-    public final ConfigInt escapedPlaceholderColor = i(0x743020, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorDisabledPlaceholders = b(true, "disabledPlaceholders", Comments.colorDisabledPlaceholders);
-    public final ConfigInt disabledPlaceholderColor = i(0x000000, 0, 16777215, "disabledPlaceholderColor", Comments.rgb, Comments.disabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorEscapedDisabledPlaceholders = b(true, "escapedDisabledPlaceholders", Comments.colorEscapedDisabledPlaceholders);
-    public final ConfigInt escapedDisabledPlaceholderColor = i(0x2F0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorIncompletePlaceholders = b(true, "incompletePlaceholders", Comments.colorIncompletePlaceholders);
-    public final ConfigInt incompletePlaceholderColor = i(0x743020, 0, 16777215, "incompletePlaceholderColor", Comments.rgb, Comments.incompletePlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorUnoptimizedPlaceholders = b(true, "unoptimizedPlaceholders", Comments.colorUnoptimizedPlaceholders);
-    public final ConfigInt unoptimizedPlaceholderColor = i(0x743020, 0, 16777215, "unoptimizedPlaceholderColor", Comments.rgb, Comments.unoptimizedPlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
-    public final ConfigBool colorSyntacticallyErrorsomePlaceholders = b(true, "syntacticallyErrorsomePlaceholders", Comments.colorSyntacticallyErrorsomePlaceholders);
-    public final ConfigInt syntacticallyErrorsomePlaceholderColor = i(0x743020, 0, 16777215, "syntacticallyErrorsomePlaceholderColor", Comments.rgb, Comments.syntacticallyErrorsomePlaceholderColor, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorDollarPlaceholders = b(true, "dollarPlaceholders", Comments.colorDollarPlaceholders, Comments.oteColoring);
+    public final ConfigInt dollarPlaceholderColor = i(0xEAB444, 0, 16777215, "dollarPlaceholderColor", Comments.rgb, Comments.dollarPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorBracketsPlaceholders = b(true, "bracketsPlaceholders", Comments.colorBracketsPlaceholders, Comments.oteColoring);
+    public final ConfigInt bracketsPlaceholderColor = i(0xC3C54F, 0, 16777215, "bracketsPlaceholderColor", Comments.rgb, Comments.bracketsPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorOriginalTrimmingPlaceholders = b(true, "originalTrimmingPlaceholders", Comments.colorOriginalTrimmingPlaceholders, Comments.oteColoring);
+    public final ConfigInt originalTrimmingPlaceholderColor = i(0xA0D06B, 0, 16777215, "originalTrimmingPlaceholderColor", Comments.rgb, Comments.originalTrimmingPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorShortenedTrimmingPlaceholders = b(true, "shortenedTrimmingPlaceholders", Comments.colorShortenedTrimmingPlaceholders, Comments.oteColoring);
+    public final ConfigInt shortenedTrimmingPlaceholderColor = i(0x75D78D, 0, 16777215, "shortenedTrimmingPlaceholderColor", Comments.rgb, Comments.shortenedTrimmingPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorAlternativeTrimmingPlaceholders = b(true, "alternativeTrimmingPlaceholders", Comments.colorAlternativeTrimmingPlaceholders, Comments.oteColoring);
+    public final ConfigInt alternativeTrimmingPlaceholderColor = i(0x69D3C6, 0, 16777215, "alternativeTrimmingPlaceholderColor", Comments.rgb, Comments.alternativeTrimmingPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorInvalidPlaceholders = b(true, "invalidPlaceholders", Comments.colorInvalidPlaceholders, Comments.oteColoring);
+    public final ConfigInt invalidPlaceholderColor = i(0xFF6460, 0, 16777215, "invalidPlaceholderColor", Comments.rgb, Comments.invalidPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorEscapedPlaceholders = b(true, "escapedPlaceholders", Comments.colorEscapedPlaceholders, Comments.oteColoring);
+    public final ConfigInt escapedPlaceholderColor = i(0x743020, 0, 16777215, "escapedPlaceholderColor", Comments.rgb, Comments.escapedPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorDisabledPlaceholders = b(true, "disabledPlaceholders", Comments.colorDisabledPlaceholders, Comments.oteColoring);
+    public final ConfigInt disabledPlaceholderColor = i(0x000000, 0, 16777215, "disabledPlaceholderColor", Comments.rgb, Comments.disabledPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+    public final ConfigBool colorEscapedDisabledPlaceholders = b(true, "escapedDisabledPlaceholders", Comments.colorEscapedDisabledPlaceholders, Comments.oteColoring);
+    public final ConfigInt escapedDisabledPlaceholderColor = i(0x2F0407, 0, 16777215, "escapedDisabledPlaceholderColor", Comments.rgb, Comments.escapedDisabledPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+//    public final ConfigBool colorIncompletePlaceholders = b(true, "incompletePlaceholders", Comments.colorIncompletePlaceholders, Comments.oteColoring);
+//    public final ConfigInt incompletePlaceholderColor = i(0x743020, 0, 16777215, "incompletePlaceholderColor", Comments.rgb, Comments.incompletePlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+//    public final ConfigBool colorUnoptimizedPlaceholders = b(true, "unoptimizedPlaceholders", Comments.colorUnoptimizedPlaceholders, Comments.oteColoring);
+//    public final ConfigInt unoptimizedPlaceholderColor = i(0x743020, 0, 16777215, "unoptimizedPlaceholderColor", Comments.rgb, Comments.unoptimizedPlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
+//    public final ConfigBool colorSyntacticallyErrorsomePlaceholders = b(true, "syntacticallyErrorsomePlaceholders", Comments.colorSyntacticallyErrorsomePlaceholders, Comments.oteColoring);
+//    public final ConfigInt syntacticallyErrorsomePlaceholderColor = i(0x743020, 0, 16777215, "syntacticallyErrorsomePlaceholderColor", Comments.rgb, Comments.syntacticallyErrorsomePlaceholderColor, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
 
     public final ConfigGroup richLabelEditorCustomization = group(2, "richLabelEditorCustomization", "Rich Label Editor Customization");
     public final ConfigEnum<DefaultClosingMode> rleDefaultClosingMode = e(DefaultClosingMode.ASK, "defaultClosingMode", Comments.rleDefaultClosingMode);
     public final ConfigEnum<CounterPosition> rleCounterPosition = e(CounterPosition.DYNAMIC, "counterPosition", Comments.rleCounterPosition);
-    public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
     public final ConfigBool rleEnableScreenConfigButton = b(true, "enableScreenConfigButton", Comments.rleEnableScreenConfigButton);
     public final ConfigBool rleEnableOutputLinePreview = b(true, "enableOutputLinePreview", Comments.rleEnableOutputLinePreview);
 
-    public final ConfigGroup rleOutputLinePreviewCustomization = group(3, "outputLinePreviewCustomization", "Output Line Preview Customization");
-    public final ConfigEnum<ProcessedInfoPartHighlightingMode> rleProcessedInfoPartHighlightingMode = e(ProcessedInfoPartHighlightingMode.COLOR, "processedInfoPartHighlightingMode", Comments.rleProcessedInfoPartHighlightingMode);
-    public final ConfigBool rleEnableOutputLinePreviewFieldHints = b(true, "enableOutputLinePreviewFieldHints", Comments.rleEnableOutputLinePreviewFieldHints);
+    public final ConfigGroup rlePlaceholderTabsSettings = group(3, "placeholderTabsSettings", "Placeholder Tabs Settings");
+    public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
+    public final ConfigBool rleDisplayFullPlaceholdersInTabHeaders = b(true, "displayFullPlaceholdersInTabHeaders", Comments.rleDisplayFullPlaceholdersInTabHeaders);
+
+    public final ConfigGroup rleOutputLinePreviewSectionCustomization = group(3, "outputLinePreviewSectionCustomization", "Output Line Preview Section Customization");
+    public final ConfigBool rleHighlightProcessedInfoPartsInPreview = b(true, "highlightProcessedInfoPartsInPreview", Comments.rleHighlightProcessedInfoPartsInPreview);
+    public final ConfigBool rleUnderlineSelectedPlaceholderInPreview = b(true, "underlineSelectedPlaceholderInPreview", Comments.rleUnderlineSelectedPlaceholderInPreview);
+    public final ConfigBool rleEnableOutputLinePreviewFieldHints = b(true, "enableFieldHints", Comments.rleEnableOutputLinePreviewFieldHints);
 
     public final ConfigGroup richLabelEditorButtonOutlineSettings = group(2, "richLabelEditorButtonOutlineSettings", "Attached Label Box Outline Settings");
     public final ConfigFloat richLabelEditorButtonOutlineFadeInTime = f(0.25F, 0F, 10F, "richLabelEditorButtonOutlineFadeInTime", Comments.seconds, Comments.richLabelEditorButtonOutlineFadeInTime, Comments.defaultZero);
@@ -71,15 +75,15 @@ public class CIDLXClient extends CIDLXConfigBase {
 
     public final ConfigGroup clipboardDisplayLinkOutlines = group(1, "clipboardDisplayLinkOutlines", "Clipboard Display Link Outlines");
     public final ConfigBool enableCustomOutlineForDisplayLinks = b(true, "enableCustomOutlineForDisplayLinks", Comments.enableCustomOutlineForDisplayLinks);
-    public final ConfigBool enableDifferentOutlineForInvalidDisplayLinks = b(true, "enableDifferentOutlineForInvalidDisplayLinks", Comments.enableDifferentOutlineForInvalidDisplayLinks, Comments.onlyTakesEffectOutline);
+    public final ConfigBool enableDifferentOutlineForInvalidDisplayLinks = b(true, "enableDifferentOutlineForInvalidDisplayLinks", Comments.enableDifferentOutlineForInvalidDisplayLinks, Comments.oteOutline);
 
 //  public final ConfigGroup customOutlineSettings = group(2, "customOutlineSettings", "Custom Outline Settings");
-    public final ConfigFloat customOutlineAlpha = f(0.8F, 0F, 1F, "customOutlineAlpha", Comments.customOutlineAlpha, Comments.outlineReference, Comments.onlyTakesEffectOutline);
+    public final ConfigFloat customOutlineAlpha = f(0.8F, 0F, 1F, "customOutlineAlpha", Comments.customOutlineAlpha, Comments.outlineReference, Comments.oteOutline);
 
     public final ConfigGroup textFieldsEnhancements = group(1, "textFieldsEnhancements", "Text Fields Enhancements");
     public final ConfigBool truncateOverflowingStrings = b(true, "truncateOverflowingStrings", Comments.truncateOverflowingStrings);
-    public final ConfigBool addMarqueeEffectToTruncatedStrings = b(true, "addMarqueeEffectToTruncatedStrings", Comments.addMarqueeEffectToTruncatedStrings, Comments.onlyTakesEffectMarqueeEffect);
-    public final ConfigBool showTooltipForSingleOptionSelector = b(true, "showTooltipForSingleOptionSelector", Comments.showTooltipForSingleOptionSelector, Comments.onlyTakesEffectMarqueeEffect);
+    public final ConfigBool addMarqueeEffectToTruncatedStrings = b(true, "addMarqueeEffectToTruncatedStrings", Comments.addMarqueeEffectToTruncatedStrings, Comments.oteMarqueeEffect);
+    public final ConfigBool showTooltipForSingleOptionSelector = b(true, "showTooltipForSingleOptionSelector", Comments.showTooltipForSingleOptionSelector, Comments.oteMarqueeEffect);
 
     public final ConfigGroup marqueeEffectSettings = group(2, "marqueeEffectSettings", "Marquee Effect Settings");
     public final ConfigInt fixedCharTravelTime = i(30, 1, 10000, "fixedCharTravelTime", Comments.milliseconds, Comments.fixedCharTravelTime);
@@ -99,10 +103,11 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String pixels = "[in Pixels]";
         static String defaultZero = "Set to 0 to disable.";
         static String overrides = "Overrides 'Fixed Char Travel Time' and 'Maximal/Minimal String Travel Time'.";
-        static String onlyTakesEffectGuideWidgets = "Only takes effect if 'Enable Guide Widgets' is enabled.";
-        static String onlyTakesEffectVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
-        static String onlyTakesEffectMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
-        static String onlyTakesEffectOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
+        static String oteGuideWidgets = "Only takes effect if 'Enable Guide Widgets' is enabled.";
+        static String oteColoring = "Only takes effect if 'Color Placeholders' is enabled.";
+        static String oteVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
+        static String oteMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
+        static String oteOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
         static String heightReference = "Set to -1 to make it fit within the text height; set to 3 to make it fill the whole text input field height.";
 
@@ -138,25 +143,28 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String disabledPlaceholderColor = "The background color to apply to all placeholders that are disabled by the server config.";
         static String colorEscapedDisabledPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
         static String escapedDisabledPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
-        static String colorIncompletePlaceholders = "Apply background coloring to all incomplete placeholders.";
-        static String incompletePlaceholderColor = "The background color to apply to all incomplete placeholders.";
-        static String colorUnoptimizedPlaceholders = "Apply background coloring to all unoptimized placeholders.";
-        static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
-        static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
-        static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
+//        static String colorIncompletePlaceholders = "Apply background coloring to all incomplete placeholders.";
+//        static String incompletePlaceholderColor = "The background color to apply to all incomplete placeholders.";
+//        static String colorUnoptimizedPlaceholders = "Apply background coloring to all unoptimized placeholders.";
+//        static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
+//        static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
+//        static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
 
         static String rleDefaultClosingMode = "Which action to perform to the Label when the Editor is closed with a keybind instead of a button.";
         static String rleCounterPosition = "How should the Character Counter appear: in the same field as the Label or in its own window.";
-        static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
         static String rleEnableScreenConfigButton = "Enable the 'Configure' button, redirecting to the respective client config section, in Rich Label Editor interface.";
         static String rleEnableOutputLinePreview = "Enable the Output Line Preview section of the Editor.";
+
+        static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
+        static String rleDisplayFullPlaceholdersInTabHeaders = "Display full forms of the Placeholders, instead of the indexes, in the headers of their respective tabs, unless not enough space is present.";
+
+        static String rleHighlightProcessedInfoPartsInPreview = "Highlight the processed (undergone the trimming modifications) information parts with colors according to their placeholders.";
+        static String rleUnderlineSelectedPlaceholderInPreview = "Underline the processed (undergone the trimming modifications) information part, the according placeholder of which is currently selected in the Editor.";
+        static String rleEnableOutputLinePreviewFieldHints = "Display the hints in the Input Information Example and the Formatted Output String fields.";
 
         static String richLabelEditorButtonOutlineFadeInTime = "The fixed time for the Rich Label Editor button outline to fully fade in.";
         static String richLabelEditorButtonOutlineFadeOutTime = "The fixed time for the Rich Label Editor button outline to fade out back to idle state opacity.";
         static String richLabelEditorButtonOutlineIdleStateAlpha = "The default opacity of the Rich Label Editor button outline when it's not hovered on.";
-
-        static String rleProcessedInfoPartHighlightingMode = "Which way should the processed (undergone the placeholder trimming modifications) information part should be highlighted in the Formatted Output String field.";
-        static String rleEnableOutputLinePreviewFieldHints = "Enable the hints inside the Input Information Example and the Formatted Output String fields.";
 
         static String deselectEmptyAttachedLabel = "Prevent the 'Copy the Attached Label' from being automatically selected if the Attached Label is empty.";
 

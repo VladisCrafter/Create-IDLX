@@ -1,5 +1,6 @@
 package com.vladiscrafter.createidlx.util.widget.rle;
 
+import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart;
 import com.vladiscrafter.createidlx.util.gui.UIRenderHelperAdditions;
@@ -18,6 +19,8 @@ public class RLEPlaceholderTabButton extends AbstractSimiWidget {
     protected int index;
     protected AttachedLabelPart.Placeholder placeholder;
     protected boolean selected;
+
+    final boolean displayFullPlaceholdersInTabHeaders = CIDLXConfigs.client.rleDisplayFullPlaceholdersInTabHeaders.get();
 
     public RLEPlaceholderTabButton(int x, int y, int width, int index, AttachedLabelPart.Placeholder placeholder) {
         super(x, y, width, 13);
@@ -69,11 +72,12 @@ public class RLEPlaceholderTabButton extends AbstractSimiWidget {
             rTex.render(graphics, getX() + getWidth() - 1, getY());
 
             Font font = Minecraft.getInstance().font;
-            MutableComponent text = font.width(placeholder.getString()) + 2 <= getWidth()
+            MutableComponent indexText = Component.literal(String.format("#%d", index + 1)); // TODO: make translatable
+            MutableComponent text = displayFullPlaceholdersInTabHeaders && font.width(placeholder.getString()) + 2 <= getWidth()
                     ? Component.literal(placeholder.getString())
-                     : font.width(String.format("#%d", index + 1)) + 2 <= getWidth() ? Component.literal(String.format("#%d", index + 1)) : Component.literal("" + (index + 1)); // или https://www.unicode.org/charts/nameslist/n_2460.html
+                     : font.width(indexText) + 2 <= getWidth() ? indexText : Component.literal("" + (index + 1));
             graphics.drawString(font, text, getX() + (int) ((float) getWidth() / 2) - (font.width(text) / 2),
-                    getY() + 3, isHoveredOrFocused() ? 0x4f4f4f : 0x424242, false);
+                    getY() + 3, isHoveredOrFocused() ? 0x4F4F4F : 0x424242, false);
         }
     }
 }

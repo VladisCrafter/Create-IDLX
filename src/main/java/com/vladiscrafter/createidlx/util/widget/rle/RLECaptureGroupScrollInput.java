@@ -4,7 +4,6 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
-import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -13,14 +12,10 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import org.apache.commons.lang3.math.Fraction;
-import org.lwjgl.glfw.GLFW;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -43,8 +38,6 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
     final Component scrollToModifyPropNum = Component.literal("Ctrl to Modify the Numerator");
     final Component typeTitle = Component.literal("Capture Group Type");
     final Component altToCycleType = Component.literal("Alt to Select the Capture Group Type");
-    final Component roundingTitle = Component.literal("Capture Group Rounding");
-    final Component middleToCycleRounding = Component.literal("Middle-Click to Cycle Between Rounding Options");
 
     public static final Integer NEW_INTEGER = 0; // TODO: make configurable
     public static final BigDecimal NEW_DECIMAL = BigDecimal.valueOf(0.5);
@@ -57,6 +50,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
 
         this.cache = cache;
 
+        this.max = 999999;
         this.setFGColor(0xFFFFFF);
         this.setFocused(false);
 
@@ -78,14 +72,6 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
         if (AllKeys.altDown()) {
             return cycleValueTypes(direction * -1);
         } else return updateState(direction);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!visible || !active || !isMouseOver(mouseX, mouseY)) return false;
-
-        if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE) return cycleRounding(!AllKeys.shiftDown() ? 1 : -1);
-        else return false;
     }
 
     private boolean cycleValueTypes(int direction) {
@@ -111,29 +97,6 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
         return false;
     }
 
-    private boolean cycleRounding(int direction) {
-        CaptureGroupRounding priorRounding = cg.rounding();
-
-        int newRoundingO = cg.rounding().ordinal() + direction;
-        if (newRoundingO >= 0 && newRoundingO <= 2) cg.setRounding(CaptureGroupRounding.values()[newRoundingO]);
-        else if (newRoundingO > 2) cg.setRounding(CaptureGroupRounding.values()[0]);
-        else cg.setRounding(CaptureGroupRounding.values()[2]);
-
-        if (!priorRounding.equals(cg.rounding())) {
-            if (!soundPlayed)
-                Minecraft.getInstance()
-                        .getSoundManager()
-                        .play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK,
-                                (direction == 1 ? 1.25f : 1.15f)));
-            soundPlayed = true;
-            updateFormatter();
-            onChanged();
-            return true;
-        }
-
-        return false;
-    }
-
     private boolean updateState(int direction) {
         BigDecimal stepBD = switch (cg.valueType()) {
             case FR_DECIMAL, FR_PERCENT -> BigDecimal.valueOf(AllKeys.shiftDown() ? 0.1 : 0.01);
@@ -143,7 +106,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
 
         Number priorState = cg.value();
         if (cg.valueType() == CaptureGroupValueType.CHARS) {
-            cg.setValue(Math.clamp(priorState.intValue() + step.intValue(), 0, 99999));
+            cg.setValue(Math.clamp(priorState.intValue() + step.intValue(), 0, 999999));
         } else if (cg.valueType() == CaptureGroupValueType.FR_PROPER) {
             cg.setValue(Fraction.getFraction(
                     Math.clamp(((Fraction) priorState).getNumerator() + (AllKeys.ctrlDown() ? step.intValue() : 0), 0, ((Fraction) priorState).getDenominator()),
@@ -256,45 +219,21 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
                         .append(Component.literal(vt.name().toLowerCase()))
                         .withStyle(vt == cg.valueType() ? ChatFormatting.WHITE : ChatFormatting.GRAY));
         toolTip.add(altToCycleType.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
-        toolTip.add(CommonComponents.EMPTY);
-
-        toolTip.add(roundingTitle.plainCopy().withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
-        for (CaptureGroupRounding r : CaptureGroupRounding.values())
-            toolTip.add(Component.empty()
-                    .append((r == cg.rounding() ? "-" : "") + "> ")
-                    .append(Component.literal(r.name().toLowerCase()))
-                            .append(" " + getRoundingChar(r))
-                    .withStyle(r == cg.rounding() ? ChatFormatting.WHITE : ChatFormatting.GRAY));
-        toolTip.add(middleToCycleRounding.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
     }
 
     private Component formatChars(int v) {
-        return Component.literal(String.format("%s%d", getRoundingChar(), v));
+        return Component.literal(String.format("%d", v));
     }
 
     private Component formatDecimal(BigDecimal v) {
-        return Component.literal(String.format("%s%s", getRoundingChar(),
-                v.stripTrailingZeros().toPlainString() + (v.stripTrailingZeros().scale() < 1 ? ".0" : "")));
+        return Component.literal(String.format("%s", v.stripTrailingZeros().toPlainString() + (v.stripTrailingZeros().scale() < 1 ? ".0" : "")));
     }
 
     private Component formatPercent(BigDecimal v) {
-        return Component.literal(String.format("%s%s%%", getRoundingChar(),
-                v.multiply(BigDecimal.valueOf(100)).stripTrailingZeros().toPlainString()));
+        return Component.literal(String.format("%s%%", v.multiply(BigDecimal.valueOf(100)).stripTrailingZeros().toPlainString()));
     }
 
     private Component formatFraction(Fraction v) {
-        return Component.literal(String.format("%s%s", getRoundingChar(), v.toString()));
-    }
-
-    private String getRoundingChar() {
-        return getRoundingChar(cg.rounding());
-    }
-
-    private /*Component*/String getRoundingChar(CaptureGroupRounding rounding) {
-        return switch (rounding) {
-            case CEIL -> Component.literal("↑").getString();
-            case FLOOR -> Component.literal("↓").getString();
-            default -> Component.literal("⇵").getString();
-        };
+        return Component.literal(String.format("%s", v.toString()));
     }
 }
