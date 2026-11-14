@@ -10,6 +10,7 @@ import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
+import com.vladiscrafter.createidlx.mixin.accessor.create.SingleLineDisplaySourceAccessor;
 import com.vladiscrafter.createidlx.util.gui.CreateIDLXGuiTooltipBuffer;
 import com.vladiscrafter.createidlx.util.widget.ModularGuiLineBuilderExt;
 import net.minecraft.ChatFormatting;
@@ -55,7 +56,9 @@ public abstract class SingleLineDisplaySourceClientMixin {
         if (!(CIDLXConfigs.server.addColorCopyingToNixieTubeDisplaySource.get())) return;
 
         if (!((SingleLineDisplaySource) (Object) this instanceof NixieTubeDisplaySource)) return;
-        if (isFirstLine) return;
+
+        boolean allowsLabeling = ((SingleLineDisplaySourceAccessor) (SingleLineDisplaySource) (Object) this).createidlx$callAllowsLabeling(context);
+        if ((isFirstLine && allowsLabeling) || (!isFirstLine && !allowsLabeling)) return;
 
         boolean copyColorPresent = context.getTargetBlockEntity() instanceof FlapDisplayBlockEntity;
         boolean conveyInternalText = context.getSourceBlockEntity() instanceof NixieTubeBlockEntity;

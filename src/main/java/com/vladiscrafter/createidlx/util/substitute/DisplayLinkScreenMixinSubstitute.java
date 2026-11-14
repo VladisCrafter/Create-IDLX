@@ -68,9 +68,7 @@ public class DisplayLinkScreenMixinSubstitute {
 
     private final List<AbstractWidget> visualizationSettingWidgets = new ArrayList<>();
 
-    private final List<Class<? extends BlockEntity>>
-            visualizationSettingsSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class, SignBlockEntity.class),
-            centerTextSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class);
+    private final List<Class<? extends BlockEntity>> visualizationSettingsSupporters = List.of(FlapDisplayBlockEntity.class, NixieTubeBlockEntity.class);
 
     private final Component optionEnabled = CreateLang.translateDirect("gui.schematicannon.optionEnabled");
     private final Component optionDisabled = CreateLang.translateDirect("gui.schematicannon.optionDisabled");
@@ -258,7 +256,6 @@ public class DisplayLinkScreenMixinSubstitute {
         screen.createidlx$callTick();
     }
 
-    @SuppressWarnings("DataFlowIssue")
     private void initVisualizationSettings() {
         screen.createidlx$callRemoveWidgets(visualizationSettingWidgets);
         visualizationSettingWidgets.clear();
@@ -270,14 +267,11 @@ public class DisplayLinkScreenMixinSubstitute {
         int y = screen.createidlx$getGuiTop() + background.getHeight() - 24;
 
         centerTextButton = new IconButton(x, y, CreateIDLXIcons.I_CENTER_TEXT);
-        centerTextButton.visible = supportsCenterText(Minecraft.getInstance().level.getBlockEntity(screen.createidlx$getBlockEntity().getTargetPosition()));
         centerTextButton.green = centerText;
         centerTextButton.withCallback(() -> centerTextButton.green ^= true);
         centerTextButton.setToolTip(translateLocal("visualization_settings.center_text"));
-        if (supportsCenterText(Minecraft.getInstance().level.getBlockEntity(screen.createidlx$getBlockEntity().getTargetPosition()))) {
-            Collections.addAll(visualizationSettingWidgets, centerTextButton);
-            x += 26;
-        }
+        Collections.addAll(visualizationSettingWidgets, centerTextButton);
+        x += 26;
 
         /*cutOutSectionGapsButton = new IconButton(x, y, CreateIDLXIcons.I_CUT_OUT_SECTION_GAPS);
         cutOutSectionGapsButton.green = cutOutSectionGaps;
@@ -409,10 +403,6 @@ public class DisplayLinkScreenMixinSubstitute {
 
     private boolean supportsVisualizationSettings(BlockEntity target) {
         return visualizationSettingsSupporters.stream().anyMatch(c -> c.isInstance(target));
-    }
-
-    private boolean supportsCenterText(BlockEntity target) {
-        return centerTextSupporters.stream().anyMatch(c -> c.isInstance(target));
     }
 
     private MutableComponent translateLocal(String key, Object... args) {

@@ -11,17 +11,16 @@ import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.util.bridge.NixieTubeBlockEntityInternalCustomTextHolder;
 import com.vladiscrafter.createidlx.util.bridge.NixieTubeDisplaySourceColorHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(NixieTubeDisplaySource.class)
 public class NixieTubeDisplaySourceMixin implements NixieTubeDisplaySourceColorHolder {
@@ -54,24 +53,19 @@ public class NixieTubeDisplaySourceMixin implements NixieTubeDisplaySourceColorH
     @SuppressWarnings("DataFlowIssue")
     @ModifyReturnValue(method = "allowsLabeling", at = @At("RETURN"))
     protected boolean createidlx$conditionallyAllowLabeling(boolean original, @Local(argsOnly = true) DisplayLinkContext context) {
-        boolean allowLabeling;
+        boolean allowLabeling = false;
 
-        DisplayTarget activeTarget;
+        BlockEntity source = context.getSourceBlockEntity(), target = context.getTargetBlockEntity();
+        LevelAccessor level = source != null ? source.getLevel() : null;
+        DisplayTarget activeTarget = context.blockEntity().activeTarget;
 
-        try {
-            LevelAccessor level = Minecraft.getInstance().level;
-
-            BlockPos sourcePos = context.getSourceBlockEntity().getBlockPos();
-            BlockPos targetPos = context.getTargetBlockEntity().getBlockPos();
-
+        if (level != null && target != null) {
+            BlockPos sourcePos = source.getBlockPos(), targetPos = target.getBlockPos();
             activeTarget = DisplayTarget.get(level, context.blockEntity().getTargetPosition());
-
-            AABB fullTarget = activeTarget.getMultiblockBounds(level, targetPos);
-
-            allowLabeling = !(fullTarget.intersects(new AABB(sourcePos)));
-        } catch (NullPointerException e) {
-            activeTarget = context.blockEntity().activeTarget;
-            allowLabeling = false;
+            if (activeTarget != null) {
+                AABB fullTarget = activeTarget.getMultiblockBounds(level, targetPos);
+                allowLabeling = !(fullTarget.intersects(new AABB(sourcePos)));
+            }
         }
 
         return (CIDLXConfigs.server.enhanceNixieTubeDisplaySource.get() && allowLabeling) || !(activeTarget instanceof NixieTubeDisplayTarget);
