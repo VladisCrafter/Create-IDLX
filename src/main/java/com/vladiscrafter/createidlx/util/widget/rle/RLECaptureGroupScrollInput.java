@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import org.apache.commons.lang3.math.Fraction;
 
 import java.math.BigDecimal;
@@ -88,7 +87,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
                             .play(SimpleSoundInstance.forUI(AllSoundEvents.SCROLL_VALUE.getMainEvent(),
                                     (direction == 1 ? 0.75f : 0.65f)));
                 soundPlayed = true;
-                changeValueType(priorType, newType);
+                setValueType(priorType, newType);
                 onChanged();
                 return true;
             }
@@ -156,7 +155,11 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
         return this;
     }
 
-    private void changeValueType(CaptureGroupValueType oldType, CaptureGroupValueType newType) {
+    public CaptureGroupValueType getValueType() {
+        return cg.valueType();
+    }
+
+    private void setValueType(CaptureGroupValueType oldType, CaptureGroupValueType newType) {
         Number oldValue = cg.value();
         cache.remove(oldType);
         cache.put(oldType, oldValue);
@@ -182,7 +185,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
             default -> (v) -> formatChars(v.intValue());
         };
     }
-    
+
     @Override
     public void onChanged() {
         if (displayLabel != null) writeToLabel();

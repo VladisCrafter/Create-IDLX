@@ -38,7 +38,7 @@ public class AttachedLabelProcessingUtils {
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d{1,9}$");
     private static final Pattern FR_DECIMAL_PATTERN = Pattern.compile("^\\d?\\.\\d{1,9}$");
     private static final Pattern FR_PERCENT_PATTERN = Pattern.compile("^\\d{1,9}%$");
-    private static final Pattern FR_PROPER_PATTERN = Pattern.compile("^\\d{0,9}/[1-9]\\d{1,9}$");
+    private static final Pattern FR_PROPER_PATTERN = Pattern.compile("^\\d{0,9}/[1-9]\\d{0,8}$");
 
     public static String setToPrimitivePlaceholder() {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();

@@ -60,6 +60,12 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
     public final ConfigBool rleDisplayFullPlaceholdersInTabHeaders = b(true, "displayFullPlaceholdersInTabHeaders", Comments.rleDisplayFullPlaceholdersInTabHeaders);
 
+    public final ConfigGroup rleResetCaptureGroupsButtonSettings = group(3, "resetCaptureGroupsButtonSettings", "Reset Capture Groups Button Settings");
+    public final ConfigBool rleEnableResetCaptureGroupsButton = b(true, "enableResetCaptureGroupsButton", Comments.rleEnableResetCaptureGroupsButton);
+    public final ConfigBool rleResetButtonHoldShiftToResetValues = b(false, "holdShiftToResetValues", Comments.rleResetButtonHoldShiftToResetValues, Comments.oteResetButton);
+    public final ConfigBool rleResetButtonHoldShiftToResetRoundings = b(false, "holdShiftToResetRoundings", Comments.rleResetButtonHoldShiftToResetRoundings, Comments.oteResetButton);
+    public final ConfigBool rleResetButtonHoldShiftToResetOperations = b(true, "holdShiftToResetOperations", Comments.rleResetButtonHoldShiftToResetOperations, Comments.oteResetButton);
+
     public final ConfigGroup rleOutputLinePreviewSectionCustomization = group(3, "outputLinePreviewSectionCustomization", "Output Line Preview Section Customization");
     public final ConfigBool rleHighlightProcessedInfoPartsInPreview = b(true, "highlightProcessedInfoPartsInPreview", Comments.rleHighlightProcessedInfoPartsInPreview);
     public final ConfigBool rleUnderlineSelectedPlaceholderInPreview = b(true, "underlineSelectedPlaceholderInPreview", Comments.rleUnderlineSelectedPlaceholderInPreview);
@@ -101,13 +107,15 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String rgb = "[in Hex: #RrGgBb]";
         static String alpha = "[in Hex: #Aa]";
         static String pixels = "[in Pixels]";
+
         static String defaultZero = "Set to 0 to disable.";
         static String overrides = "Overrides 'Fixed Char Travel Time' and 'Maximal/Minimal String Travel Time'.";
+        static String oteVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
         static String oteGuideWidgets = "Only takes effect if 'Enable Guide Widgets' is enabled.";
         static String oteColoring = "Only takes effect if 'Color Placeholders' is enabled.";
-        static String oteVisualizationButtons = "Only takes effect if 'Enable Visualization Settings Buttons' is enabled.";
-        static String oteMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
+        static String oteResetButton = "Only takes effect if 'Enable Reset Capture Groups Button' is enabled.";
         static String oteOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
+        static String oteMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
         static String heightReference = "Set to -1 to make it fit within the text height; set to 3 to make it fill the whole text input field height.";
 
@@ -157,6 +165,11 @@ public class CIDLXClient extends CIDLXConfigBase {
 
         static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
         static String rleDisplayFullPlaceholdersInTabHeaders = "Display full forms of the Placeholders, instead of the indexes, in the headers of their respective tabs, unless not enough space is present.";
+
+        static String rleEnableResetCaptureGroupsButton = "Enable the 'Reset Capture Groups' button in the Editor.";
+        static String rleResetButtonHoldShiftToResetValues = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the values.";
+        static String rleResetButtonHoldShiftToResetRoundings = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the roundings.";
+        static String rleResetButtonHoldShiftToResetOperations = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the operations.";
 
         static String rleHighlightProcessedInfoPartsInPreview = "Highlight the processed (undergone the trimming modifications) information parts with colors according to their placeholders.";
         static String rleUnderlineSelectedPlaceholderInPreview = "Underline the processed (undergone the trimming modifications) information part, the according placeholder of which is currently selected in the Editor.";
