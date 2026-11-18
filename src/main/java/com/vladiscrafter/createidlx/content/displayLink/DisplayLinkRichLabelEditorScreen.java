@@ -11,6 +11,7 @@ import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.mixin.accessor.minecraft.EditBoxAccessor;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils;
+import com.vladiscrafter.createidlx.util.gui.PlaceholderColoringUtils;
 import com.vladiscrafter.createidlx.util.gui.ScrollingTruncatedString;
 import com.vladiscrafter.createidlx.util.gui.UIRenderHelperAdditions;
 import com.vladiscrafter.createidlx.util.widget.PlaceholderColoringEditBox;
@@ -23,6 +24,7 @@ import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.gui.element.ScreenElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +33,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
-import net.neoforged.neoforge.common.util.TriState;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -97,7 +98,11 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     final boolean enableScreenConfigButton = CIDLXConfigs.client.rleEnableScreenConfigButton.get();
     final boolean enableOutputLinePreview = CIDLXConfigs.client.rleEnableOutputLinePreview.get();
     final TabWidthDistributionMode tabWidthDistributionMode = CIDLXConfigs.client.rleTabWidthDistributionMode.get();
+    final boolean configEnableClearerValueFieldSplitters = CIDLXConfigs.client.rleConfigEnableClearerValueFieldSplitters.get();
+    final boolean rleConfigEnablePlaceholderPointer = CIDLXConfigs.client.rleConfigEnablePlaceholderPointer.get();
+    final boolean rleConfigEnablePlaceholderPointerClamps = CIDLXConfigs.client.rleConfigEnablePlaceholderPointerClamps.get();
     final boolean enableResetCaptureGroupsButton = CIDLXConfigs.client.rleEnableResetCaptureGroupsButton.get();
+    final boolean rleResetButtonHighlightFieldsToBeReset = CIDLXConfigs.client.rleResetButtonHighlightFieldsToBeReset.get();
     final boolean resetButtonHoldShiftToResetValues = CIDLXConfigs.client.rleResetButtonHoldShiftToResetValues.get();
     final boolean resetButtonHoldShiftToResetRoundings = CIDLXConfigs.client.rleResetButtonHoldShiftToResetRoundings.get();
     final boolean resetButtonHoldShiftToResetOperations = CIDLXConfigs.client.rleResetButtonHoldShiftToResetOperations.get();
@@ -142,12 +147,11 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         int x = guiLeft, y = guiTop;
 
-        labelBox = new PlaceholderColoringEditBox(font, x + 14, y + 120, 330, 8, CommonComponents.EMPTY);
-        labelBox.setBordered(false);
+        labelBox = new PlaceholderColoringEditBox(font, x + 14, y + 120, 332, 8, CommonComponents.EMPTY);
         labelBox.setTextColor(0xffffff);
         labelBox.setFocused(false);
         labelBox.setMaxLength(Integer.MAX_VALUE);
-        labelBox.setColoring(true);
+        labelBox.setColoring(CIDLXConfigs.client.colorPlaceholdersInRichLabelEditor.get());
         labelBox.setValue(text);
         labelBox.setResponder(this::onLabelUpdate);
 
@@ -177,21 +181,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         if (newPlaceholderTabButton != null) removeWidget(newPlaceholderTabButton);
 
         int i = 0, x = guiLeft, tX = guiLeft + 4 + 2, y = guiTop + 16;
+        boolean even = tabWidthDistributionMode == TabWidthDistributionMode.EVEN;
 
-        if (tabWidthDistributionMode == TabWidthDistributionMode.EVEN) {
-            tX += calculatePlaceholderButtonLeftGap();
-            for (Placeholder placeholder : placeholders.values()) {
-                final int lI = i;
-                placeholderTabButtons.add(new RLEPlaceholderTabButton(tX, y, calculatePlaceholderButtonWidth(false), lI, placeholder)
-                        .withCallback(() -> selectPlaceholder(lI, placeholder)));
-                tX += calculatePlaceholderButtonWidth(true);
-                i++;
-            }
-        } else for (Placeholder placeholder : placeholders.values()) {
+        if (even) tX += calculatePlaceholderButtonLeftGap();
+        for (Placeholder placeholder : placeholders.sequencedValues()) {
             final int lI = i;
-            placeholderTabButtons.add(new RLEPlaceholderTabButton(tX, y, calculatePlaceholderButtonWidths().get(lI), lI, placeholder)
-                    .withCallback(() -> selectPlaceholder(lI, placeholder)));
-            tX += calculatePlaceholderButtonWidths().get(i) + 2;
+            RLEPlaceholderTabButton t = new RLEPlaceholderTabButton(tX, y,
+                    (even ? calculatePlaceholderButtonWidth(false) : calculatePlaceholderButtonWidths().get(lI)), lI, placeholder);
+            t.withCallback(() -> selectPlaceholder(true, lI, placeholder));
+            t.withSecondaryCallback(() -> onPlaceholderUpdate(toStringIndex(t.getIndex()), t.getPlaceholder(), invalid.copy()));
+            placeholderTabButtons.add(t);
+            tX += (even ? calculatePlaceholderButtonWidth(true) : calculatePlaceholderButtonWidths().get(i) + 2);
             i++;
         }
 
@@ -203,10 +203,9 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         addRenderableWidget(newPlaceholderTabButton);
 
         int ri = Math.min(index, placeholders.size() - 1);
-        selectPlaceholder(placeholders.isEmpty() ? -1 : ri, placeholders.isEmpty() ? invalid.copy() : placeholderTabButtons.get(ri).getPlaceholder());
+        selectPlaceholder(true, placeholders.isEmpty() ? -1 : ri, placeholders.isEmpty() ? invalid.copy() : placeholderTabButtons.get(ri).getPlaceholder());
     }
 
-    @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     private void buildPlaceholderConfig(int index) {
         List<? extends AbstractWidget> placeholderConfigWidgets = Arrays.asList(
                 standardPlaceholderCheckbox, alternativePlaceholderCheckbox,
@@ -224,7 +223,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         if (index == -1 || placeholders.isEmpty()) return;
 
         Placeholder placeholder = placeholderTabButtons.get(index).getPlaceholder();
-        int psi = placeholders.keySet().toArray(new Integer[placeholders.size()])[index];
+        int psi = toStringIndex(index);
 
         int x = guiLeft + 11, y = guiTop + 44;
 
@@ -320,10 +319,10 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
                 .setState(placeholder.properties().rightGroup().operation().ordinal()).onChanged();
 
         if (enableResetCaptureGroupsButton) {
-            resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, RLE_PL_CAPTURE_GROUPS_RESET, RLE_PL_CAPTURE_GROUPS_RESET_H);
-            resetCaptureGroupsButton.withCallback(() -> resetCaptureGroups(psi, placeholder)); // TODO: mind the config when adding tooltip text
+            resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, RLE_PL_CONFIG_RESET, RLE_PL_CONFIG_RESET_H);
+            resetCaptureGroupsButton.withCallback(() -> resetPlaceholderProperties(psi, placeholder)); // TODO: mind the config when adding tooltip text
             if (resetButtonHoldShiftToResetValues || resetButtonHoldShiftToResetRoundings || resetButtonHoldShiftToResetOperations)
-                resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, RLE_PL_CAPTURE_GROUPS_RESET_HR);
+                resetCaptureGroupsButton.withSpecialHoverTexture(AllKeys.SHIFT_MODIFIER, RLE_PL_CONFIG_RESET_HR);
             resetCaptureGroupsButton.setNonFocusable();
         }
 
@@ -406,13 +405,13 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     private void renderElements(GuiGraphics graphics, int x, int y) {
         RLE_FIELD.render(graphics, x, y + 106);
-        renderPlaceholderTabStuff(graphics, x, y);
+        renderPlaceholderConfigStuff(graphics, x, y);
         renderCounter(graphics, x, y);
         renderPreviewStuff(graphics, x, y + 142);
         UIRenderHelperAdditions.drawStretched(graphics, x + 29, y + 210, 302, 24, RLE_BOTTOM_TABS_COVER, 512, 512);
     }
 
-    private void renderPlaceholderTabStuff(GuiGraphics graphics, int x, int y) {
+    private void renderPlaceholderConfigStuff(GuiGraphics graphics, int x, int y) {
         UIRenderHelperAdditions.drawStretched(graphics, x + 3, y + 15, 354, 16, RLE_TABS_BG_E, 512, 512);
         UIRenderHelperAdditions.drawStretched(graphics, x + 4, y + 15, 352, 16, RLE_TABS_BG_M, 512, 512);
 
@@ -420,12 +419,12 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         RLE_TABS_SEPARATOR.render(graphics, x + 342, y + 17);
 
-        RLE_PL_PROPERTIES_BG_L.render(graphics, x + 5, y + 38);
-        UIRenderHelperAdditions.drawStretched(graphics, x + 11, y + 38, 338, 66, RLE_PL_PROPERTIES_BG_M, 512, 512);
-        RLE_PL_PROPERTIES_BG_R.render(graphics, x + 349, y + 38);
+        RLE_PL_CONFIG_BG_L.render(graphics, x + 5, y + 38);
+        UIRenderHelperAdditions.drawStretched(graphics, x + 11, y + 38, 338, 66, RLE_PL_CONFIG_BG_M, 512, 512);
+        RLE_PL_CONFIG_BG_R.render(graphics, x + 349, y + 38);
 
-        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 107 - 6, y + 46);
-        RLE_PL_PROPERTIES_SEPARATOR.render(graphics, x + 249 + 6, y + 46);
+        RLE_PL_CONFIG_SEPARATOR.render(graphics, x + 107 - 6, y + 46);
+        RLE_PL_CONFIG_SEPARATOR.render(graphics, x + 249 + 6, y + 46);
 
         int sideNameplateInnerWidth = Math.max(40, Math.clamp(Math.max(font.width(plType) + 2, font.width(plFlags) + 2), 20, 92));
         int middleNameplateInnerWidth = Math.max(90, Math.clamp(font.width(plCaptureGroups) + 2 + 18, 20, 134));
@@ -438,36 +437,41 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         int fY = y + 34;
 
-        RLE_PL_PROPERTIES_FG_L.render(graphics, lX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, lX, fY, sideNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
-        RLE_PL_PROPERTIES_FG_R.render(graphics, lX + sideNameplateInnerWidth, fY);
+        RLE_PL_CONFIG_FG_L.render(graphics, lX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, lX, fY, sideNameplateInnerWidth, 16, RLE_PL_CONFIG_FG_M, 512, 512);
+        RLE_PL_CONFIG_FG_R.render(graphics, lX + sideNameplateInnerWidth, fY);
 
-        RLE_PL_PROPERTIES_FG_L.render(graphics, mX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, mX, fY, middleNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
-        RLE_PL_PROPERTIES_FG_R.render(graphics, mX + middleNameplateInnerWidth, fY);
+        RLE_PL_CONFIG_FG_L.render(graphics, mX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, mX, fY, middleNameplateInnerWidth, 16, RLE_PL_CONFIG_FG_M, 512, 512);
+        RLE_PL_CONFIG_FG_R.render(graphics, mX + middleNameplateInnerWidth, fY);
 
-        RLE_PL_PROPERTIES_FG_L.render(graphics, rX - 2, fY);
-        UIRenderHelperAdditions.drawStretched(graphics, rX, fY, sideNameplateInnerWidth, 16, RLE_PL_PROPERTIES_FG_M, 512, 512);
-        RLE_PL_PROPERTIES_FG_R.render(graphics, rX + sideNameplateInnerWidth, fY);
+        RLE_PL_CONFIG_FG_L.render(graphics, rX - 2, fY);
+        UIRenderHelperAdditions.drawStretched(graphics, rX, fY, sideNameplateInnerWidth, 16, RLE_PL_CONFIG_FG_M, 512, 512);
+        RLE_PL_CONFIG_FG_R.render(graphics, rX + sideNameplateInnerWidth, fY);
 
         graphics.drawCenteredString(font, plType, x - 3 + 11 + 48, fY + 4, 0xffffff);
         graphics.drawCenteredString(font, plCaptureGroups, x + 11 + 100 + 69, fY + 4, 0xffffff);
         graphics.drawCenteredString(font, plFlags, x + 3 + 11 + 242 + 48, fY + 4, 0xffffff);
 
         graphics.drawString(font, plTypeS, x + 36, y + 64, 0xffffff);
-        RLE_PL_TYPE_RADIO_WIRE.render(graphics, x + 27, y + 72);
+        RLE_PL_CONFIG_TYPES_CONNECTOR.render(graphics, x + 27, y + 72);
         graphics.drawString(font, plTypeA, x + 36, y + 81, 0xffffff);
 
-        /*RLE_PL_CAPTURE_GROUPS_BRACKETS.render(graphics, x + 115, y + 56);*/
-
+        boolean cs = configEnableClearerValueFieldSplitters;
         boolean alt = selectedPlaceholder.isAlternative();
-        int leftRoundingBoxExt = (leftGroupRoundingScrollInput != null && leftGroupRoundingScrollInput.getState() == 2) ? 1 : 0;
-        int rightRoundingBoxExt = (rightGroupRoundingScrollInput != null && rightGroupRoundingScrollInput.getState() == 2) ? 1 : 0;
+        int leftRoundingBoxExt = ((leftGroupRoundingScrollInput != null && leftGroupRoundingScrollInput.getState() == 2) ? 1 : 0) - (cs ? 1 : 0);
+        int rightRoundingBoxExt = ((rightGroupRoundingScrollInput != null && rightGroupRoundingScrollInput.getState() == 2) ? 1 : 0) + (cs ? 1 : 0);
+        ScreenElement splitter = cs ? AllGuiTextures.DATA_AREA_END : RLE_PL_CONFIG_TYPES_CONNECTOR;
         if (selectedPlaceholder.type() != INVALID) {
             drawInputBox(graphics, x + 124, y + 56, 47);
             drawInputBox(graphics, x + 109, y + 56, 16 + leftRoundingBoxExt);
             drawInputBox(graphics, x + 234, y + 56, 17);
             drawInputBox(graphics, x + 189, y + 56, 47 - rightRoundingBoxExt);
+
+            drawInputBox(graphics, x + 109, y + 56, 62);
+            drawInputBox(graphics, x + 189, y + 56, 62);
+            splitter.render(graphics, x + 124 + leftRoundingBoxExt, y + (cs ? 56 : 61));
+            splitter.render(graphics, x + 235 - rightRoundingBoxExt, y + (cs ? 56 : 61));
 
             drawInputBox(graphics, x + 109, y + 77, !alt ? 69 : 44);
             if (alt) drawInputBox(graphics, x + 158, y + 77, 44);
@@ -486,7 +490,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         if (alt) middleGroupOperationSelectorLabel.colored(w);
         rightGroupOperationSelectorLabel.colored(w);
 
-        if (resetCaptureGroupsButton != null && resetCaptureGroupsButton.isHovered()) {
+        if (resetCaptureGroupsButton != null && rleResetButtonHighlightFieldsToBeReset && resetCaptureGroupsButton.isHovered()) {
             boolean s = AllKeys.shiftDown();
             int rw = (s ? r : w), rb = (s ? r : b),
                     vc = (resetButtonHoldShiftToResetValues ? rw : rb),
@@ -504,6 +508,31 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             if (leftGroupOperationSelector.getState() != 2) leftGroupOperationSelectorLabel.colored(oc);
             if (alt && middleGroupOperationSelector.getState() != 2) middleGroupOperationSelectorLabel.colored(oc);
             if (rightGroupOperationSelector.getState() != 2) rightGroupOperationSelectorLabel.colored(oc);
+        }
+
+        if (labelBox.getSelectedPlaceholderX() != null && (rleConfigEnablePlaceholderPointer || rleConfigEnablePlaceholderPointerClamps)) {
+            boolean c = labelBox.isColoring();
+            int sps = labelBox.getSelectedPlaceholderX().x(), spe = labelBox.getSelectedPlaceholderX().y();
+            int ptrX = Math.round(sps + (float) (spe - sps) / 2) - 7;
+            if (rleConfigEnablePlaceholderPointer) {
+                RLE_PL_CONFIG_POINTER.render(graphics, ptrX, y + 101);
+                graphics.fill(sps, y + 119, spe, y + 129, 0xFFA3A3A3);
+            }
+
+            if (rleConfigEnablePlaceholderPointerClamps) {
+                graphics.fill(sps, y + 116, spe, y + 117, 0xFF575757);
+                graphics.fill(sps, y + 117, spe, y + 119, 0xFF6E6E6E);
+                graphics.fill(sps + 1, y + 117, spe - 1, y + 118, c ? 0xFFFFFFFF : 0xFFA3A3A3);
+
+                graphics.fill(sps, y + 131, spe, y + 132, 0xFF575757);
+                graphics.fill(sps, y + 129, spe, y + 131, 0xFF6E6E6E);
+                graphics.fill(sps + 1, y + 130, spe - 1, y + 131, c ? 0xFFFFFFFF : 0xFFA3A3A3);
+
+                if (c) {
+                    graphics.fill(sps + 1, y + 117, spe - 1, y + 118, PlaceholderColoringUtils.getHighlightColor(selectedPlaceholder));
+                    graphics.fill(sps + 1, y + 130, spe - 1, y + 131, PlaceholderColoringUtils.getHighlightColor(selectedPlaceholder));
+                }
+            }
         }
     }
 
@@ -584,10 +613,10 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         i = new LinkedList<>(placeholders.keySet())
                 .indexOf(placeholders.keySet().stream().filter(i1 -> i1 == si).findAny().orElse(placeholders.size() - 1));
         if (i > 0 && placeholderTabButtons.get(i).getPlaceholder().isTrimming()) i--;
-        if (i != -1) selectPlaceholder(i, placeholderTabButtons.get(i).getPlaceholder());
+        if (i != -1) selectPlaceholder(false, i, placeholderTabButtons.get(i).getPlaceholder());
     }
 
-    public void selectPlaceholder(int index, Placeholder placeholder) {
+    public void selectPlaceholder(boolean manual, int index, Placeholder placeholder) {
         if (index > -1 && index != selectedPlaceholderIndex) {
             clearGroupCaches(true, true);
             selectedPlaceholderIndex = index;
@@ -600,6 +629,9 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         }
         for (RLEPlaceholderTabButton button : placeholderTabButtons) button.setSelected(index == button.getIndex());
+        labelBox.setSelectedPlaceholderIndex(index);
+        labelBox.setSelectedPlaceholderDisplayMarks(toStringIndex(index), placeholder.length(),
+                !manual ? labelBox.getCursorPosition() : -1, (AllKeys.shiftDown() && !resetCaptureGroupsButton.isHovered()));
 
         buildPlaceholderConfig(index);
         refreshPreviewOutput();
@@ -618,6 +650,14 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     private void refreshPlaceholders() {
         placeholders = AttachedLabelProcessingUtils.mapPlaceholders(text);
+    }
+
+    private int toStringIndex(int placeholderIndex) {
+        return placeholders.keySet().stream().toList().get(placeholderIndex);
+    }
+
+    private int toPlaceholderIndex(int stringIndex) {
+        return placeholders.keySet().stream().toList().indexOf(stringIndex);
     }
 
     private int calculatePlaceholderButtonWidth(boolean gap) {
@@ -650,7 +690,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         return widths;
     }
 
-    public void resetCaptureGroups(int i, Placeholder oldPlaceholder) {
+    public void resetPlaceholderProperties(int i, Placeholder oldPlaceholder) {
         boolean resetValues = !resetButtonHoldShiftToResetValues || AllKeys.shiftDown();
         boolean resetRoundings = !resetButtonHoldShiftToResetRoundings || AllKeys.shiftDown();
         boolean resetOperations = !resetButtonHoldShiftToResetOperations || AllKeys.shiftDown();
@@ -711,8 +751,10 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
             LinkedHashMap<CaptureGroupValueType, Number> cachedV = left ? leftGroupCache : rightGroupCache;
             CaptureGroupOperation oldOperation = group.operation();
 
-            if (newOperation == CaptureGroupOperation.NONE && oldOperation != CaptureGroupOperation.NONE) cacheCaptureGroupData(true, true, group, cachedV, left);
-            else if (oldOperation == CaptureGroupOperation.NONE && newOperation != CaptureGroupOperation.NONE) pullCachedCaptureGroupData(group, cachedV, left);
+            if (newOperation == CaptureGroupOperation.NONE && oldOperation != CaptureGroupOperation.NONE)
+                cacheCaptureGroupData(true, true, group, cachedV, left);
+            else if (oldOperation == CaptureGroupOperation.NONE && newOperation != CaptureGroupOperation.NONE)
+                pullCachedCaptureGroupData(group, cachedV, left);
 
             group.withOperation(newOperation);
         }

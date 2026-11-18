@@ -1,5 +1,6 @@
 package com.vladiscrafter.createidlx.util.widget.rle;
 
+import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart;
@@ -19,14 +20,17 @@ public class RLEPlaceholderTabButton extends AbstractSimiWidget {
     protected int index;
     protected AttachedLabelPart.Placeholder placeholder;
     protected boolean selected;
+    protected Runnable onRightClick;
 
     final boolean displayFullPlaceholdersInTabHeaders = CIDLXConfigs.client.rleDisplayFullPlaceholdersInTabHeaders.get();
+    final boolean deletePlaceholderWithRightClick = CIDLXConfigs.client.rleDeletePlaceholderWithRightClick.get();
 
     public RLEPlaceholderTabButton(int x, int y, int width, int index, AttachedLabelPart.Placeholder placeholder) {
         super(x, y, width, 13);
         this.index = index;
         this.placeholder = placeholder;
         this.selected = false;
+        this.onRightClick = () -> {};
     }
 
     public void setIndex(int index) {
@@ -45,6 +49,11 @@ public class RLEPlaceholderTabButton extends AbstractSimiWidget {
         this.placeholder = placeholder;
     }
 
+    public RLEPlaceholderTabButton withSecondaryCallback(Runnable cb) {
+        this.onRightClick = cb;
+        return this;
+    }
+
     public boolean isSelected() {
         return selected;
     }
@@ -57,6 +66,19 @@ public class RLEPlaceholderTabButton extends AbstractSimiWidget {
     @Override
     public void setFocused(boolean focused) {
         super.setFocused(focused || selected);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if ((button != 0 && button != 1) || !visible || !active || !isMouseOver(mouseX, mouseY)) return false;
+
+        switch (button) {
+            case 0 -> runCallback(mouseX, mouseY);
+            case 1 -> {
+                if (onRightClick != null && deletePlaceholderWithRightClick) onRightClick.run();
+            }
+        }
+        return true;
     }
 
     @Override

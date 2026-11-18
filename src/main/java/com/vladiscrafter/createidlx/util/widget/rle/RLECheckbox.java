@@ -11,13 +11,13 @@ public class RLECheckbox extends TextureButton {
     protected RLECheckbox linkedCheckbox;
     protected Runnable linkedToggler;
 
-    final ScreenElement tex = CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_OFF;
-    final ScreenElement hoverTex = CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_OFF_H;
-    final ScreenElement onTex = CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_ON;
-    final ScreenElement onHoverTex = CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_ON_H;
+    final ScreenElement tex = CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_OFF;
+    final ScreenElement hoverTex = CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_OFF_H;
+    final ScreenElement onTex = CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_ON;
+    final ScreenElement onHoverTex = CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_ON_H;
 
     public RLECheckbox(int x, int y) {
-        super(x, y, 9, 9, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_OFF, CreateIDLXGuiTextures.RLE_PL_PROPERTIES_CHECKBOX_OFF_H);
+        super(x, y, 9, 9, CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_OFF, CreateIDLXGuiTextures.RLE_PL_CONFIG_CHECKBOX_OFF_H);
         this.on = false;
         this.linkedCheckbox = null;
         this.linkedToggler = this::toggle;

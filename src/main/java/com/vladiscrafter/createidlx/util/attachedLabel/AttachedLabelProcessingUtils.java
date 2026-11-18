@@ -2,8 +2,7 @@ package com.vladiscrafter.createidlx.util.attachedLabel;
 
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
-import com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen;
-import com.vladiscrafter.createidlx.util.widget.PlaceholderColoringEditBox;
+import com.vladiscrafter.createidlx.util.gui.PlaceholderColoringUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -14,9 +13,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -499,7 +496,7 @@ public class AttachedLabelProcessingUtils {
             }
 
             if (placeholder.isPrimitive()) {
-                trimmedInfoParts.add(new ProcessedInfoPart(rawInfo, PlaceholderColoringEditBox.getHighlightColor(placeholder)));
+                trimmedInfoParts.add(new ProcessedInfoPart(rawInfo, PlaceholderColoringUtils.getHighlightColor(placeholder)));
                 continue;
             }
 
@@ -524,7 +521,7 @@ public class AttachedLabelProcessingUtils {
                     .concat(middleGroupOperation == PRESERVE ? middleSub : "")
                     .concat(rightGroupOperation == PRESERVE ? rightSub : "");
 
-            trimmedInfoParts.add(new ProcessedInfoPart(infoPart, PlaceholderColoringEditBox.getHighlightColor(placeholder)));
+            trimmedInfoParts.add(new ProcessedInfoPart(infoPart, PlaceholderColoringUtils.getHighlightColor(placeholder)));
         }
 
         return trimmedInfoParts;

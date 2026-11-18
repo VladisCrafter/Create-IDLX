@@ -36,7 +36,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
     final Component scrollToModifyPropDen = Component.literal("Scroll to Modify the Denominator");
     final Component scrollToModifyPropNum = Component.literal("Ctrl to Modify the Numerator");
     final Component typeTitle = Component.literal("Capture Group Type");
-    final Component altToCycleType = Component.literal("Alt to Select the Capture Group Type");
+    final Component altToCycleType = Component.literal("Alt to Select the Value Type");
 
     public static final Integer NEW_INTEGER = 0; // TODO: make configurable
     public static final BigDecimal NEW_DECIMAL = BigDecimal.valueOf(0.5);
@@ -201,12 +201,8 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
         toolTip.add(title.plainCopy().withStyle(s -> s.withColor(HEADER_RGB.getRGB())));
         if (hint != null) toolTip.add(hint.plainCopy().withStyle(s -> s.withColor(HINT_RGB.getRGB())));
 
-        toolTip.add((switch (cg.valueType()) {
-            case FR_DECIMAL -> scrollToModifyDecimal;
-            case FR_PERCENT -> scrollToModifyPercent;
-            case FR_PROPER -> scrollToModifyPropDen;
-            default -> scrollToModifyChars;
-        }).plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
+        toolTip.add((cg.valueType() == FR_PROPER ? scrollToModifyPropDen : scrollToModifyChars)
+                .plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
 
         if (cg.valueType() == CaptureGroupValueType.FR_PROPER) toolTip.add(scrollToModifyPropNum.plainCopy().
                 withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));

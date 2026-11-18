@@ -19,10 +19,13 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigBool enableClipboardIconHighlighting = b(true, "enableClipboardIconHighlighting", Comments.enableClipboardIconHighlighting, Comments.oteGuideWidgets);
     public final ConfigBool enableRedirectsToPonderScenes = b(true, "enableRedirectsToPonderScenes", Comments.enableRedirectsToPonderScenes, Comments.oteGuideWidgets);
 
-    public final ConfigGroup attachedLabelVisuals = group(2, "attachedLabelVisuals", "Attached Label Visuals");
+    public final ConfigGroup attachedLabelFieldVisuals = group(2, "attachedLabelFieldVisuals", "Attached Label Field Visuals");
     public final ConfigBool colorPlaceholders = b(true, "colorPlaceholders", Comments.colorPlaceholders);
+    public final ConfigBool colorPlaceholdersInDisplayLinkGUI = b(true, "colorPlaceholdersInDisplayLinkGUI", Comments.colorPlaceholdersInDisplayLinkGUI, Comments.oteColoring);
+    public final ConfigBool colorPlaceholdersInRichLabelEditor = b(true, "colorPlaceholdersInRichLabelEditor", Comments.colorPlaceholdersInRichLabelEditor, Comments.oteColoring);
     public final ConfigInt placeholdersColorsAlpha = i(0xAA, 0, 255, "placeholdersColorsAlpha", Comments.alpha, Comments.placeholdersColorsAlpha, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigInt coloringBackgroundHeightIncrease = i(0, -1, 3, "coloringBackgroundHeightIncrease", Comments.pixels, Comments.coloringBackgroundHeightIncrease, Comments.heightReference, Comments.oteColoring);
+    public final ConfigBool stretchColoringForPartlyVisiblePlaceholders = b(true, "stretchColoringForPartlyVisiblePlaceholders", Comments.stretchColoringForPartlyVisiblePlaceholders, Comments.oteColoring);
 
     public final ConfigGroup placeholderColoringCustomization = group(3, "placeholderColoringCustomization", "Placeholder Coloring Customization");
     public final ConfigBool colorDollarPlaceholders = b(true, "dollarPlaceholders", Comments.colorDollarPlaceholders, Comments.oteColoring);
@@ -59,9 +62,17 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigGroup rlePlaceholderTabsSettings = group(3, "placeholderTabsSettings", "Placeholder Tabs Settings");
     public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
     public final ConfigBool rleDisplayFullPlaceholdersInTabHeaders = b(true, "displayFullPlaceholdersInTabHeaders", Comments.rleDisplayFullPlaceholdersInTabHeaders);
+    public final ConfigBool rleDeletePlaceholderWithRightClick = b(true, "deletePlaceholderWithRightClick", Comments.rleDeletePlaceholderWithRightClick);
+    public final ConfigBool rleCenterAlignSelectedPlaceholder = b(true, "centerAlignSelectedPlaceholder", Comments.rleCenterAlignSelectedPlaceholder, Comments.centerAlignReference);
 
-    public final ConfigGroup rleResetCaptureGroupsButtonSettings = group(3, "resetCaptureGroupsButtonSettings", "Reset Capture Groups Button Settings");
+    public final ConfigGroup rlePlaceholderConfigurationSectionSettings = group(3, "placeholderConfigurationSectionSettings", "Placeholder Configuration Section Settings");
+    public final ConfigBool rleConfigEnableClearerValueFieldSplitters = b(false, "enableClearerValueFieldSplitters", Comments.rleConfigEnableClearerValueFieldSplitters);
+    public final ConfigBool rleConfigEnablePlaceholderPointer = b(true, "enablePlaceholderPointer", Comments.rleConfigEnablePlaceholderPointer);
+    public final ConfigBool rleConfigEnablePlaceholderPointerClamps = b(true, "enablePlaceholderPointerClamps", Comments.rleConfigEnablePlaceholderPointerClamps);
+
+    public final ConfigGroup rleResetCaptureGroupsButtonSettings = group(4, "resetCaptureGroupsButtonSettings", "Reset Capture Groups Button Settings");
     public final ConfigBool rleEnableResetCaptureGroupsButton = b(true, "enableResetCaptureGroupsButton", Comments.rleEnableResetCaptureGroupsButton);
+    public final ConfigBool rleResetButtonHighlightFieldsToBeReset = b(true, "highlightFieldsToBeReset", Comments.rleResetButtonHighlightFieldsToBeReset, Comments.oteResetButton);
     public final ConfigBool rleResetButtonHoldShiftToResetValues = b(false, "holdShiftToResetValues", Comments.rleResetButtonHoldShiftToResetValues, Comments.oteResetButton);
     public final ConfigBool rleResetButtonHoldShiftToResetRoundings = b(false, "holdShiftToResetRoundings", Comments.rleResetButtonHoldShiftToResetRoundings, Comments.oteResetButton);
     public final ConfigBool rleResetButtonHoldShiftToResetOperations = b(true, "holdShiftToResetOperations", Comments.rleResetButtonHoldShiftToResetOperations, Comments.oteResetButton);
@@ -116,6 +127,7 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String oteResetButton = "Only takes effect if 'Enable Reset Capture Groups Button' is enabled.";
         static String oteOutline = "Only takes effect if 'Enable Custom Outline For Display Links' is enabled.";
         static String oteMarqueeEffect = "Only takes effect if 'Truncate Overflowing Strings' is enabled.";
+        static String centerAlignReference = "Disable to make the displayed part move only if the placeholder is not fully shown, and to a minimal delta required to show it fully.";
         static String outlineReference = "It's set to 0.4 for other components which properties can be copied with a Clipboard.";
         static String heightReference = "Set to -1 to make it fit within the text height; set to 3 to make it fill the whole text input field height.";
 
@@ -129,8 +141,11 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String enableRedirectsToPonderScenes = "Allow the guide widgets to redirect to their respective Ponder scenes on clicked.";
 
         static String colorPlaceholders = "Apply background coloring to placeholders in the Attached Label field.";
+        static String colorPlaceholdersInDisplayLinkGUI = "Enable placeholder coloring support to the Attached Label input field in the regular Display Link configuration GUI.";
+        static String colorPlaceholdersInRichLabelEditor = "Enable placeholder coloring support to the input field in the Rich Label Editor GUI.";
         static String placeholdersColorsAlpha = "The alpha value of background colorings of placeholders.";
         static String coloringBackgroundHeightIncrease = "The additional vertical space for placeholders' background coloring rectangles to take.";
+        static String stretchColoringForPartlyVisiblePlaceholders = "Enable stretching the coloring background up to the bounds to indicate that a part of the placeholder is out of them.";
 
         static String colorDollarPlaceholders = "Apply background coloring to all '$' (dollar sign) placeholders.";
         static String dollarPlaceholderColor = "The background color to apply to all '$' (dollar sign) placeholders.";
@@ -165,8 +180,16 @@ public class CIDLXClient extends CIDLXConfigBase {
 
         static String rleTabWidthDistributionMode = "How should the Placeholder tab widths be distributed in uncertain situations: evenly (may create uneven gaps in between) or unevenly (longer placeholders will have wider tabs).";
         static String rleDisplayFullPlaceholdersInTabHeaders = "Display full forms of the Placeholders, instead of the indexes, in the headers of their respective tabs, unless not enough space is present.";
+        static String rleDeletePlaceholderWithRightClick = "Enable deleting a placeholder by right-clicking the header of its respective tab.";
+        static String rleCenterAlignSelectedPlaceholder = "Whenever a placeholder is selected, always move the displayed portion of the Label field to make the selected placeholder appear in the center.";
+
+        static String rleConfigEnableClearerValueFieldSplitters = "Change the texture of the splitters between the value input and the rounding selector from a subtle gray one to a taller and more distinct white one.";
+
+        static String rleConfigEnablePlaceholderPointer = "Enable the Pointer - a decorative arrow pointing to the currently selected placeholder's location in the Label input field.";
+        static String rleConfigEnablePlaceholderPointerClamps = "Enable the Clamps - decorative lines below the Pointer that visualize the length of the selected placeholder.";
 
         static String rleEnableResetCaptureGroupsButton = "Enable the 'Reset Capture Groups' button in the Editor.";
+        static String rleResetButtonHighlightFieldsToBeReset = "Highlight the fields that are going to be reset after clicking the 'Reset Capture Groups' button with respective colors.";
         static String rleResetButtonHoldShiftToResetValues = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the values.";
         static String rleResetButtonHoldShiftToResetRoundings = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the roundings.";
         static String rleResetButtonHoldShiftToResetOperations = "Whether holding Shift before clicking the 'Reset Capture Groups' button is necessary to affect the operations.";

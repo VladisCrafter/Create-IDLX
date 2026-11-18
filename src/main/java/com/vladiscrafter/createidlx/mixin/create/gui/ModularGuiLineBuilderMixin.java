@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.function.BiConsumer;
 
+@SuppressWarnings("DataFlowIssue")
 @Mixin(ModularGuiLineBuilder.class)
 public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilderExt {
 
@@ -58,12 +59,12 @@ public abstract class ModularGuiLineBuilderMixin implements ModularGuiLineBuilde
     @Unique
     public ModularGuiLineBuilder createidlx$addPlaceholderColoringTextInput(int x, int width, BiConsumer<EditBox, TooltipArea> inputTransform,
                                                                             String dataKey) {
-        PlaceholderColoringEditBox input = new PlaceholderColoringEditBox(font, x + this.x + 5, y, width - 9, 8, CommonComponents.EMPTY);
+        PlaceholderColoringEditBox input = new PlaceholderColoringEditBox(font, x + this.x + 5, y, width - 10, 8, CommonComponents.EMPTY);
         input.setBordered(false);
         input.setTextColor(0xffffff);
         input.setMaxLength(Integer.MAX_VALUE);
         input.setFocused(false);
-        input.setColoring(true /* TODO: configurable */);
+        input.setColoring(CIDLXConfigs.client.colorPlaceholdersInDisplayLinkGUI.get());
         input.mouseClicked(0, 0, 0);
         TooltipArea tooltipArea = new TooltipArea(this.x + x, y - 4, width, 18);
         inputTransform.accept(input, tooltipArea);
