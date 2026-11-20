@@ -435,7 +435,7 @@ public class AttachedLabelProcessingUtils {
         /*log(String.format("\n[hasValidRounding] CG %s for type %s is %svalid", raw, type, result ? "" : "NOT "));*/
         return result;
     }
-    
+
     private static boolean matches(char a, char b) {
         return Character.toUpperCase(a) == b;
     }

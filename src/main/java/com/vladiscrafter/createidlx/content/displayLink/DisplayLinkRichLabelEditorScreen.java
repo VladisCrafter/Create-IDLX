@@ -196,14 +196,14 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
 
         newPlaceholderTabButton = new TextureButton(x + (!placeholders.isEmpty() ? 345 : 171), y + 2, 9, 9, RLE_TABS_NEW, RLE_TABS_NEW_H);
-        newPlaceholderTabButton.withCallback(() -> labelBox.insertText(dollar.getString()));
+        newPlaceholderTabButton.withCallback(() -> createNewPlaceholder());
         newPlaceholderTabButton.setNonFocusable();
 
         addRenderableWidgets(placeholderTabButtons);
         addRenderableWidget(newPlaceholderTabButton);
 
         int ri = Math.min(index, placeholders.size() - 1);
-        selectPlaceholder(true, placeholders.isEmpty() ? -1 : ri, placeholders.isEmpty() ? invalid.copy() : placeholderTabButtons.get(ri).getPlaceholder());
+        selectPlaceholder(false, placeholders.isEmpty() ? -1 : ri, placeholders.isEmpty() ? invalid.copy() : placeholderTabButtons.get(ri).getPlaceholder());
     }
 
     private void buildPlaceholderConfig(int index) {
@@ -599,6 +599,22 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
                 prOutputExample.copy().withStyle(ChatFormatting.ITALIC), x + 14, y + 44, 0xA3A3A3, false);
     }
 
+    public void createNewPlaceholder() {
+        int cursor = labelBox.getCursorPosition(), highlight = ((EditBoxAccessor) labelBox).createidlx$getHighlightPos();
+        List<Integer> placeholdersBeforeCursor = placeholders.sequencedKeySet().stream().filter(si -> si < cursor).toList();
+
+        if (!placeholdersBeforeCursor.isEmpty() && cursor == highlight) {
+            int closestPlaceholderIndex = placeholdersBeforeCursor.getLast();
+            int placeholderEndIndex = closestPlaceholderIndex + placeholders.get(closestPlaceholderIndex).length();
+            int finalIndex = Math.max(placeholderEndIndex, cursor);
+            labelBox.setCursorPosition(finalIndex);
+            labelBox.setHighlightPos(finalIndex);
+        }
+
+        clearGroupCaches(true, true);
+        labelBox.insertText(dollar.getString());
+    }
+
     private void autoselectNewestPlaceholder() {
         if (text.equals(cachedText) || placeholders.size() <= cachedPlaceholdersAmount || cachedPlaceholdersAmount == -1) return;
 
@@ -637,10 +653,16 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         refreshPreviewOutput();
     }
 
+    private void refreshPlaceholders() {
+        placeholders = AttachedLabelProcessingUtils.mapPlaceholders(text);
+    }
+
     private void clearGroupCaches(boolean v, boolean r) {
         if (v) {
             leftGroupCache.clear();
             rightGroupCache.clear();
+            leftGroupScrollInputLabelCache = plValueNone.copy();
+            rightGroupScrollInputLabelCache = plValueNone.copy();
         }
         if (r) {
             leftGroupRoundingLabelCache = plRoundingNone.copy();
@@ -648,12 +670,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         }
     }
 
-    private void refreshPlaceholders() {
-        placeholders = AttachedLabelProcessingUtils.mapPlaceholders(text);
-    }
-
     private int toStringIndex(int placeholderIndex) {
-        return placeholders.keySet().stream().toList().get(placeholderIndex);
+        return placeholderIndex != -1 ? placeholders.keySet().stream().toList().get(placeholderIndex) : 0;
     }
 
     private int toPlaceholderIndex(int stringIndex) {
@@ -864,13 +882,17 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        List<? extends EditBox> boxes = Arrays.asList(labelBox, previewInputBox); // TODO: somehow fix y offsets some time soon
+        HashMap<? extends EditBox, List<? extends AbstractWidget>> boxesAndExceptions // the list is for widgets, using which will keep the key box focused
+                = new HashMap<>(Map.of(labelBox, List.of(newPlaceholderTabButton), previewInputBox, List.of()));
+        // TODO: somehow fix y offsets of input boxes
 
-        for (EditBox box : boxes.stream().filter(Objects::nonNull).filter(EditBox::isFocused).toList()) {
+        for (EditBox box : boxesAndExceptions.keySet().stream().filter(Objects::nonNull).filter(EditBox::isFocused).toList()) {
             boolean result = box.mouseClicked(mouseX, mouseY, button);
             if (box.isHovered() || result) return result;
-            box.setHighlightPos(box.getCursorPosition());
-            box.setFocused(false);
+            if (boxesAndExceptions.get(box).stream().noneMatch(AbstractWidget::isHovered)) {
+                box.setHighlightPos(box.getCursorPosition());
+                box.setFocused(false);
+            }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
