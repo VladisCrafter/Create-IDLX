@@ -2,7 +2,7 @@ package com.vladiscrafter.createidlx.util.attachedLabel;
 
 public class AttachedLabelPart {
     public enum PlaceholderType { DOLLAR, BRACKETS, TRIM, TRIM_SHORT, TRIM_ALT, INVALID }
-    public enum PlaceholderState { ACTIVE, ESCAPED, DISABLED, ESCAPED_DISABLED, /*INCOMPLETE, UNOPTIMIZED, SYNTACTICALLY_ERRORSOME,*/ UNIDENTIFIED}
+    public enum PlaceholderState { ACTIVE, ESCAPED, DISABLED, /*ESCAPED_DISABLED, INCOMPLETE, UNOPTIMIZED, SYNTACTICALLY_ERRORSOME,*/ UNIDENTIFIED}
 
     public enum CaptureGroupValueType { CHARS, FR_DECIMAL, FR_PERCENT, FR_PROPER }
     public enum CaptureGroupOperation { CUT, PRESERVE, NONE }
@@ -120,11 +120,11 @@ public class AttachedLabelPart {
         }*/
 
         public boolean isEscaped() {
-            return state == PlaceholderState.ESCAPED || state == PlaceholderState.ESCAPED_DISABLED;
+            return state == PlaceholderState.ESCAPED /*|| state == PlaceholderState.ESCAPED_DISABLED*/;
         }
 
         public boolean isDisabled() {
-            return state == PlaceholderState.DISABLED || state == PlaceholderState.ESCAPED_DISABLED;
+            return state == PlaceholderState.DISABLED /*|| state == PlaceholderState.ESCAPED_DISABLED*/;
         }
 
         public PlaceholderType conditional(boolean alt) {
@@ -272,23 +272,27 @@ public class AttachedLabelPart {
             return this;
         }
 
-        public String asDebugString () {
+        public String asDebugString() {
             return String.format("{ VT = %s | V = %s | O = %s | R = %s }", valueType, value.toString(), operation, rounding);
         }
 
-        public boolean isFraction () {
+        public boolean isFraction() {
             return valueType != CaptureGroupValueType.CHARS;
         }
 
-        public boolean isInvalid () {
+        public boolean isInvalid() {
             return valueType == CaptureGroupValueType.CHARS ? value.intValue() < 0 : value.floatValue() > 1.0;
         }
 
     }
 
-    public record PlainPart(String raw) implements AttachedLabelBreakdownResult {
+    public record PlainPart(String raw, boolean isFormerlyPlaceholder) implements AttachedLabelBreakdownResult {
         public String getString() {
             return raw;
+        }
+
+        public boolean isFormerlyPlaceholder() {
+            return isFormerlyPlaceholder;
         }
 
         public String asDebugString() {

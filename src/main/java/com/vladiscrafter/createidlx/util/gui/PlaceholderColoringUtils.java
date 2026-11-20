@@ -21,9 +21,9 @@ public class PlaceholderColoringUtils {
                         ? cfg.escapedPlaceholderColor.get() | alpha : invisible;
                 case DISABLED -> cfg.colorDisabledPlaceholders.get()
                         ? cfg.disabledPlaceholderColor.get() | alpha : invisible;
-                case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
+                /*case ESCAPED_DISABLED -> cfg.colorEscapedDisabledPlaceholders.get()
                         ? cfg.escapedDisabledPlaceholderColor.get() | alpha : invisible;
-                /*case INCOMPLETE -> cfg.colorIncompletePlaceholders.get()
+                case INCOMPLETE -> cfg.colorIncompletePlaceholders.get()
                         ? cfg.incompletePlaceholderColor.get() | alpha : invisible;
                 case UNOPTIMIZED -> cfg.colorUnoptimizedPlaceholders.get()
                         ? cfg.unoptimizedPlaceholderColor.get() | alpha : invisible;

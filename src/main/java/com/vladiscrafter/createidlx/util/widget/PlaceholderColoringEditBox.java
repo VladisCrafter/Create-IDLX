@@ -20,7 +20,7 @@ public class PlaceholderColoringEditBox extends EditBox {
 
     final boolean rleCenterAlignSelectedPlaceholder = CIDLXConfigs.client.rleCenterAlignSelectedPlaceholder.get();
     final boolean stretchColoringForPartlyVisiblePlaceholders = CIDLXConfigs.client.stretchColoringForPartlyVisiblePlaceholders.get();
-    final boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
+    /*final boolean hideEscapingOfDisabledPlaceholders = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();*/
 
     public PlaceholderColoringEditBox(Font font, int x, int y, int width, int height, Component message) {
         super(font, x, y, width, height, null, message);
@@ -103,10 +103,10 @@ public class PlaceholderColoringEditBox extends EditBox {
                 int minX = Math.max(widgetX - 4, fX);
                 int maxX = (fX + plW > widgetX + font.width(visible) && stretchColoringForPartlyVisiblePlaceholders) ? widgetX + width + 4 : fX + plW;
 
-                if (placeholderState == AttachedLabelPart.PlaceholderState.ESCAPED_DISABLED && !hideEscapingOfDisabledPlaceholders) {
+                /*if (placeholderState == AttachedLabelPart.PlaceholderState.ESCAPED_DISABLED && !hideEscapingOfDisabledPlaceholders) {
                     if (maxX - minX >= plW) minX += font.width(String.valueOf('\\'));
                     placeholderState = AttachedLabelPart.PlaceholderState.DISABLED;
-                }
+                }*/
 
                 if (minX < maxX) {
                     if (coloring) graphics.fill(minX, sY, maxX, eY, 0, getHighlightColor(placeholderType, placeholderState));

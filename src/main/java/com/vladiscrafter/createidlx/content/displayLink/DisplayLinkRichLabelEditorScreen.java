@@ -6,7 +6,6 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
-import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
 import com.vladiscrafter.createidlx.mixin.accessor.minecraft.EditBoxAccessor;
@@ -571,7 +570,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         if (!enableOutputLinePreview) return;
 
         int ix = x + 173;
-        int ibel = previewInputBox.isFocused() ? 166 : previewInputBox.getValue().isEmpty()
+        int ibel = previewInputBox != null && previewInputBox.isFocused() ? 166 : previewInputBox != null && previewInputBox.getValue().isEmpty()
                 ? font.width(prInputExample) / 2 - 4 : Math.clamp(font.width(previewInput) / 2 - 4, 0, 166); // Input backplate extension length
 
         RLE_PREVIEW_INPUT_FIELD_LE.render(graphics, ix - ibel - 3, y);
@@ -816,7 +815,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     private void refreshPreviewOutput() {
-        previewOutput = AttachedLabelProcessingUtils.breakDownAndAssembleLabelAsSingleComponent(text, previewInput,
+        previewOutput = AttachedLabelProcessingUtils.breakDownAndAssembleLabelAsColoredComponent(text, previewInput,
                 highlightProcessedInfoPartsInPreview, underlineSelectedPlaceholderInPreview, selectedPlaceholderIndex);
         previewOutputStringLastStateChangeMillis = Util.getMillis();
     }
@@ -889,7 +888,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         for (EditBox box : boxesAndExceptions.keySet().stream().filter(Objects::nonNull).filter(EditBox::isFocused).toList()) {
             boolean result = box.mouseClicked(mouseX, mouseY, button);
             if (box.isHovered() || result) return result;
-            if (boxesAndExceptions.get(box).stream().noneMatch(AbstractWidget::isHovered)) {
+            if (boxesAndExceptions.get(box).stream().filter(Objects::nonNull).noneMatch(AbstractWidget::isHovered)) {
                 box.setHighlightPos(box.getCursorPosition());
                 box.setFocused(false);
             }

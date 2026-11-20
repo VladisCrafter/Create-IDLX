@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.vladiscrafter.createidlx.content.displayLink.DisplayLinkRichLabelEditorScreen.*;
 
-@SuppressWarnings("unused")
 public class CIDLXClient extends CIDLXConfigBase {
 
     public final ConfigGroup displayLinkGUI = group(1, "displayLinkGUI", "Display Link GUI");
@@ -26,6 +25,7 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigInt placeholdersColorsAlpha = i(0xAA, 0, 255, "placeholdersColorsAlpha", Comments.alpha, Comments.placeholdersColorsAlpha, Comments.oteColoring, ConfigAnnotations.IntDisplay.HEX.asComment());
     public final ConfigInt coloringBackgroundHeightIncrease = i(0, -1, 3, "coloringBackgroundHeightIncrease", Comments.pixels, Comments.coloringBackgroundHeightIncrease, Comments.heightReference, Comments.oteColoring);
     public final ConfigBool stretchColoringForPartlyVisiblePlaceholders = b(true, "stretchColoringForPartlyVisiblePlaceholders", Comments.stretchColoringForPartlyVisiblePlaceholders, Comments.oteColoring);
+//    public final ConfigBool enhanceBackwardsTextCursorMovement = b(true, "enhanceBackwardsTextCursorMovement", Comments.enhanceBackwardsTextCursorMovement);
 
     public final ConfigGroup placeholderColoringCustomization = group(3, "placeholderColoringCustomization", "Placeholder Coloring Customization");
     public final ConfigBool colorDollarPlaceholders = b(true, "dollarPlaceholders", Comments.colorDollarPlaceholders, Comments.oteColoring);
@@ -58,6 +58,8 @@ public class CIDLXClient extends CIDLXConfigBase {
     public final ConfigEnum<CounterPosition> rleCounterPosition = e(CounterPosition.DYNAMIC, "counterPosition", Comments.rleCounterPosition);
     public final ConfigBool rleEnableScreenConfigButton = b(true, "enableScreenConfigButton", Comments.rleEnableScreenConfigButton);
     public final ConfigBool rleEnableOutputLinePreview = b(true, "enableOutputLinePreview", Comments.rleEnableOutputLinePreview);
+    // TODO: maybe a maximum amount of Placeholders cap (default to 21 for even tab widths even in the uneven mode)
+
 
     public final ConfigGroup rlePlaceholderTabsSettings = group(3, "placeholderTabsSettings", "Placeholder Tabs Settings");
     public final ConfigEnum<TabWidthDistributionMode> rleTabWidthDistributionMode = e(TabWidthDistributionMode.UNEVEN, "tabWidthDistributionMode", Comments.rleTabWidthDistributionMode);
@@ -136,7 +138,7 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String enableVisualizationSettingsButtons = "Show the 'Show Visualization Settings' button in Display Link interface.";
         static String alwaysShowVisualizationSettingsButtons = "Never hide the Visualization Settings buttons behind the 'Show Visualization Buttons' dropdown button.";
 
-//      static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
+        static String enableActivePlaceholdersTooltip = "Show the Active placeholders part of the Placeholders Usage Guide tooltip.";
         static String enableClipboardIconHighlighting = "Highlight the 'Duplicating Display Link Properties' icon when hovered on.";
         static String enableRedirectsToPonderScenes = "Allow the guide widgets to redirect to their respective Ponder scenes on clicked.";
 
@@ -146,6 +148,7 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String placeholdersColorsAlpha = "The alpha value of background colorings of placeholders.";
         static String coloringBackgroundHeightIncrease = "The additional vertical space for placeholders' background coloring rectangles to take.";
         static String stretchColoringForPartlyVisiblePlaceholders = "Enable stretching the coloring background up to the bounds to indicate that a part of the placeholder is out of them.";
+        static String enhanceBackwardsTextCursorMovement = "Make the text cursor (caret) move the visible part of the string gradually when moving right to left.";
 
         static String colorDollarPlaceholders = "Apply background coloring to all '$' (dollar sign) placeholders.";
         static String dollarPlaceholderColor = "The background color to apply to all '$' (dollar sign) placeholders.";
@@ -166,12 +169,12 @@ public class CIDLXClient extends CIDLXConfigBase {
         static String disabledPlaceholderColor = "The background color to apply to all placeholders that are disabled by the server config.";
         static String colorEscapedDisabledPlaceholders = "Apply background coloring to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
         static String escapedDisabledPlaceholderColor = "The background color to apply to all '\\'-annotated (escaped) placeholders that are disabled by the server config.";
-//        static String colorIncompletePlaceholders = "Apply background coloring to all incomplete placeholders.";
-//        static String incompletePlaceholderColor = "The background color to apply to all incomplete placeholders.";
-//        static String colorUnoptimizedPlaceholders = "Apply background coloring to all unoptimized placeholders.";
-//        static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
-//        static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
-//        static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
+        static String colorIncompletePlaceholders = "Apply background coloring to all incomplete placeholders.";
+        static String incompletePlaceholderColor = "The background color to apply to all incomplete placeholders.";
+        static String colorUnoptimizedPlaceholders = "Apply background coloring to all unoptimized placeholders.";
+        static String unoptimizedPlaceholderColor = "The background color to apply to all unoptimized placeholders.";
+        static String colorSyntacticallyErrorsomePlaceholders = "Apply background coloring to all placeholders containing syntax errors.";
+        static String syntacticallyErrorsomePlaceholderColor = "The background color to apply to all placeholders containing syntax errors.";
 
         static String rleDefaultClosingMode = "Which action to perform to the Label when the Editor is closed with a keybind instead of a button.";
         static String rleCounterPosition = "How should the Character Counter appear: in the same field as the Label or in its own window.";

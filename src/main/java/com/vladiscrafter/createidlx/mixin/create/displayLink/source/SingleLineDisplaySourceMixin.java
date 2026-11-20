@@ -11,6 +11,7 @@ import com.simibubi.create.content.redstone.nixieTube.NixieTubeBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayBlockEntity;
 import com.simibubi.create.content.trains.display.FlapDisplayLayout;
 import com.simibubi.create.content.trains.display.FlapDisplaySection;
+import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.mixin.accessor.create.NixieTubeDisplayTargetAccessor;
 import com.vladiscrafter.createidlx.mixin.accessor.create.SingleLineDisplaySourceAccessor;
 import com.vladiscrafter.createidlx.util.bridge.NixieTubeBlockEntityInternalCustomTextHolder;
@@ -49,10 +50,7 @@ public abstract class SingleLineDisplaySourceMixin {
             else return originalValue;
         }
 
-        if (getTotalPlaceholdersCountInLabel(label) == 0) {
-            if (anyVisualizationConfigEnabled(context)) label = appendPrimitivePlaceholder(label);
-            else return originalValue;
-        }
+        if (getTotalPlaceholdersCountInLabel(label, false) == 0) label = appendPrimitivePlaceholder(label);
 
         if (!shouldBeProcessed(label) && !hasOverridingFinishLabel(context)) return originalValue;
 
@@ -106,10 +104,7 @@ public abstract class SingleLineDisplaySourceMixin {
             else return originalValue;
         }
 
-        if (getTotalPlaceholdersCountInLabel(label) == 0) {
-            if (anyVisualizationConfigEnabled(context)) label = appendPrimitivePlaceholder(label);
-            else return originalValue;
-        }
+        if (getTotalPlaceholdersCountInLabel(label, false) == 0) label = appendPrimitivePlaceholder(label);
 
         if (!shouldBeProcessed(label) && !hasOverridingFinishLabel(context)) return originalValue;
 
@@ -150,10 +145,7 @@ public abstract class SingleLineDisplaySourceMixin {
             else return;
         }
 
-        if (getTotalPlaceholdersCountInLabel(label) == 0) {
-            if (anyVisualizationConfigEnabled(context)) label = appendPrimitivePlaceholder(label);
-            else return;
-        }
+        if (getTotalPlaceholdersCountInLabel(label, false) == 0) label = appendPrimitivePlaceholder(label);
 
         if (!shouldBeProcessed(label) && (!hasOverridingFinishLabel(context))) return;
 

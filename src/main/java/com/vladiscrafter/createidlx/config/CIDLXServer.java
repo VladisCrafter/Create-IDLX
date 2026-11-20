@@ -6,7 +6,7 @@ public class CIDLXServer extends CIDLXConfigBase {
     public final ConfigBool enableBracketsPlaceholder = b(true, "enableCurlyBracketsPlaceholder", Comments.enableBracketsPlaceholder);
     public final ConfigBool enableDollarPlaceholder = b(true, "enableDollarSignPlaceholder", Comments.enableDollarPlaceholder);
     public final ConfigBool enableEscapingOfPlaceholders = b(true, "enableEscapingOfPlaceholders", Comments.enableEscapingOfPlaceholders);
-    public final ConfigBool hideEscapingOfDisabledPlaceholders = b(false, "hideEscapingOfDisabledPlaceholders", Comments.hideEscapingOfDisabledPlaceholders);
+//    public final ConfigBool hideEscapingOfDisabledPlaceholders = b(false, "hideEscapingOfDisabledPlaceholders", Comments.hideEscapingOfDisabledPlaceholders);
 
     public final ConfigGroup trimmingPlaceholdersSettings = group(2, "trimmingPlaceholdersSettings", "Trimming Placeholders Settings");
     public final ConfigBool enableOriginalTrimmingPlaceholder = b(true, "enableOriginalTrimmingPlaceholder", Comments.enableOriginalTrimmingPlaceholder);
@@ -24,8 +24,6 @@ public class CIDLXServer extends CIDLXConfigBase {
     public final ConfigBool enhanceTrainStatusDisplaySource = b(true, "enhanceTrainStatusDisplaySource", Comments.enhanceTrainStatusDisplaySource);
     public final ConfigBool enhanceNixieTubeDisplaySource = b(true, "enhanceNixieTubeDisplaySource", Comments.enhanceNixieTubeDisplaySource);
     public final ConfigBool addColorCopyingToNixieTubeDisplaySource = b(true, "addColorCopyingToNixieTubeDisplaySource", Comments.addColorCopyingToNixieTubeDisplaySource);
-
-//    public final ConfigGroup visualDisplaySettings
 
     @Override public String getName() { return "server"; }
 

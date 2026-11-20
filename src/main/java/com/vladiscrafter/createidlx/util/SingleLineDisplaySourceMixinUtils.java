@@ -146,7 +146,7 @@ public class SingleLineDisplaySourceMixinUtils {
         if (getTotalPlaceholdersCountInLabel(label) > 0) {
             signature.append("->[");
 
-            for (Placeholder placeholder : extractPlaceholders(label)) signature.append(placeholder.getString()).append("+");
+            for (Placeholder placeholder : extractPlaceholders(label, false)) signature.append(placeholder.getString()).append("+");
             signature.deleteCharAt(signature.lastIndexOf("+"));
 
             signature.append("]");

@@ -50,7 +50,7 @@ public class AttachedLabelProcessingUtils {
     }
 
     public static LinkedHashMap<Integer, Placeholder> mapPlaceholders(String label) {
-        ArrayList<AttachedLabelBreakdownResult> breakdown = processLabel(label);
+        ArrayList<AttachedLabelBreakdownResult> breakdown = processLabel(label, false, false);
         LinkedHashMap<Integer, Placeholder> result = new LinkedHashMap<>();
         int index = 0;
 
@@ -58,6 +58,22 @@ public class AttachedLabelProcessingUtils {
             if (part instanceof Placeholder) result.put(index, (Placeholder) part);
             index += part.length();
         }
+
+        return result;
+    }
+
+    public static MutableComponent breakDownAndAssembleLabelAsColoredComponent(String label, String rawInfo, boolean highlight, boolean everUnderline, int spi) {
+        if (label.isEmpty()) return Component.literal(rawInfo);
+        else if (getTotalPlaceholdersCountInLabel(label) == 0) label = appendPrimitivePlaceholder(label);
+
+        MutableComponent result = CommonComponents.EMPTY.copy();
+        breakDownAndAssembleLabel(label, rawInfo, (part, i) -> {
+            int color = highlight && part instanceof ProcessedInfoPart pip ? pip.getColor() : 0xFFFFFF;
+            boolean underlinable = part instanceof ProcessedInfoPart || (part instanceof PlainPart pip && pip.isFormerlyPlaceholder());
+            boolean underline = everUnderline && underlinable && i == spi;
+            result.append(Component.literal(part.getString()).withStyle(underline ? ChatFormatting.UNDERLINE : ChatFormatting.RESET).withColor(color));
+            return underlinable;
+        });
 
         return result;
     }
@@ -72,22 +88,6 @@ public class AttachedLabelProcessingUtils {
         });
 
         return result.toString();
-    }
-
-    public static MutableComponent breakDownAndAssembleLabelAsSingleComponent(String label, String rawInfo, boolean highlight, boolean everUnderline, int spi) {
-        if (label.isEmpty()) return Component.literal(rawInfo);
-        else if (getTotalPlaceholdersCountInLabel(label) == 0) label = appendPrimitivePlaceholder(label);
-
-        MutableComponent result = CommonComponents.EMPTY.copy();
-        breakDownAndAssembleLabel(label, rawInfo, (part, i) -> {
-            int color = highlight && part instanceof ProcessedInfoPart ? ((ProcessedInfoPart) part).getColor() : 0xFFFFFF;
-            boolean underline = everUnderline && part instanceof ProcessedInfoPart && i == spi;
-
-            result.append(Component.literal(part.getString()).withStyle(underline ? ChatFormatting.UNDERLINE : ChatFormatting.RESET).withColor(color));
-            return part instanceof ProcessedInfoPart;
-        });
-
-        return result;
     }
 
     public static List<MutableComponent> breakDownAndAssembleLabelAsComponentList(String label, String rawInfo) {
@@ -126,35 +126,39 @@ public class AttachedLabelProcessingUtils {
 
         for (FlapDisplaySection section : sections) result.add(Component.literal("").append(section.getText()));
 
-        return result; // TODO: rename this one and others above accordingly
+        return result;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean shouldBeProcessed(String label) { // TODO: doesn't get called for some reason?
-        return getTotalPlaceholdersCountInLabel(label) > 0 || hasEscapedPlaceholders(label);
+    public static boolean shouldBeProcessed(String label) {
+        return getTotalPlaceholdersCountInLabel(label, true) > 0 || hasEscapedPlaceholders(label);
     }
 
     public static int getTotalPlaceholdersCountInLabel(String label) {
-        return extractPlaceholders(label).size();
+        return getTotalPlaceholdersCountInLabel(label, false);
+    }
+
+    public static int getTotalPlaceholdersCountInLabel(String label, boolean includeEscaped) {
+        return extractPlaceholders(label, includeEscaped).size();
     }
 
     public static ArrayList<PlainPart> extractPlainParts(String label) {
-        return extractParts(label, PlainPart.class);
+        return extractParts(label, PlainPart.class, false);
     }
 
-    public static ArrayList<Placeholder> extractPlaceholders(String label) {
-        return extractParts(label, Placeholder.class);
+    public static ArrayList<Placeholder> extractPlaceholders(String label, boolean includeEscaped) {
+        return extractParts(label, Placeholder.class, includeEscaped);
     }
 
-    private static <T extends AttachedLabelBreakdownResult> ArrayList<T> extractParts(String label, Class<T> type) {
-        return plainifyEscapedPlaceholders(label).stream()
+    private static <T extends AttachedLabelBreakdownResult> ArrayList<T> extractParts(String label, Class<T> type, boolean includeEscaped) {
+        return processLabel(label, !includeEscaped, true).stream()
                 .filter(type::isInstance).map(type::cast).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static boolean hasEscapedPlaceholders(String label) {
         boolean hasEscapedPlaceholders = false;
 
-        for (AttachedLabelBreakdownResult part : processLabel(label))
+        for (AttachedLabelBreakdownResult part : processLabel(label, false, true))
             if (part instanceof Placeholder placeholder && placeholder.isEscaped()) {
                 hasEscapedPlaceholders = true;
                 break;
@@ -163,8 +167,8 @@ public class AttachedLabelProcessingUtils {
         return hasEscapedPlaceholders;
     }
 
-    private static ArrayList<AttachedLabelBreakdownResult> processLabel(String label) {
-        boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
+    private static ArrayList<AttachedLabelBreakdownResult> processLabel(String label, boolean escapedToPlain, boolean disabledToPlain) {
+        boolean e = escapedToPlain && CIDLXConfigs.server.enableEscapingOfPlaceholders.get(), d = disabledToPlain;
 
         StringBuilder breakableLabel = new StringBuilder(label);
         ArrayList<AttachedLabelBreakdownResult> brokenDownLabel = new ArrayList<>();
@@ -177,7 +181,7 @@ public class AttachedLabelProcessingUtils {
                 Placeholder placeholder = getPlaceholder(breakableLabel.toString(), i);
 
                 if (placeholder.length() > 0) {
-                    if (!labelPart.isEmpty()) brokenDownLabel.add(new PlainPart(labelPart.toString()));
+                    if (!labelPart.isEmpty()) brokenDownLabel.add(new PlainPart(labelPart.toString(), false));
                     if (!label.isEmpty()) breakableLabel.delete(0, labelPart.toString().length());
 
                     foundPlaceholder = true;
@@ -190,48 +194,24 @@ public class AttachedLabelProcessingUtils {
             }
 
             if (!foundPlaceholder) {
-                brokenDownLabel.add(new PlainPart(breakableLabel.toString()));
+                brokenDownLabel.add(new PlainPart(breakableLabel.toString(), false));
                 breakableLabel.setLength(0);
             }
         }
 
-        if (isEscapingOfPlaceholdersEnabled) {
-            for (int p = 0; p < brokenDownLabel.size(); p++) {
-                if (!(brokenDownLabel.get(p) instanceof Placeholder placeholder)) continue;
-                if (!placeholder.isEscaped()) continue;
+        if (e || d) {
+            ArrayList<AttachedLabelBreakdownResult> brokenDownLabelCache = new ArrayList<>(brokenDownLabel);
+            brokenDownLabel.clear();
 
-                String part = brokenDownLabel.get(p).getString();
-
-                if (removeEscapeBackslash(DOLLAR)) part = part.replace("\\$", "$");
-                if (removeEscapeBackslash(BRACKETS)) part = part.replace("\\{}", "{}");
-
-                if (removeEscapeBackslash(TRIM)) part = part.replaceAll("\\\\(?=[{}][\\d./%CcFfUuDdAa]+\\$[\\d./%CcFfUuDdAa]+[}{])", "");
-
-                if (removeEscapeBackslash(TRIM_SHORT)) part = part.replaceAll("\\\\(?=[{}][\\d./%CcFfUuDdAa]+\\$)", "")
-                            .replaceAll("\\\\(?=\\$[\\d./%CcFfUuDdAa]+[}{])", "");
-
-                if (removeEscapeBackslash(TRIM_ALT)) part = part.replaceAll("\\\\(?=\\$\\{[\\d./%CcFfUuDdAa]+[+-]{3}\\d+})", "");
-
-                brokenDownLabel.set(p, new PlainPart(part));
+            for (AttachedLabelBreakdownResult part : brokenDownLabelCache) {
+                if (part instanceof Placeholder placeholder && (placeholder.isEscaped() || placeholder.isDisabled())) {
+                    brokenDownLabel.add(new PlainPart(placeholder.isDisabled() ? placeholder.getString()
+                            : placeholder.getString().replaceAll("^\\\\", (removeEscapeBackslash(placeholder) ? "" : "\\\\")), true));
+                } else brokenDownLabel.add(part);
             }
         }
 
-        /*log("\nProcessed label:\n\n- " + brokenDownLabel.stream()
-                .map(AttachedLabelBreakdownResult::asDebugString).collect(Collectors.joining("\n- ")));*/
-
         return brokenDownLabel;
-    }
-
-    public static ArrayList<AttachedLabelBreakdownResult> plainifyEscapedPlaceholders(String label) {
-        ArrayList<AttachedLabelBreakdownResult> oldParts = processLabel(label);
-        ArrayList<AttachedLabelBreakdownResult> newParts = new ArrayList<>();
-
-        for (AttachedLabelBreakdownResult oldPart : oldParts) {
-            if (oldPart instanceof Placeholder placeholder && placeholder.isEscaped()) newParts.add(new PlainPart(oldPart.getString()));
-            else newParts.add(oldPart);
-        }
-
-        return newParts; // currently wraps processLabel() for any chain that gets to rendering the finished text
     }
 
     public static Placeholder getPlaceholder(String text, int i) {
@@ -293,7 +273,7 @@ public class AttachedLabelProcessingUtils {
 
         if (isEscaped) {
             if (length == 1) return invalid.copy();
-            else state = state == DISABLED ? ESCAPED_DISABLED : ESCAPED;
+            else if (state != DISABLED) state = ESCAPED;
         }
 
         return new Placeholder(text.substring(inI, inI + length), type, state, properties);
@@ -486,7 +466,7 @@ public class AttachedLabelProcessingUtils {
     }
 
     public static ArrayList<AttachedLabelBreakdownResult> moldInfoPartsViaPlaceholders(String label, String rawInfo) {
-        ArrayList<AttachedLabelBreakdownResult> parts = plainifyEscapedPlaceholders(label);
+        ArrayList<AttachedLabelBreakdownResult> parts = processLabel(label, true, true);
         ArrayList<AttachedLabelBreakdownResult> trimmedInfoParts = new ArrayList<>();
 
         for (AttachedLabelBreakdownResult part : parts) {
@@ -537,23 +517,23 @@ public class AttachedLabelProcessingUtils {
                 : value.intValue();
     }
 
-    public static boolean removeEscapeBackslash(PlaceholderType type) {
+    public static boolean removeEscapeBackslash(Placeholder placeholder) {
         boolean isDollarSignPlaceholderEnabled = CIDLXConfigs.server.enableDollarPlaceholder.get();
         boolean isBracketsPlaceholderEnabled = CIDLXConfigs.server.enableBracketsPlaceholder.get();
         boolean isOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableOriginalTrimmingPlaceholder.get();
         boolean isShortenedOriginalTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableShortenedOriginalTrimmingPlaceholder.get();
         boolean isAlternativeTrimmingPlaceholderEnabled = CIDLXConfigs.server.enableAlternativeTrimmingPlaceholder.get();
         boolean isEscapingOfPlaceholdersEnabled = CIDLXConfigs.server.enableEscapingOfPlaceholders.get();
-        boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();
+        /*boolean isEscapingOfDisabledPlaceholdersHidden = CIDLXConfigs.server.hideEscapingOfDisabledPlaceholders.get();*/
 
-        return isEscapingOfPlaceholdersEnabled && (isEscapingOfDisabledPlaceholdersHidden || switch (type) {
+        return isEscapingOfPlaceholdersEnabled && /*(isEscapingOfDisabledPlaceholdersHidden ||*/ switch (placeholder.type()) {
             case DOLLAR -> isDollarSignPlaceholderEnabled;
             case BRACKETS -> isBracketsPlaceholderEnabled;
             case TRIM -> isOriginalTrimmingPlaceholderEnabled;
             case TRIM_SHORT -> isShortenedOriginalTrimmingPlaceholderEnabled;
             case TRIM_ALT -> isAlternativeTrimmingPlaceholderEnabled;
             default -> false;
-        });
+        };
     }
 
     public static String constructRawCaptureGroup(CaptureGroup captureGroup, boolean alt, boolean left) {
