@@ -9,6 +9,7 @@
     "accessor.create.HosePulleyBlockEntityAccessor",
     "accessor.create.MechanicalPistonBlockEntityAccessor",
     "accessor.create.NixieTubeDisplayTargetAccessor",
+    "accessor.create.SelectionScrollInputAccessor",
     "accessor.create.SingleLineDisplaySourceAccessor",
     "create.displayLink.DisplayLinkBlockEntityMixin",
     "create.displayLink.DisplayLinkConfigurationPacketMixin",

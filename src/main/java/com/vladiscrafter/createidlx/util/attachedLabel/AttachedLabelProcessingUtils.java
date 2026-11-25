@@ -244,7 +244,9 @@ public class AttachedLabelProcessingUtils {
                 type = alt.type();
                 properties = alt.properties();
             }
-        } else if (text.charAt(i) == '$' || text.charAt(i) == '}' || text.charAt(i) == '{') {
+        }
+
+        if (type == INVALID && (text.charAt(i) == '$' || text.charAt(i) == '}' || text.charAt(i) == '{')) {
             Placeholder original = getOriginalTrimmingPlaceholder(text, i);
             int origLength = original.length();
             if (origLength > 2) {
@@ -540,9 +542,9 @@ public class AttachedLabelProcessingUtils {
         String v = captureGroup.valueType() == CaptureGroupValueType.FR_PERCENT
         ? ((BigDecimal) captureGroup.value()).multiply(BigDecimal.valueOf(100)).stripTrailingZeros().toPlainString() : captureGroup.value().toString();
         String valuePart = v + (captureGroup.valueType() == CaptureGroupValueType.FR_PERCENT ? "%" : "");
-        String rounder = alt ? captureGroup.rounding().name().charAt(0) + "" : switch (captureGroup.rounding()) {
-            case CEIL -> "+";
-            case FLOOR -> "-";
+        String rounder = switch (captureGroup.rounding()) {
+            case CEIL -> !alt ? "+" : "C";
+            case FLOOR -> !alt ? "-" : "F";
             default -> "";
         };
 

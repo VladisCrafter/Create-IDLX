@@ -195,7 +195,7 @@ public class RLECaptureGroupScrollInput extends ScrollInput {
     }
 
     @Override
-    protected void updateTooltip() {
+    public void updateTooltip() {
         toolTip.clear();
         if (title == null) return;
         toolTip.add(title.plainCopy().withStyle(s -> s.withColor(HEADER_RGB.getRGB())));

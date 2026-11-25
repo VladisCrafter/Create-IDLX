@@ -6,8 +6,10 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
+import com.vladiscrafter.createidlx.CreateIDLX;
 import com.vladiscrafter.createidlx.config.CIDLXConfigs;
 import com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures;
+import com.vladiscrafter.createidlx.mixin.accessor.create.SelectionScrollInputAccessor;
 import com.vladiscrafter.createidlx.mixin.accessor.minecraft.EditBoxAccessor;
 import com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelProcessingUtils;
 import com.vladiscrafter.createidlx.util.gui.PlaceholderColoringUtils;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.*;
 import static com.vladiscrafter.createidlx.util.attachedLabel.AttachedLabelPart.PlaceholderType.*;
 import static com.vladiscrafter.createidlx.foundation.gui.CreateIDLXGuiTextures.*;
+import static net.createmod.catnip.gui.widget.AbstractSimiWidget.HEADER_RGB;
 
 public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     protected String text, oldText, cachedText, previewInput;
@@ -247,7 +250,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         leftGroupRoundingScrollInput.setState(placeholder.properties().leftGroup().rounding().ordinal());
         leftGroupRoundingScrollInput.calling(i -> onPlaceholderUpdate(psi, placeholder.copy(),
                 placeholder.copy().withProperties(placeholder.properties().copy().withLeftGroup(placeholder.properties().leftGroup().copy()
-                        .withRounding(CaptureGroupRounding.values()[i]))))).onChanged();
+                        .withRounding(CaptureGroupRounding.values()[i])))));
+        ((SelectionScrollInputAccessor) leftGroupRoundingScrollInput).createidlx$callUpdateTooltip();
         if (placeholder.properties().leftGroup().operation() != CaptureGroupOperation.NONE) {
             leftGroupRoundingScrollInput.writingTo(leftGroupRoundingScrollInputLabel);
             leftGroupRoundingLabelCache = leftGroupRoundingScrollInputLabel.text;
@@ -262,7 +266,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         rightGroupRoundingScrollInput.setState(placeholder.properties().rightGroup().rounding().ordinal());
         rightGroupRoundingScrollInput.calling(i -> onPlaceholderUpdate(psi, placeholder.copy(),
                 placeholder.copy().withProperties(placeholder.properties().copy().withRightGroup(placeholder.properties().rightGroup().copy()
-                        .withRounding(CaptureGroupRounding.values()[i]))))).onChanged();
+                        .withRounding(CaptureGroupRounding.values()[i])))));
+        ((SelectionScrollInputAccessor) rightGroupRoundingScrollInput).createidlx$callUpdateTooltip();
         if (placeholder.properties().rightGroup().operation() != CaptureGroupOperation.NONE) {
             rightGroupRoundingScrollInput.writingTo(rightGroupRoundingScrollInputLabel);
             rightGroupRoundingLabelCache = rightGroupRoundingScrollInputLabel.text;
@@ -276,7 +281,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
                 placeholder.properties().leftGroup(), leftGroupCache);
         leftGroupScrollInput.withScrollCallback((pcg, cg) -> onPlaceholderUpdate(psi,
                     placeholder.copy().withProperties(placeholder.properties().copy().withLeftGroup(pcg.copy())),
-                    placeholder.withProperties(placeholder.properties().copy().withLeftGroup(cg.copy())))).onChanged();
+                    placeholder.withProperties(placeholder.properties().copy().withLeftGroup(cg.copy())))).updateTooltip();
         leftGroupScrollInputLabel.colored(leftGroupScrollInput.isActive() ? 0xFFFFFF : 0xA3A3A3);
         if (placeholder.properties().leftGroup().operation() != CaptureGroupOperation.NONE) {
             leftGroupScrollInput.writingTo(leftGroupScrollInputLabel);
@@ -288,7 +293,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
                 placeholder.properties().rightGroup(), rightGroupCache);
         rightGroupScrollInput.withScrollCallback((pcg, cg) -> onPlaceholderUpdate(psi,
                 placeholder.copy().withProperties(placeholder.properties().copy().withRightGroup(pcg.copy())),
-                placeholder.withProperties(placeholder.properties().copy().withRightGroup(cg.copy())))).onChanged();
+                placeholder.withProperties(placeholder.properties().copy().withRightGroup(cg.copy())))).updateTooltip();
         rightGroupScrollInputLabel.colored(rightGroupScrollInput.isActive() ? 0xFFFFFF : 0xA3A3A3);
         if (placeholder.properties().rightGroup().operation() != CaptureGroupOperation.NONE) {
             rightGroupScrollInput.writingTo(rightGroupScrollInputLabel);
@@ -299,23 +304,26 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
 
         leftGroupOperationSelectorLabel = new Label(x + 103, y + 38, CommonComponents.EMPTY).withShadow();
         leftGroupOperationSelector = new SelectionScrollInput(x + 98, y + 32, !alt ? 69 : 44, 18);
-        leftGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 0, s));
         leftGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(leftGroupOperationSelectorLabel)
-                .setState(placeholder.properties().leftGroup().operation().ordinal()).onChanged();
+                .setState(placeholder.properties().leftGroup().operation().ordinal());
+        leftGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 0, s));
+        ((SelectionScrollInputAccessor) leftGroupOperationSelector).createidlx$callUpdateTooltip();
 
         if (alt) {
             middleGroupOperationSelectorLabel = new Label(x + 152, y + 38, CommonComponents.EMPTY).withShadow();
             middleGroupOperationSelector = new SelectionScrollInput(x + 147, y + 32, 44, 18);
-            middleGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 1, s));
             middleGroupOperationSelector.forOptions(plOperationsAlt).writingTo(middleGroupOperationSelectorLabel)
-                    .setState(placeholder.properties().middleGroupOperation().ordinal()).onChanged();
+                    .setState(placeholder.properties().middleGroupOperation().ordinal());
+            middleGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 1, s));
+            ((SelectionScrollInputAccessor) middleGroupOperationSelector).createidlx$callUpdateTooltip();
         }
 
         rightGroupOperationSelectorLabel = new Label(x + (!alt ? 176 : 201), y + 38, CommonComponents.EMPTY).withShadow();
         rightGroupOperationSelector = new SelectionScrollInput(x + (!alt ? 171 : 196), y + 32, !alt ? 69 : 44, 18);
-        rightGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 2, s));
         rightGroupOperationSelector.forOptions(!alt ? plOperations : plOperationsAlt).writingTo(rightGroupOperationSelectorLabel)
-                .setState(placeholder.properties().rightGroup().operation().ordinal()).onChanged();
+                .setState(placeholder.properties().rightGroup().operation().ordinal());
+        rightGroupOperationSelector.calling(s -> selectCaptureGroupOperation(psi, placeholder, 2, s));
+        ((SelectionScrollInputAccessor) rightGroupOperationSelector).createidlx$callUpdateTooltip();
 
         if (enableResetCaptureGroupsButton) {
             resetCaptureGroupsButton = new TextureButton(x + 164, y + 16, 11, 11, RLE_PL_CONFIG_RESET, RLE_PL_CONFIG_RESET_H);
@@ -632,7 +640,7 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
     }
 
     public void selectPlaceholder(boolean manual, int index, Placeholder placeholder) {
-        if (index > -1 && index != selectedPlaceholderIndex) {
+        if (index > -1 && (index == 0 || index != selectedPlaceholderIndex)) {
             clearGroupCaches(true, true);
             selectedPlaceholderIndex = index;
             selectedPlaceholder = placeholder;
@@ -646,7 +654,8 @@ public class DisplayLinkRichLabelEditorScreen extends AbstractSimiScreen {
         for (RLEPlaceholderTabButton button : placeholderTabButtons) button.setSelected(index == button.getIndex());
         labelBox.setSelectedPlaceholderIndex(index);
         labelBox.setSelectedPlaceholderDisplayMarks(toStringIndex(index), placeholder.length(),
-                !manual ? labelBox.getCursorPosition() : -1, (AllKeys.shiftDown() && !resetCaptureGroupsButton.isHovered()));
+                !manual ? labelBox.getCursorPosition() : -1,
+                AllKeys.shiftDown() && (resetCaptureGroupsButton == null || !resetCaptureGroupsButton.isHovered()));
 
         buildPlaceholderConfig(index);
         refreshPreviewOutput();

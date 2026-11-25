@@ -36,8 +36,8 @@ public final class ScrollingTruncatedString {
         int availableWidth = isSourceTypeSelector ? Math.max(0, width - 8) : Math.max(0, width - 10);
 
         if (textWidth <= availableWidthForCheck) {
-            if (isSourceTypeSelector) graphics.drawString(font, text, textX - offset, textY, 0xFFFFFF, true);
-            else graphics.drawString(font, text, textX - offset + 1, textY - 1, 0xFFFFFF, true);
+            if (isSourceTypeSelector) graphics.drawString(font, text, textX, textY, 0xFFFFFF, true);
+            else graphics.drawString(font, text, textX + 1, textY - 1, 0xFFFFFF, true);
             return;
         }
 
